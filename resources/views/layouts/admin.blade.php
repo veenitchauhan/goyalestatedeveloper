@@ -25,6 +25,7 @@
 @can('pages.view')<a href="{{ route('admin.knowledge.index') }}" @if(request()->routeIs('admin.knowledge.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▤</span>Insights, Knowledge & FAQs</a>@endcan
 @can('jobs.view')<a href="{{ route('admin.jobs.index') }}" @if(request()->routeIs('admin.jobs.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▣</span>Careers & openings</a>@endcan
 @if(auth()->user()->can('candidates.view') || auth()->user()->can('candidates.view-assigned'))<a href="{{ route('admin.candidates.index') }}" @if(request()->routeIs('admin.candidates.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">♙</span>Candidate pipeline</a>@endif
+@can('seo.manage')<a href="{{ route('admin.seo.index') }}" @if(request()->routeIs('admin.seo.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">◎</span>SEO & discovery</a>@endcan
 @can('campaigns.manage')<a href="{{ route('admin.campaigns.index') }}" @if(request()->routeIs('admin.campaigns.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">◇</span>Campaigns</a><a href="{{ route('admin.analytics') }}" @if(request()->routeIs('admin.analytics')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▥</span>Analytics</a>@endcan
 @can('media.manage')
 <a href="{{ route('admin.media.index') }}" @if(request()->routeIs('admin.media.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▧</span>Media library</a>

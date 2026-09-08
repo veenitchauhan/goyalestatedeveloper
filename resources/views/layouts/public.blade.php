@@ -4,15 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ ($content['seo']['title'] ?: $siteSettings['seo']['title']) }}</title>
-    <meta name="description" content="{{ ($content['seo']['description'] ?: $siteSettings['seo']['description']) }}">
-    <link rel="canonical" href="{{ $canonical ?? (isset($entry) && $entry->type==='page' ? route('pages.show',$entry->slug) : route('home')) }}">
-    <meta property="og:title" content="{{ ($content['seo']['title'] ?: $siteSettings['seo']['title']) }}">
-    <meta property="og:description" content="{{ ($content['seo']['description'] ?: $siteSettings['seo']['description']) }}">
-    <meta property="og:type" content="website">
+    @include('partials.seo-head')
     @if($favicon=\App\Models\SiteSetting::image($siteSettings['branding']['favicon_id']))<link rel="icon" href="{{ route('media.show',$favicon) }}">@endif
-    @if($ogImage=\App\Models\SiteSetting::image($siteSettings['branding']['og_image_id']))<meta property="og:image" content="{{ route('media.show',$ogImage) }}">@endif
-    @if($preview??false)<meta name="robots" content="noindex,nofollow">@elseif(app()->isProduction())<meta name="robots" content="{{ $siteSettings['seo']['robots'] }}">@endif
     @if($siteSettings['seo']['search_console_verification'])<meta name="google-site-verification" content="{{ $siteSettings['seo']['search_console_verification'] }}">@endif
     <link rel="stylesheet" href="{{ asset('assets/website.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/projects.css') }}">
@@ -34,7 +27,8 @@
         <details class="mobile-nav"><summary>Menu <span aria-hidden="true">＋</span></summary><nav aria-label="Mobile navigation"><a href="{{ route('search') }}">Search</a><a href="{{ route('home') }}">Home</a>@foreach($sections as $section) @if($section['nav'])<a href="{{ in_array($section['id'],['about','business','capabilities']) ? route('corporate.'.$section['id'].'.index') : ((in_array($section['id'],['careers','insights','contact']) ? route(match($section['id']) { 'careers'=>'careers.index', 'insights'=>'knowledge.article.index', default=>'contact' }) : ($section['id']==='projects' ? route('projects.index') : (request()->routeIs('home') ? '' : route('home')).'#'.$section['id']))) }}">{{ $section['nav'] }}</a>@endif @endforeach @foreach($menuItems->whereIn('placement',['header','both']) as $item)<a href="{{ $item['url'] }}">{{ $item['title'] }}</a>@endforeach</nav></details>
     </div>
 </header>
-<main id="main">@yield('content')</main>
+<main id="main">@if(isset($entry,$payload['title']))<nav class="corporate-subnav" aria-label="Breadcrumb"><a href="{{ route('home') }}">Home</a><span aria-current="page">{{ $payload['title'] }}</span></nav>@endif
+@yield('content')</main>
 <footer class="site-footer">
     <div class="footer-top"><a class="company-name" href="{{ route('home') }}">@if($logo=\App\Models\SiteSetting::image($siteSettings['branding']['logo_id']))<img class="company-logo" src="{{ route('media.show',$logo) }}" alt="">@endif{{ $siteSettings['company']['name'] }}</a><p>{{ $content['hero']['eyebrow'] }}</p></div>
     <nav class="footer-nav" aria-label="Footer navigation"><a href="{{ route('search') }}">Search</a><a href="{{ route('knowledge.knowledge.index') }}">Knowledge Bank</a><a href="{{ route('knowledge.faq.index') }}">FAQs</a>@foreach($sections as $section) @if($section['nav'])<a href="{{ in_array($section['id'],['about','business','capabilities']) ? route('corporate.'.$section['id'].'.index') : ((in_array($section['id'],['careers','insights','contact']) ? route(match($section['id']) { 'careers'=>'careers.index', 'insights'=>'knowledge.article.index', default=>'contact' }) : ($section['id']==='projects' ? route('projects.index') : (request()->routeIs('home') ? '' : route('home')).'#'.$section['id']))) }}">{{ $section['nav'] }}</a>@endif @endforeach @foreach($menuItems->whereIn('placement',['footer','both']) as $item)<a href="{{ $item['url'] }}">{{ $item['title'] }}</a>@endforeach</nav>

@@ -11,12 +11,14 @@ use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CorporateController;
+use App\Http\Controllers\DiscoveryController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\IntegrationController;
 use App\Http\Controllers\KnowledgeController;
@@ -34,6 +36,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 
+Route::get('/sitemap.xml', [DiscoveryController::class, 'sitemap'])->name('sitemap');
+Route::get('/robots.txt', [DiscoveryController::class, 'robots'])->name('robots');
 Route::post('/integrations/lead-events', [IntegrationController::class, 'receive'])->middleware('throttle:60,1')->name('integrations.receive');
 Route::get('/privacy-preferences', [AnalyticsController::class, 'preferences'])->name('privacy.preferences');
 Route::post('/privacy-preferences', [AnalyticsController::class, 'consent'])->name('privacy.consent');
@@ -172,6 +176,11 @@ Route::middleware(['auth', 'auth.session'])->prefix('admin')->name('admin.')->gr
         Route::post('/media/{media}/archive', [MediaController::class, 'archive'])->middleware(['can:media.manage', 'can:media.edit'])->name('media.archive');
         Route::put('/media/{media}', [MediaController::class, 'update'])->middleware(['can:media.manage', 'can:media.edit'])->name('media.update');
         Route::get('/media/{media}/original', [MediaController::class, 'original'])->middleware('can:media.manage')->name('media.original');
+        Route::get('/seo', [SeoController::class, 'index'])->middleware('can:seo.manage')->name('seo.index');
+        Route::get('/seo/edit', [SeoController::class, 'edit'])->middleware('can:seo.manage')->name('seo.edit');
+        Route::put('/seo', [SeoController::class, 'update'])->middleware('can:seo.manage')->name('seo.update');
+        Route::post('/seo/redirects', [SeoController::class, 'redirect'])->middleware('can:seo.manage')->name('seo.redirects.store');
+        Route::delete('/seo/redirects/{redirect}', [SeoController::class, 'deleteRedirect'])->middleware('can:seo.manage')->name('seo.redirects.delete');
         Route::get('/campaigns', [CampaignController::class, 'index'])->middleware('can:campaigns.manage')->name('campaigns.index');
         Route::get('/campaigns/create', [CampaignController::class, 'create'])->middleware('can:campaigns.manage')->name('campaigns.create');
         Route::post('/campaigns', [CampaignController::class, 'store'])->middleware('can:campaigns.manage')->name('campaigns.store');
@@ -211,3 +220,5 @@ Route::get('/pages/{slug}', function (string $slug) {
 
     return view('page', compact('entry', 'payload', 'content', 'sections'));
 })->name('pages.show');
+
+Route::any('{fallbackPlaceholder}', fn () => abort(404))->where('fallbackPlaceholder', '.*')->fallback();

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\ApplySeoRedirect;
 use App\Http\Middleware\EnsureActiveUser;
 use App\Http\Middleware\RequireTwoFactor;
 use App\Http\Middleware\SecurityHeaders;
@@ -16,7 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->web(append: [SecurityHeaders::class, EnsureActiveUser::class, TrackConsentedVisit::class]);
+        $middleware->web(append: [SecurityHeaders::class, EnsureActiveUser::class, TrackConsentedVisit::class, ApplySeoRedirect::class]);
         $middleware->validateCsrfTokens(except: ['integrations/lead-events']);
         $middleware->alias(['two-factor.required' => RequireTwoFactor::class]);
     })

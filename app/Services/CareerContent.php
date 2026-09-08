@@ -23,6 +23,11 @@ class CareerContent
             $rules[$key] = [$publishing && in_array($key, ['description', 'responsibilities', 'requirements', 'source_note']) ? 'required' : 'nullable', 'string', 'max:15000'];
         }
 
+        $rules['address_country'] = ['nullable', 'string', 'regex:/^[A-Z]{2}$/'];
+        foreach (['address_locality', 'address_region', 'postal_code', 'street_address'] as $field) {
+            $rules[$field] = ['nullable', 'string', 'max:255'];
+        }
+
         return $rules;
     }
 
