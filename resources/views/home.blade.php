@@ -34,13 +34,13 @@
         @php($publishedBusiness=\App\Services\CorporateContent::items('business_unit'))
         @php($businessCards=$publishedBusiness->isNotEmpty() ? $publishedBusiness->map(fn($item)=>['title'=>$item['title'],'text'=>$item['summary'],'detail'=>'','url'=>$item['url']]) : collect($section['items']))
         <div class="business-grid">@foreach($businessCards as $item)
-            <article class="business-card"><div class="card-top"><span>{{ sprintf('%02d',$loop->iteration) }}</span><span aria-hidden="true">↗</span></div>
+            <article class="business-card"><div class="card-top"><span>{{ sprintf('%02d',$loop->iteration) }}</span></div>
             @if($section['artwork_enabled']??true)
             @php($cardImage=$sectionAssets->get($section['card_'.($loop->index%3+1).'_id']??null))
             <figure class="business-art"><img src="{{ $cardImage ? route('media.show',$cardImage) : asset('assets/architecture/'.['construction','infrastructure','delivery'][$loop->index%3].'.webp') }}" alt="{{ $cardImage?->alt ?: 'Concept illustration: '.$item['title'] }}" loading="lazy" width="1536" height="1024">@unless($cardImage)<figcaption>Concept illustration</figcaption>@endunless</figure>
             @endif
 
-            <h3>@if($item['url']??null)<a href="{{ $item['url'] }}">{{ $item['title'] }} ↗</a>@else{{ $item['title'] }}@endif</h3><p>{{ $item['text'] }}</p>@if($item['detail'])<div class="card-detail">{{ $item['detail'] }}</div>@endif</article>
+            <h3><a class="business-card-link" href="{{ $item['url'] ?? route('corporate.business.index') }}">{{ $item['title'] }}</a></h3><p>{{ $item['text'] }}</p>@if($item['detail'])<div class="card-detail">{{ $item['detail'] }}</div>@endif</article>
         @endforeach</div>
         @break
     @case('capabilities')
