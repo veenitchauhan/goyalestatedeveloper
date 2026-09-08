@@ -1,0 +1,1 @@
+@if($statistics->isNotEmpty())<div class="cms-statistics">@foreach($statistics as $statistic)<div><strong>{{ $statistic['value'] }}</strong><span>{{ $statistic['title'] }}</span></div>@endforeach</div>@endif

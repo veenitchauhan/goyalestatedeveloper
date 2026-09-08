@@ -2,15 +2,17 @@
 @section('content')
 @php($hasContact=$sections->contains('id','contact'))
 <section class="hero" aria-labelledby="hero-title">
-    <img class="hero-architecture" src="{{ asset('assets/architecture/hero.svg') }}" alt="Conceptual architectural illustration of high-rise structures and a tower crane" width="1200" height="1000" fetchpriority="high">
+    @php($heroImage=\App\Models\Media::where('is_public',true)->whereKey($content['hero']['media_id']??null)->first())
+    <img class="hero-architecture" src="{{ $heroImage ? route('media.show',$heroImage) : asset('assets/architecture/hero.svg') }}" alt="{{ $heroImage?->alt ?? 'Conceptual architectural illustration of high-rise structures and a tower crane' }}" width="1200" height="1000" fetchpriority="high">
     <div class="hero-inner">
         <p class="eyebrow"><span class="orange-line"></span>{{ $content['hero']['eyebrow'] }}</p>
         <h1 id="hero-title">{{ $content['hero']['line_one'] }}<br>{{ $content['hero']['line_two'] }}<br><span>{{ $content['hero']['line_three'] }}</span></h1>
         <p class="hero-description">{{ $content['hero']['description'] }}</p>
         <div class="hero-actions">@if($hasContact)<a class="button orange" href="#contact">{{ $content['hero']['primary_cta'] }} <span aria-hidden="true">↗</span></a>@endif @if($sections->contains('id','projects'))<a class="text-link" href="#projects">{{ $content['hero']['secondary_cta'] }} <span aria-hidden="true">↗</span></a>@endif</div>
     </div>
-    <div class="hero-baseline"><span>TRICITY ROOTS. A FORWARD VISION.</span><span class="visual-caption">Architectural concept · not a project photograph</span><a href="#{{ $sections->first()['id'] ?? 'main' }}" aria-label="Explore the company">↓</a></div>
+    <div class="hero-baseline"><span>TRICITY ROOTS. A FORWARD VISION.</span><span class="visual-caption">{{ $heroImage ? $heroImage->caption : 'Architectural concept · not a project photograph' }}</span><a href="#{{ $sections->first()['id'] ?? 'main' }}" aria-label="Explore the company">↓</a></div>
 </section>
+@include('partials.statistics',['statistics'=>\App\Models\ContentEntry::publishedItems('statistic')])
 @foreach($sections as $section)
 <section id="{{ $section['id'] }}" class="section section-{{ $section['id'] }}">
     <div class="section-wrap">

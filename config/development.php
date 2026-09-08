@@ -3,8 +3,10 @@
 return [
     'company' => 'GOYAL ESTATE & DEVELOPERS PVT. LTD.',
     'host' => 'goyalestatedeveloper.test',
-    'completed' => 1,
-    'status' => 'Module 2 — administrator setup pending',
+    'completed' => 2,
+    'completed_ids' => [1, 4],
+    'current_module' => 3,
+    'status' => 'Module 3 — CMS testing checkpoint; administrator account ready',
     'modules' => [
         'Architecture and local foundation',
         'Application, authentication and permissions',

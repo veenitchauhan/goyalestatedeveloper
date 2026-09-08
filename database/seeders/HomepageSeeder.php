@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ContentEntry;
 use App\Models\Homepage;
 use Illuminate\Database\Seeder;
 
@@ -187,5 +188,11 @@ class HomepageSeeder extends Seeder
   }
 }
 JSON, true, 512, JSON_THROW_ON_ERROR)]);
+        $entry = ContentEntry::firstOrCreate(['type' => 'homepage', 'slug' => 'home'], ['title' => 'Homepage']);
+        if (! $entry->revisions()->exists()) {
+            $revision = $entry->revisions()->create(['version' => 1, 'payload' => Homepage::main()->content]);
+            $entry->update(['published_revision_id' => $revision->id, 'published_at' => now(), 'status' => 'published']);
+        }
+
     }
 }

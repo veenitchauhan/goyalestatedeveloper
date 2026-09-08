@@ -6,7 +6,7 @@ Laravel 13.30.1 / PHP 8.4 / MySQL 8.4 / Blade. Composer dependencies are pinned 
 
 ## Delivery status
 
-14 modules total; 1 complete; 13 remaining. Module 2 implementation and automated verification are ready, but first-administrator provisioning and user acceptance remain pending. The user explicitly prioritized correcting the visitor homepage. Module 4 now has a reviewable public design, with limited homepage-editing and enquiry-intake dependencies; complete CMS and lead-management modules remain pending.
+14 modules total; 2 accepted/completed (Modules 1 and 4); 12 remaining. The homepage is approved, with real images deferred by the user. Module 3 is at its CMS testing checkpoint. The first local Super Admin has now been provisioned with explicit user approval; Module 2 still needs user testing. Pause for this checkpoint before continuing development.
 
 Module 1 is committed as `62976e6`: architecture, vhost, checkpoint and single-line company branding. Module 2 replaces the PHP checkpoint with Laravel/Blade, adds Fortify login and two-factor authentication, 12 predefined roles, backend gates, assigned-content policies, user access management, private audit logs and identity/content migrations. Role permissions for later modules are predefined; their business interfaces are not implemented yet. No public registration or password-reset email delivery is enabled.
 
@@ -14,13 +14,25 @@ Module 1 is committed as `62976e6`: architecture, vhost, checkpoint and single-l
 
 The main address now displays the corporate homepage based on the reread 94-page brief: full company name, specified hero tagline, corporate navigation, business categories, an interactive ten-stage construction process, project section, Tricity positioning, careers, FAQs and a working enquiry form. Module counts and development instructions are absent from the visitor homepage. The checkpoint moved to `/admin/development`, protected by authentication, two-factor requirements and settings permission.
 
-Homepage copy and section visibility/order are stored in MySQL and editable at `/admin/homepage` by an authorized settings manager. The enquiry form validates, rate limits, checks consent and stores submissions for authorized review at `/admin/enquiries`. It does not send email or connect to a CRM yet. These are focused dependencies of the homepage correction, not completion of the full CMS or CRM modules.
+Homepage copy and section visibility/order are stored in MySQL and editable at `/admin/homepage` by an authorized content editor. The enquiry form validates, rate limits, checks consent and stores submissions for authorized review at `/admin/enquiries`. It does not send email or connect to a CRM yet. The CRM module remains pending. Homepage saves now create private revisions; publishing requires separate permission.
 
-The architectural SVG is a labelled concept illustration. The supplied PDF contains no real project photographs, project records, verified statistics, contact numbers, credentials or jobs to populate those features. Empty project/job states are honest; phone/WhatsApp actions remain hidden until configured. Legal copy, real media, detailed public pages, project filters and full publishing workflows remain part of subsequent modules. This is a design-review checkpoint, not production completion.
+The architectural SVG is a labelled concept illustration. The supplied PDF contains no real project photographs, project records, verified statistics, contact numbers, credentials or jobs to populate those features. Empty project/job states are honest; phone/WhatsApp actions remain hidden until configured. Legal copy, real media, detailed business content and project filters remain for later modules. The public design has been approved; this is not production completion.
 
-The updated suite passes 33 tests / 150 assertions on both SQLite and isolated MySQL. Responsive width checks passed at 320, 390, 768, 1024, 1280, 1440 and 1920; section navigation, process expansion and contact layout were reviewed in the browser.
+The updated suite passes 41 tests / 245 assertions on both SQLite and isolated MySQL. Responsive width checks passed at 320, 390, 768, 1024, 1280, 1440 and 1920; section navigation, process expansion and contact layout were reviewed in the browser.
 
-Please test the homepage at desktop/mobile sizes, menu anchors, construction-process accordion and enquiry validation. Pause for user feedback before progressing further.
+## CMS testing checkpoint (Module 3)
+
+- `/admin/homepage`: grouped copy/contact/SEO controls, section visibility/order, and an approved-media hero image selector. Current illustrations remain until an image is selected and the draft is published.
+- `/admin/content`: pages, reusable text blocks, verified statistics and header/footer links. Published statistics appear on the homepage and can also be selected on pages; blocks and statistics resolve their latest published version rather than duplicating text.
+- Draft saves, private previews, review notes, publish/unpublish, scheduling, revision history and restore-as-draft. Editors cannot publish. Conflicting edits and stale publication requests are rejected. Published content stays unchanged while a replacement is edited.
+- `/admin/media`: searchable/filterable image, PDF and MP4 uploads with descriptive metadata, visibility and ordering. Originals remain private. Images receive a WebP derivative up to 1,920 pixels, with optional full company-name watermark, position, size, opacity and padding. PDFs are downloaded as attachments. SVG/executable uploads are rejected.
+- Audit events record content/media actions without copying complete text or file contents into the log.
+
+Scheduled publishing is implemented and tested, but no persistent scheduler service has been installed on this Mac. Run `php artisan schedule:work` in a terminal for automatic local schedules, or `php artisan content:publish-due` for a one-time due-content check. Times are shown in the application timezone (currently UTC). Editing a scheduled draft cancels its pending schedule.
+
+Testing sequence after administrator setup: save a headline draft and confirm the public homepage is unchanged; preview and publish; create a page using a reusable block/statistic; change the block once and verify reuse; upload an image, toggle watermark and compare the unchanged original; set media private and verify visitor access is denied. Uploading real images is optional at this checkpoint. Project, careers, article and campaign selectors will connect when those modules are implemented. The media library stores videos now; dedicated video presentation belongs to the relevant public content modules.
+
+The first local Super Admin was created after explicit user approval. Credentials are in ignored `storage/app/private/local-admin.json`; sign in and enroll an authenticator. No sample business records were added. Module 3 is not counted complete until this testing checkpoint is resolved.
 
 ## Local database
 
@@ -54,11 +66,11 @@ Never point automated tests at the application database. This machine's Composer
 
 ## Verification completed
 
-25 tests / 108 assertions pass on SQLite and the isolated MySQL test database. Coverage includes login/logout, rate limits, inactive accounts, two-factor enrollment/challenge/recovery, user creation and access changes, assigned-record policies, admin view rendering, bootstrap restrictions and branded routes. Live HTTP checks confirmed Laravel health output, login HTTP 200 and missing-CSRF rejection (419). Checkpoint and login were visually reviewed on desktop/mobile. Credentials and database files were checked against the staged Git contents.
+41 tests / 245 assertions pass on SQLite and the isolated MySQL test database. Coverage includes login/logout, rate limits, inactive accounts, two-factor enrollment/challenge/recovery, user creation and access changes, assigned-record policies, admin view rendering, bootstrap restrictions and branded routes. Live HTTP checks confirmed Laravel health output, login HTTP 200 and missing-CSRF rejection (419). Checkpoint and login were visually reviewed on desktop/mobile. Credentials and database files were checked against the staged Git contents.
 
 ## First administrator
 
-No real administrator has been provisioned. An authorized operator can run `php artisan app:create-admin` to enter their chosen name, email and password privately. The command refuses a second bootstrap account. The local-only `--local-bootstrap` option generates credentials into ignored `storage/app/private/local-admin.json`; executing this option is pending explicit approval.
+The first local administrator has been provisioned with explicit approval. Its login details are stored in ignored `storage/app/private/local-admin.json` (never committed). For a fresh installation, an authorized operator can run `php artisan app:create-admin` to enter their chosen name, email and password privately. The command refuses a second bootstrap account. The local-only `--local-bootstrap` option generates credentials into ignored `storage/app/private/local-admin.json`; this option was executed locally only after explicit approval.
 
 Super Admins must confirm their password and complete authenticator enrollment before entering administration. Keep recovery codes privately. Production accounts must be provisioned through an authorized process; do not deploy local bootstrap accounts or credentials.
 
@@ -68,7 +80,7 @@ Super Admins must confirm their password and complete authenticator enrollment b
 2. After authorized admin provisioning, sign in, confirm password and enroll two-factor authentication.
 3. Inspect Users, Roles & permissions, and Audit log. Add a test Viewer account and verify it cannot access Users, Roles or Audit log directly.
 4. Sign out/in and test authenticator or recovery-code login. Review mobile layout.
-5. Report feedback and explicitly approve Module 3 before work continues.
+5. Report feedback. Module 3 development was authorized after homepage approval; further modules wait for the current CMS checkpoint.
 
 ## Working agreement
 

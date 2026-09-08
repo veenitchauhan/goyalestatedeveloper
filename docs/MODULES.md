@@ -1,8 +1,8 @@
 # Delivery plan: 14 modules
 
-Status: 14 total, 1 complete, 13 remaining. Module 1 accepted. Module 2 code and automated verification ready; first-administrator provisioning and user testing pending. The user has reprioritized the visitor homepage after rejecting the checkpoint at `/`. Module 4 is now at a design-review checkpoint, with limited homepage-content controls from Module 3 and enquiry intake from Module 10. These partial deliveries do not mark their full modules complete. Other modules remain pending.
+Status: 14 total, 2 complete (Modules 1 and 4), 12 remaining. The user approved the homepage and deferred real images to later CMS uploads. Module 3 CMS implementation is ready for testing, and the first local administrator has now been provisioned with explicit authorization. Modules 2 and 3 now await user testing. No next module has started.
 
-Each row is a separate development and testing checkpoint. Completion means implemented and verified; acceptance is recorded separately. Stop after every module and wait for the user to test and authorize the next one. Do not change the total silently if scope changes.
+Each row is a separate development and testing checkpoint. Completion requires implementation, verification and resolution of the user testing checkpoint. Stop after every module and wait for the user to test and authorize the next one. Do not change the total silently if scope changes.
 
 | # | Module | Scope / PDF sections | Acceptance test |
 |---|---|---|---|
@@ -30,5 +30,6 @@ Approved logo and real project/media assets; company facts and leadership; verif
 | Module | Implementation | User acceptance | Next module authorized |
 |---|---|---|---|
 | 1 | Complete; see MODULE-1-VERIFICATION.md | Accepted by user | Yes, Module 2 |
-| 2 | Laravel/MySQL foundation implemented; tests pass | Pending first-administrator provisioning and user testing | User explicitly prioritized homepage correction |
-| 4 | Corporate homepage design review ready; real media and complete CMS integration pending | Awaiting review | No further module authorized |
+| 2 | Laravel/MySQL foundation implemented; tests pass | First local administrator provisioned with explicit approval; user testing pending | User explicitly prioritized homepage correction |
+| 4 | Approved corporate homepage; real imagery deferred by user | Accepted | Yes, carry on with CMS |
+| 3 | Revision workflow, pages, reusable blocks/statistics, menus, homepage settings and private-original media library implemented and tested; local scheduler requires a running worker | Awaiting CMS testing; local administrator provisioned | No |

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\ContentEntry;
 use App\Models\Homepage;
 use App\Models\Role;
 use App\Models\User;
@@ -36,7 +37,7 @@ class PublicWebsiteTest extends TestCase
         $page = Homepage::main();
         $content = $page->content;
         $content['hero']['line_one'] = 'AN EDITED HEADLINE';
-        $page->update(['content' => $content]);
+        $page->update(['content' => $content, 'version' => 1]);
         $this->get('/')->assertSee('AN EDITED HEADLINE')->assertDontSee('href="tel:', false)->assertDontSee('https://wa.me/');
     }
 
@@ -45,7 +46,7 @@ class PublicWebsiteTest extends TestCase
         $page = Homepage::main();
         $content = $page->content;
         $content['sections'][3]['enabled'] = false;
-        $page->update(['content' => $content]);
+        $page->update(['content' => $content, 'version' => 1]);
         $this->get('/')->assertDontSee('id="projects"', false)->assertDontSee('href="#projects"', false);
     }
 
@@ -88,10 +89,13 @@ class PublicWebsiteTest extends TestCase
         $this->actingAs($user)->get('/admin/homepage')->assertOk();
         $content = Homepage::main()->content;
         $content['hero']['line_one'] = 'APPROVED HEADING';
-        $this->put('/admin/homepage', ['content' => $content])->assertSessionHasNoErrors();
+        $this->put('/admin/homepage', ['content' => $content, 'version' => 1])->assertSessionHasNoErrors();
+        $this->get('/')->assertDontSee('APPROVED HEADING');
+        $entry = ContentEntry::where('type', 'homepage')->firstOrFail();
+        $this->post(route('admin.content.transition', $entry), ['action' => 'publish', 'version' => 2])->assertSessionHasNoErrors();
         $this->get('/')->assertSee('APPROVED HEADING');
-        $this->assertDatabaseHas('audit_logs', ['action' => 'homepage.updated', 'actor_id' => $user->id]);
+        $this->assertDatabaseHas('audit_logs', ['action' => 'content.draft_saved', 'actor_id' => $user->id]);
         $content['contact']['whatsapp'] = 'javascript:alert(1)';
-        $this->put('/admin/homepage', ['content' => $content])->assertSessionHasErrors('content.contact.whatsapp');
+        $this->put('/admin/homepage', ['content' => $content, 'version' => 1])->assertSessionHasErrors('content.contact.whatsapp');
     }
 }
