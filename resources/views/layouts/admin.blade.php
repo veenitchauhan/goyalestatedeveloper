@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>@yield('title', 'Administration') | {{ config('app.name') }}</title><link rel="stylesheet" href="{{ asset('assets/admin.css') }}"></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>@yield('title', 'Administration') | {{ config('app.name') }}</title><link rel="stylesheet" href="{{ asset('assets/admin.css') }}"><script src="{{ asset('assets/password-toggle.js') }}" defer></script></head>
 <body><a class="skip" href="#main">Skip to content</a><header><a class="brand" href="{{ route('home') }}">{{ config('app.name') }}</a><span class="badge">ADMINISTRATION</span></header>
 @auth<nav aria-label="Administration"><a href="{{ route('admin.dashboard') }}">Overview</a>@can('users.manage')<a href="{{ route('admin.users.index') }}">Users</a>@endcan @can('roles.view')<a href="{{ route('admin.roles') }}">Roles & permissions</a>@endcan @can('audit.view')<a href="{{ route('admin.audit') }}">Audit log</a>@endcan
 @can('pages.edit')<a href="{{ route('admin.homepage.edit') }}">Homepage</a><a href="{{ route('admin.content.index') }}">Pages & reusable content</a>@endcan
