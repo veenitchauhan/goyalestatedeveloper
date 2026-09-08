@@ -1,9 +1,9 @@
 # PDF requirements audit
 
-Audit date: 8 September 2026. Implementation inspected at Git commit `4ae29f3`.
+Baseline audit: 8 September 2026 at `4ae29f3`. See the current validation update below and the dated checkpoints in MODULES.md; the original section matrix is historical, not current feature availability.
 Source: `GOYAL ESTATE & DEVELOPERS PVT.pdf`, 94 pages, 138 numbered sections. Page references below are physical PDF page numbers where each section begins. Every section was reread; the appendix on page 94 defines the complete product and does not add a separate numbered section.
 
-## Result and corrected completion count
+## Historical baseline result
 
 **14 modules total: 1 fully complete, 13 remaining.** Module 1 is the accepted architecture/local foundation checkpoint. Module 4's visual direction was accepted, but its complete homepage/design scope is partial. Earlier reports of “2 completed” incorrectly promoted that visual acceptance to full module completion. The approved appearance remains valid; this correction does not discard it. Modules 2 and 3 remain partial, not merely finished modules waiting for a login test.
 
@@ -213,3 +213,24 @@ Module 2 awaits user acceptance. Module 3's full editorial approval/archive beha
 Sections 68–70, 79–81 and 107 now have central shared settings, document categories, independent file visibility/publication, archive/restore, reusable CTA/PDF references, explicit review/approve/publish transitions and field-level history. These changes preserve the existing live revision while drafts are edited. The 22 source MySQL tables were copied and verified into SQLite; local migrations then added settings and media lifecycle fields. The MySQL source remains unchanged for later migration planning.
 
 Validation: 58 SQLite tests / 419 assertions; local homepage opens after migration; SQLite integrity and foreign-key checks pass. A local scheduler worker is active for this session, without a persistent service installation. Future social exports (71), domain-specific reuse/preview (79–80) and homepage media/reference controls (123) remain dependencies of their scoped modules. This checkpoint awaits user testing and does not mark all remaining PDF requirements complete.
+
+
+## Current validation update — 8 September 2026, after Module 13
+
+The historical matrix above must not be used as a current missing-feature list. Modules 2–13 subsequently added protected primary administration; revisioned CMS/settings/media; dedicated corporate, project, location, recruitment and knowledge workflows; scoped CRM; campaigns and consented analytics; SEO controls; and gated future-development inventory. Evidence and limitations are recorded in each dated checkpoint in [MODULES.md](MODULES.md). This update does not promote every numbered requirement to complete.
+
+| Requirement area | Current implemented evidence | Remaining boundary |
+|---|---|---|
+| Corporate and projects (§§10–26, 117) | CorporateContent, ProjectContent and corresponding feature tests; dedicated pages, structured records, progress/gallery/panorama controls | Approved facts/media and populated visual acceptance |
+| Locations (§§27–28, 48–49, 97, 127) | LocationContent and LocationContentTest; gated geographic hierarchy and related content | Verified operating locations and real map/content review |
+| Recruitment (§§35–41, 128, 133) | CareerController, CandidateController and RecruitmentTest; private applications and pipeline; eligible job schema | Approved vacancies, operational HR delivery and acceptance |
+| Knowledge (§§42–51, 83, 125–126) | KnowledgeContent, SearchController and KnowledgeTest; publication, related records, public/scoped CMS search | Verified topic library and editorial content calendar |
+| CRM (§§54, 59–61, 90–94) | EnquiryCapture, EnquiryForms, EnquiryCrmTest; configurable forms, scoped lead pipeline, notes, assignment and queued notifications | Document-rich vendor/land intake, live delivery and supervised queues |
+| Marketing (§§55, 57–58, 62, 88–89, 92, 109, 119–121) | CampaignAnalyticsTest; campaigns, opt-in events, aggregate reporting and signed normalized lead bridge | Provider-specific adapters, live credentials/sandbox verification, AI assistants and retention policy |
+| SEO (§§47, 52, 85–87, 124) | SeoContent, DiscoveryController and SeoDiscoveryTest; metadata, canonical checks, redirects, sitemap and eligible schema | External search validation, approved copy, advanced schema and scale review |
+| Developments (§§29–33, 96, 120) | DevelopmentContent and FutureDevelopmentTest; feature flag, hierarchy, plans and site-visit CRM capture | Populated inventory/masterplan acceptance and future property assistant |
+| Final validation (§§72–78, 100–113, 138) | Existing domain tests plus FinalValidationTest; public hub rendering/assets, production diagnostics exclusion, template compilation | Full viewport/content audit, performance and accessibility review, demonstrated backup restoration and production monitoring |
+
+Launch remains unapproved. Approved company/legal content and assets are input dependencies. Provider integrations, backup/restore rehearsal, supervised scheduler/queue operation and full responsive review are unfinished work, not merely content dependencies. The project has no installed Vite dependencies or JS lockfile; a reproducible Vite build was not verified. Current rendered pages use committed public/assets files, whose references are checked by the public-hub test.
+
+Progress: **13/14 checkpoints reached; Module 14 is in progress (1/14 remains)**. The accepted-module count remains 1; checkpoint sequence does not measure full PDF completion.

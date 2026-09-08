@@ -169,3 +169,12 @@ Inventory follows development → tower → floor → unit, with Available/Hold/
 Verification: 144 tests / 1,524 assertions pass on isolated SQLite. Pint and diff checks pass. The additive inventory migration is applied to MySQL. The authenticated development editor was loaded and visually inspected in Chrome. Populated masterplan/inventory and mobile acceptance remain pending approved assets/data. No AI property assistant, external booking integration or automated appointment notifications are claimed; those remain integration gaps.
 
 Progress: **13/14 reached; 1/14 main module remains** — Final Validation & Handover — plus earlier content, review and integration gaps. Accepted-module count remains unchanged.
+
+
+## Final validation — initial pass, 8 September 2026
+
+Module 14 is in progress. Public hub checks now verify rendered headings and existing stylesheet/script references across thirteen public routes, guard production diagnostic exposure and check dedicated 404 recovery links. The 404 retains the existing section-visibility rules while pointing visitors to actual Projects and Contact pages. Chrome confirmed those destinations. All 147 tests / 1,594 assertions pass on isolated SQLite; Blade compilation, Pint and diff checks pass.
+
+The original PDF audit is clearly marked historical and has a current implementation/gap update. Vite build verification remains open: node_modules and a JavaScript lockfile are absent. Current pages serve committed public assets. No dependency changes were made. Backup restoration, broader responsive/accessibility/performance review, provider-specific integrations and production operations remain unfinished; approved company/legal content and assets remain required inputs. No production-readiness or full PDF-completion claim is made.
+
+Progress: **13/14 checkpoints reached; 1/14 remains open**, with Module 14 underway. Accepted count remains unchanged.
