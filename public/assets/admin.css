@@ -24,3 +24,25 @@ input,select,textarea{border-color:#cdd8dc;border-radius:6px;padding:11px 12px;f
 @media(min-width:1100px){.cards{grid-template-columns:repeat(3,minmax(0,1fr))}.cards:has(form){grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:1050px){.sidebar{width:220px;padding-inline:10px}.cms-shell .workspace-main{margin-left:220px}.topbar{padding:18px 24px}.top-menu{margin-left:0}main{padding:28px 24px 48px}.account-grid{grid-template-columns:1fr}}
 @media(max-width:760px){.sidebar{position:static;width:auto;padding:16px}.workspace-brand{padding:0 0 12px}.sidebar-menu>summary{display:block;padding:10px 12px;border:1px solid #446166;border-radius:6px;font-size:13px;list-style:revert}.sidebar nav{padding-top:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}.sidebar-bottom{display:none}.cms-shell .workspace-main{margin-left:0}.topbar{padding:16px;align-items:flex-start;gap:12px}.topbar .brand{font-size:clamp(8px,2.4vw,12px);white-space:nowrap}.top-menu{gap:2px;flex-direction:row;width:100%}.top-menu form{margin-left:auto}.top-menu>a{padding:8px}.cards,.form-grid{grid-template-columns:1fr}main{padding:24px 16px 40px}section{padding:20px}.cards section{padding:22px}.sidebar nav a{font-size:11px;gap:8px}.account-grid{gap:0}.brand-mark{height:32px;width:30px;font-size:22px}}
+
+/* Consistent dropdowns, with native form and keyboard behavior. */
+.cms-shell select{min-height:44px;background-color:#fff;border:1px solid #d1d7df;border-radius:8px;box-shadow:0 1px 2px #1018280d;color:#344054;font-weight:500;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.cms-shell select:hover{border-color:#a9b5c4}
+.cms-shell select:focus-visible{outline:2px solid #648d80;outline-offset:2px}
+.cms-shell select:disabled{cursor:not-allowed;opacity:.55;background:#f5f7f9}
+.cms-shell select[multiple]{padding:6px}
+.cms-shell select[multiple] option{padding:10px 12px;border-radius:5px;font-weight:400}
+@supports (appearance:base-select){
+    .cms-shell select:not([multiple]),.cms-shell select:not([multiple])::picker(select){appearance:base-select}
+    .cms-shell select:not([multiple]){display:flex;align-items:center;gap:12px;padding:10px 14px}
+    .cms-shell select::picker-icon{color:#98a2b3;content:"";width:8px;height:8px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);margin:-4px 3px 0 auto;flex-shrink:0}
+    .cms-shell select:open{border-color:#9cabbc;box-shadow:0 0 0 3px #e9eef3}
+    .cms-shell select:open::picker-icon{transform:rotate(225deg);margin-top:4px}
+    .cms-shell select::picker(select){background:#fff;border:1px solid #e4e7ec;border-radius:9px;padding:5px;margin-block:7px;box-shadow:0 12px 20px -5px #10182826,0 4px 7px -3px #1018281a;max-height:min(320px,60vh);overflow-y:auto;color:#475467}
+    .cms-shell select:not([multiple]) option{display:flex;align-items:center;gap:12px;min-height:40px;padding:10px 12px;border-radius:5px;font-size:14px;font-weight:400;white-space:normal;overflow-wrap:anywhere;cursor:pointer}
+    .cms-shell select:not([multiple]) option:hover,.cms-shell select:not([multiple]) option:focus{background:#f2f4f7;color:#1d2939;outline:none}
+    .cms-shell select:not([multiple]) option:checked{background:#edf3e8;color:#294d3e;font-weight:600}
+    .cms-shell select option::checkmark{order:1;margin-left:auto;color:#47715b;font-size:14px}
+    .cms-shell select option:disabled{opacity:.5;cursor:not-allowed}
+}
+@media(prefers-reduced-motion:reduce){.cms-shell select{transition:none}}
