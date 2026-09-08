@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreMediaRequest;
 use App\Models\Media;
+use App\Models\SiteSetting;
 use App\Services\AuditRecorder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class MediaController extends Controller
     public function index(Request $request): View
     {
         $filters = $request->validate(['q' => 'nullable|string|max:100', 'category' => 'nullable|string|max:80', 'location' => 'nullable|string|max:100', 'project' => 'nullable|string|max:100', 'mime' => 'nullable|string|max:100', 'date' => 'nullable|date', 'uploaded_by' => 'nullable|integer']);
-        $query = Media::query();
+        $query = Media::query()->when(! $request->boolean('archived'), fn ($q) => $q->whereNull('archived_at'));
         if ($filters['q'] ?? null) {
             $query->where(function ($q) use ($filters) {
                 $q->where('title', 'like', '%'.$filters['q'].'%')->orWhere('alt', 'like', '%'.$filters['q'].'%');
@@ -44,14 +45,14 @@ class MediaController extends Controller
 
     public function create(): View
     {
-        return view('admin.media.edit', ['media' => new Media(['category' => 'Company', 'sort_order' => 0, 'is_public' => false, 'watermark' => ['enabled' => false, 'position' => 'bottom-right', 'opacity' => 70, 'size' => 3, 'padding' => 20]])]);
+        return view('admin.media.edit', ['media' => new Media(['category' => 'Company', 'sort_order' => 0, 'is_public' => false, 'publication_status' => 'draft', 'watermark' => SiteSetting::current()['watermark']])]);
     }
 
     public function store(StoreMediaRequest $request, AuditRecorder $audit): RedirectResponse
     {
         $file = $request->file('file');
         $data = $request->safe()->except('file');
-        abort_if($request->boolean('is_public') && ! $request->user()->can('media.publish'), 403);
+        abort_if(($request->boolean('is_public') || $request->input('publication_status') === 'published') && ! $request->user()->can('media.publish'), 403);
         $mime = $file->getMimeType();
         if (! in_array($mime, ['image/jpeg', 'image/png', 'image/webp', 'application/pdf', 'video/mp4'])) {
             throw ValidationException::withMessages(['file' => 'Unsupported file contents.']);
@@ -75,11 +76,12 @@ class MediaController extends Controller
 
     public function update(StoreMediaRequest $request, Media $media, AuditRecorder $audit): RedirectResponse
     {
+        abort_if($media->archived_at, 422, 'Restore archived media before editing.');
         $data = $request->safe()->except('file');
         if (str_starts_with($media->mime, 'image/')) {
             $this->checkImage(Storage::disk('local')->path($media->original_path), $data['alt'] ?? '');
         }
-        abort_if($request->boolean('is_public') !== $media->is_public && ! $request->user()->can('media.publish'), 403);
+        abort_if(($request->boolean('is_public') !== $media->is_public || $request->input('publication_status') !== $media->publication_status) && ! $request->user()->can('media.publish'), 403);
         $changes = ['before_title' => $media->title, 'before_public' => $media->is_public, 'before_order' => $media->sort_order, 'before_alt' => $media->alt, 'before_watermark' => $media->watermark];
         $oldPath = $media->web_path;
         $media->fill($data);
@@ -91,6 +93,17 @@ class MediaController extends Controller
         $audit->record('media.updated', $media, [...$changes, 'after_title' => $media->title, 'after_public' => $media->is_public, 'after_order' => $media->sort_order, 'after_alt' => $media->alt, 'after_watermark' => $media->watermark]);
 
         return back()->with('status', 'Media settings saved; the web version was regenerated from the original.');
+    }
+
+    public function archive(Request $request, Media $media, AuditRecorder $audit): RedirectResponse
+    {
+        $request->validate(['action' => 'required|in:archive,restore']);
+        abort_if($media->is_public && ! $request->user()->can('media.publish'), 403);
+        $before = $media->archived_at ? 'archived' : $media->publication_status;
+        $media->update(['archived_at' => $request->input('action') === 'archive' ? now() : null, 'publication_status' => 'draft']);
+        $audit->record('media.'.$request->input('action'), $media, ['before_status' => $before, 'after_status' => $media->archived_at ? 'archived' : 'draft']);
+
+        return back()->with('status', 'Media status updated. Restored files remain drafts until published.');
     }
 
     private function checkImage(string $path, string $alt): void
@@ -163,7 +176,7 @@ class MediaController extends Controller
 
     public function show(Request $request, Media $media): StreamedResponse
     {
-        abort_unless($media->is_public || ($request->user()?->can('media.manage') || $request->user()?->can('pages.edit')), 404);
+        abort_unless(($media->is_public && $media->publication_status === 'published' && ! $media->archived_at) || ($request->user()?->can('media.manage') || $request->user()?->can('pages.edit')), 404);
         $path = $media->web_path ?? $media->original_path;
         if ($media->mime === 'application/pdf') {
             return Storage::disk('local')->download($path, 'document-'.$media->id.'.pdf', ['Content-Type' => 'application/pdf']);

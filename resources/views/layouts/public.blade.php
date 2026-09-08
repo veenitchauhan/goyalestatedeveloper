@@ -1,14 +1,19 @@
+@php($siteSettings=$siteSettings??\App\Models\SiteSetting::current())
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $content['seo']['title'] }}</title>
-    <meta name="description" content="{{ $content['seo']['description'] }}">
+    <title>{{ ($content['seo']['title'] ?: $siteSettings['seo']['title']) }}</title>
+    <meta name="description" content="{{ ($content['seo']['description'] ?: $siteSettings['seo']['description']) }}">
     <link rel="canonical" href="{{ isset($entry) && $entry->type==='page' ? route('pages.show',$entry->slug) : route('home') }}">
-    <meta property="og:title" content="{{ $content['seo']['title'] }}">
-    <meta property="og:description" content="{{ $content['seo']['description'] }}">
+    <meta property="og:title" content="{{ ($content['seo']['title'] ?: $siteSettings['seo']['title']) }}">
+    <meta property="og:description" content="{{ ($content['seo']['description'] ?: $siteSettings['seo']['description']) }}">
     <meta property="og:type" content="website">
+    @if($favicon=\App\Models\SiteSetting::image($siteSettings['branding']['favicon_id']))<link rel="icon" href="{{ route('media.show',$favicon) }}">@endif
+    @if($ogImage=\App\Models\SiteSetting::image($siteSettings['branding']['og_image_id']))<meta property="og:image" content="{{ route('media.show',$ogImage) }}">@endif
+    @if(app()->isProduction())<meta name="robots" content="{{ $siteSettings['seo']['robots'] }}">@endif
+    @if($siteSettings['seo']['search_console_verification'])<meta name="google-site-verification" content="{{ $siteSettings['seo']['search_console_verification'] }}">@endif
     <link rel="stylesheet" href="{{ asset('assets/website.css') }}">
 </head>
 <body>
@@ -17,7 +22,7 @@
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
     <div class="header-inner">
-        <a class="company-name" href="{{ route('home') }}">{{ config('app.name') }}</a>
+        <a class="company-name" href="{{ route('home') }}">@if($logo=\App\Models\SiteSetting::image($siteSettings['branding']['logo_id']))<img class="company-logo" src="{{ route('media.show',$logo) }}" alt="">@endif{{ $siteSettings['company']['name'] }}</a>
         <nav class="desktop-nav" aria-label="Main navigation">
             <a href="{{ route('home') }}" aria-current="page">Home</a>
             @foreach($sections as $section) @if($section['nav'])<a href="{{ request()->routeIs('home') ? '' : route('home') }}#{{ $section['id'] }}">{{ $section['nav'] }}</a>@endif @endforeach
@@ -29,8 +34,18 @@
 </header>
 <main id="main">@yield('content')</main>
 <footer class="site-footer">
-    <div class="footer-top"><a class="company-name" href="{{ route('home') }}">{{ config('app.name') }}</a><p>{{ $content['hero']['eyebrow'] }}</p></div>
+    <div class="footer-top"><a class="company-name" href="{{ route('home') }}">@if($logo=\App\Models\SiteSetting::image($siteSettings['branding']['logo_id']))<img class="company-logo" src="{{ route('media.show',$logo) }}" alt="">@endif{{ $siteSettings['company']['name'] }}</a><p>{{ $content['hero']['eyebrow'] }}</p></div>
     <nav class="footer-nav" aria-label="Footer navigation">@foreach($sections as $section) @if($section['nav'])<a href="{{ request()->routeIs('home') ? '' : route('home') }}#{{ $section['id'] }}">{{ $section['nav'] }}</a>@endif @endforeach @foreach($menuItems->whereIn('placement',['footer','both']) as $item)<a href="{{ $item['url'] }}">{{ $item['title'] }}</a>@endforeach</nav>
+    <div class="footer-settings">
+    @if($content['contact']['address'])<p>{{ $content['contact']['address'] }}</p>@endif
+    @if($content['contact']['phone'])<a href="tel:{{ preg_replace('/[^+0-9]/','',$content['contact']['phone']) }}">{{ $content['contact']['phone'] }}</a>@endif
+    @if($content['contact']['email'])<a href="mailto:{{ $content['contact']['email'] }}">{{ $content['contact']['email'] }}</a>@endif
+    @if($content['contact']['office_hours']??'')<p>{{ $content['contact']['office_hours'] }}</p>@endif
+    @if($content['contact']['map_url']??'')<a href="{{ $content['contact']['map_url'] }}" rel="noopener">View location map ↗</a>@endif
+    <nav aria-label="Social profiles">@foreach($siteSettings['social'] as $network=>$url) @if($url)<a href="{{ $url }}" rel="noopener">{{ str($network)->headline() }} ↗</a>@endif @endforeach</nav>
+    <nav aria-label="Legal information">@foreach(['privacy_url'=>'Privacy policy','terms_url'=>'Terms & conditions','cookies_url'=>'Cookie policy','disclaimer_url'=>'Disclaimer'] as $key=>$label) @if($siteSettings['footer'][$key])<a href="{{ $siteSettings['footer'][$key] }}">{{ $label }}</a>@endif @endforeach</nav>
+    @if($siteSettings['company']['legal_information'])<p>{{ $siteSettings['company']['legal_information'] }}</p>@endif
+    </div>
     <div class="footer-bottom"><span>© {{ date('Y') }} {{ config('app.name') }}</span><a href="#main">Back to top ↑</a></div>
 </footer>
 @if($content['contact']['phone'] || $content['contact']['whatsapp'])<aside class="mobile-actions" aria-label="Contact actions">@if($content['contact']['whatsapp'])<a href="https://wa.me/{{ $content['contact']['whatsapp'] }}">WhatsApp ↗</a>@endif @if($content['contact']['phone'])<a href="tel:{{ preg_replace('/[^+0-9]/','',$content['contact']['phone']) }}">Call ↗</a>@endif</aside>@endif

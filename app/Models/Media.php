@@ -15,6 +15,6 @@ class Media extends Model
 
     protected function casts(): array
     {
-        return ['is_public' => 'boolean', 'watermark' => 'array', 'taken_at' => 'date'];
+        return ['archived_at' => 'datetime', 'is_public' => 'boolean', 'watermark' => 'array', 'taken_at' => 'date'];
     }
 }

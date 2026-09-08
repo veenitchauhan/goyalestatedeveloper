@@ -21,14 +21,14 @@ class HomepageController extends Controller
         $entry = ContentEntry::where('type', 'homepage')->firstOrFail();
         $revision = $entry->revisions()->latest('version')->firstOrFail();
 
-        return view('admin.homepage', ['entry' => $entry, 'revision' => $revision, 'fields' => Arr::dot($revision->payload), 'media' => Media::where('is_public', true)->where(fn ($query) => $query->where('mime', 'like', 'image/%'))->get()]);
+        return view('admin.homepage', ['entry' => $entry, 'revision' => $revision, 'fields' => Arr::dot($revision->payload), 'media' => Media::where('is_public', true)->where('publication_status', 'published')->whereNull('archived_at')->where(fn ($query) => $query->where('mime', 'like', 'image/%'))->get()]);
     }
 
     public function update(Request $request, AuditRecorder $audit): RedirectResponse
     {
         $page = Homepage::main();
         $entry = ContentEntry::where('type', 'homepage')->firstOrFail();
-        $request->validate(['version' => 'required|integer|min:1', 'hero_media_id' => ['nullable', Rule::exists('media', 'id')->where('is_public', true)->where(fn ($query) => $query->where('mime', 'like', 'image/%'))]]);
+        $request->validate(['version' => 'required|integer|min:1', 'hero_media_id' => ['nullable', Rule::exists('media', 'id')->where('is_public', true)->where('publication_status', 'published')->whereNull('archived_at')->where(fn ($query) => $query->where('mime', 'like', 'image/%'))]]);
         $flat = Arr::dot($page->content);
         $rules = [];
         foreach ($flat as $key => $value) {

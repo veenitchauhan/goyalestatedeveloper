@@ -47,7 +47,15 @@ class CmsTest extends TestCase
 
     private function publish(ContentEntry $entry, int $version = 1): void
     {
+        $this->approve($entry, $version);
         $this->post(route('admin.content.transition', $entry), ['version' => $version, 'action' => 'publish'])->assertSessionHasNoErrors();
+    }
+
+    private function approve(ContentEntry $entry, int $version = 1): void
+    {
+        foreach (['review', 'approve'] as $action) {
+            $this->post(route('admin.content.transition', $entry), compact('version', 'action'))->assertSessionHasNoErrors();
+        }
     }
 
     public function test_draft_preview_publication_and_unpublish(): void
@@ -72,7 +80,7 @@ class CmsTest extends TestCase
         $this->post(route('admin.content.transition', $entry), ['version' => 1, 'action' => 'review', 'note' => 'Ready for approval'])->assertSessionHasNoErrors();
         $this->assertDatabaseHas('approval_events', ['action' => 'review', 'note' => 'Ready for approval']);
         $this->put(route('admin.content.update', $entry), $this->data(['version' => 0]))->assertSessionHasErrors('version');
-        $this->assertDatabaseCount('content_revisions', 2);
+        $this->assertSame(1, $entry->revisions()->count());
         $this->loginAs('viewer');
         $this->get(route('admin.content.preview', $entry))->assertForbidden();
         $this->get('/admin/media')->assertForbidden();
@@ -82,14 +90,17 @@ class CmsTest extends TestCase
     {
         $this->loginAs();
         $entry = $this->createEntry();
+        $this->approve($entry);
         $this->post(route('admin.content.transition', $entry), ['version' => 1, 'action' => 'schedule', 'scheduled_at' => now()->addHour()->format('Y-m-d H:i:s')])->assertSessionHasNoErrors();
         $this->artisan('content:publish-due')->expectsOutput('0 entries published.')->assertSuccessful();
         $this->travel(61)->minutes();
         $this->artisan('content:publish-due')->expectsOutput('1 entries published.')->assertSuccessful();
         $this->artisan('content:publish-due')->expectsOutput('0 entries published.')->assertSuccessful();
         $this->get('/pages/company-profile')->assertOk();
-        $this->post(route('admin.content.transition', $entry), ['version' => 1, 'action' => 'schedule', 'scheduled_at' => now()->addHour()->format('Y-m-d H:i:s')]);
-        $this->put(route('admin.content.update', $entry), $this->data(['version' => 1, 'body' => 'New draft']))->assertSessionHasNoErrors();
+        $this->put(route('admin.content.update', $entry), $this->data(['version' => 1]))->assertSessionHasNoErrors();
+        $this->approve($entry, 2);
+        $this->post(route('admin.content.transition', $entry), ['version' => 2, 'action' => 'schedule', 'scheduled_at' => now()->addHour()->format('Y-m-d H:i:s')]);
+        $this->put(route('admin.content.update', $entry), $this->data(['version' => 2, 'body' => 'New draft']))->assertSessionHasNoErrors();
         $this->travel(61)->minutes();
         $this->artisan('content:publish-due')->expectsOutput('0 entries published.')->assertSuccessful();
     }
@@ -132,7 +143,7 @@ class CmsTest extends TestCase
 
     private function mediaData(array $overrides = []): array
     {
-        return [...['title' => 'Construction image', 'alt' => 'Test building illustration', 'category' => 'Company', 'is_public' => 0, 'sort_order' => 10, 'watermark' => ['enabled' => 1, 'position' => 'bottom-right', 'opacity' => 70, 'size' => 3, 'padding' => 20]], ...$overrides];
+        return [...['title' => 'Construction image', 'alt' => 'Test building illustration', 'category' => 'Company', 'publication_status' => 'draft', 'is_public' => 0, 'sort_order' => 10, 'watermark' => ['enabled' => 1, 'position' => 'bottom-right', 'opacity' => 70, 'size' => 3, 'padding' => 20]], ...$overrides];
     }
 
     public function test_media_derivatives_preserve_original_and_private_access(): void
@@ -156,7 +167,7 @@ class CmsTest extends TestCase
         $this->get(route('media.show', $media))->assertNotFound();
         $this->get(route('admin.media.original', $media))->assertRedirect('/login');
         $this->loginAs('media-manager');
-        $this->put(route('admin.media.update', $media), $this->mediaData(['is_public' => 1]))->assertSessionHasNoErrors();
+        $this->put(route('admin.media.update', $media), $this->mediaData(['publication_status' => 'published', 'is_public' => 1]))->assertSessionHasNoErrors();
         auth()->logout();
         $this->get(route('media.show', $media))->assertOk()->assertHeader('Content-Type', 'image/webp');
     }
@@ -178,7 +189,7 @@ class CmsTest extends TestCase
         $this->get('/admin/media/create')->assertOk();
         $media = Media::factory()->create(['is_public' => false]);
         $this->put('/admin/homepage', ['version' => 1, 'content' => Homepage::main()->content, 'hero_media_id' => $media->id])->assertSessionHasErrors('hero_media_id');
-        $media->update(['is_public' => true]);
+        $media->update(['is_public' => true, 'publication_status' => 'published']);
         $this->put('/admin/homepage', ['version' => 1, 'content' => Homepage::main()->content, 'hero_media_id' => $media->id])->assertSessionHasNoErrors();
         $entry = ContentEntry::where('type', 'homepage')->firstOrFail();
         $this->publish($entry, 2);

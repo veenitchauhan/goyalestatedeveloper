@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\ContentEntry;
 use App\Models\ContentRevision;
 use App\Models\Homepage;
+use App\Models\SiteSetting;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -18,9 +20,13 @@ class ContentPublisher
             if ($version !== $expectedVersion) {
                 throw ValidationException::withMessages(['version' => 'Someone saved a newer version. Reload the editor before saving.']);
             }
+            if ($entry->status === 'archived') {
+                throw ValidationException::withMessages(['status' => 'Restore this archived record before editing it.']);
+            }
+            $beforePayload = $entry->revisions()->latest('version')->first()?->payload ?? [];
             $revision = $entry->revisions()->create(['version' => $version + 1, 'payload' => $payload, 'author_id' => auth()->id()]);
-            $entry->update(['status' => 'draft', 'scheduled_at' => null, 'scheduled_revision_id' => null]);
-            app(AuditRecorder::class)->record('content.draft_saved', $entry, ['before_revision' => $version, 'after_revision' => $revision->version]);
+            $entry->update(['status' => 'draft', 'approver_id' => null, 'scheduled_at' => null, 'scheduled_revision_id' => null]);
+            app(AuditRecorder::class)->record('content.draft_saved', $entry, ['before_revision' => $version, 'after_revision' => $revision->version, 'content_diff' => $this->difference($beforePayload, $payload)]);
 
             return $revision;
         });
@@ -36,15 +42,31 @@ class ContentPublisher
             }
             $beforeStatus = $entry->status;
             $beforeRevision = $entry->publishedRevision?->version;
-            if ($action === 'publish') {
+            $allowed = [
+                'review' => ['draft', 'unpublished'], 'approve' => ['review'], 'publish' => ['approved'],
+                'schedule' => ['approved'], 'return' => ['review', 'approved', 'scheduled'],
+                'unpublish' => ['published', 'draft', 'review', 'approved', 'scheduled'],
+                'archive' => ['draft', 'review', 'approved', 'scheduled', 'published', 'unpublished'], 'restore' => ['archived'],
+            ];
+            if (! in_array($entry->status, $allowed[$action] ?? [])) {
+                throw ValidationException::withMessages(['action' => 'This action is not available for the current status. Reload and follow draft → review → approval → publication.']);
+            }
+            if ($action === 'approve') {
+                $entry->update(['status' => 'approved', 'approver_id' => auth()->id()]);
+            } elseif ($action === 'publish') {
                 $this->apply($entry, $revision);
             } elseif ($action === 'schedule') {
-                $entry->update(['status' => 'scheduled', 'scheduled_at' => $scheduledAt, 'scheduled_revision_id' => $revision->id, 'approver_id' => auth()->id()]);
+                $entry->update(['status' => 'scheduled', 'scheduled_at' => $scheduledAt, 'scheduled_revision_id' => $revision->id]);
             } elseif ($action === 'unpublish') {
-                if ($entry->type === 'homepage') {
+                if (in_array($entry->type, ['homepage', 'settings'])) {
                     throw ValidationException::withMessages(['action' => 'The homepage must remain available. Publish a revised version instead.']);
                 }
-                $entry->update(['published_revision_id' => null, 'published_at' => null, 'status' => 'draft', 'scheduled_at' => null, 'scheduled_revision_id' => null]);
+                $entry->update(['published_revision_id' => null, 'published_at' => null, 'status' => 'unpublished', 'scheduled_at' => null, 'scheduled_revision_id' => null]);
+            } elseif ($action === 'archive') {
+                if (in_array($entry->type, ['homepage', 'settings'])) {
+                    throw ValidationException::withMessages(['action' => 'The homepage and global settings must remain available.']);
+                }
+                $entry->update(['status' => 'archived', 'published_revision_id' => null, 'published_at' => null, 'scheduled_at' => null, 'scheduled_revision_id' => null]);
             } else {
                 $entry->update(['status' => $action === 'review' ? 'review' : 'draft', 'scheduled_at' => null, 'scheduled_revision_id' => null]);
             }
@@ -55,10 +77,13 @@ class ContentPublisher
 
     public function apply(ContentEntry $entry, ContentRevision $revision): void
     {
+        if ($entry->type === 'settings') {
+            SiteSetting::where('key', 'global')->firstOrFail()->update(['data' => $revision->payload]);
+        }
         if ($entry->type === 'homepage') {
             Homepage::main()->update(['content' => $revision->payload]);
         }
-        $entry->update(['published_revision_id' => $revision->id, 'published_at' => now(), 'status' => 'published', 'scheduled_at' => null, 'scheduled_revision_id' => null, 'approver_id' => auth()->id() ?? $entry->approver_id]);
+        $entry->update(['published_revision_id' => $revision->id, 'published_at' => now(), 'status' => 'published', 'scheduled_at' => null, 'scheduled_revision_id' => null]);
     }
 
     public function publishDue(): int
@@ -80,5 +105,22 @@ class ContentPublisher
         }
 
         return $count;
+    }
+
+    private function difference(array $before, array $after): array
+    {
+        $changes = [];
+        $left = Arr::dot($before);
+        $right = Arr::dot($after);
+        foreach (array_unique([...array_keys($left), ...array_keys($right)]) as $key) {
+            if (preg_match('/password|secret|token|recovery/i', $key)) {
+                continue;
+            }
+            if (($left[$key] ?? null) !== ($right[$key] ?? null)) {
+                $changes[] = ['field' => $key, 'before' => $left[$key] ?? null, 'after' => $right[$key] ?? null];
+            }
+        }
+
+        return $changes;
     }
 }

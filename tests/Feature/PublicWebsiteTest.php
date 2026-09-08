@@ -92,6 +92,9 @@ class PublicWebsiteTest extends TestCase
         $this->put('/admin/homepage', ['content' => $content, 'version' => 1])->assertSessionHasNoErrors();
         $this->get('/')->assertDontSee('APPROVED HEADING');
         $entry = ContentEntry::where('type', 'homepage')->firstOrFail();
+        foreach (['review', 'approve'] as $action) {
+            $this->post(route('admin.content.transition', $entry), ['action' => $action, 'version' => 2])->assertSessionHasNoErrors();
+        }
         $this->post(route('admin.content.transition', $entry), ['action' => 'publish', 'version' => 2])->assertSessionHasNoErrors();
         $this->get('/')->assertSee('APPROVED HEADING');
         $this->assertDatabaseHas('audit_logs', ['action' => 'content.draft_saved', 'actor_id' => $user->id]);

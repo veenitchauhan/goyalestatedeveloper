@@ -207,3 +207,9 @@ The section matrix above remains the baseline audit at `4ae29f3`; the following 
 - §§98–99: the overview now links to real available workspaces; operational business/traffic totals still belong to future modules.
 
 Module 2 awaits user acceptance. Module 3's full editorial approval/archive behavior, global settings and media/document gaps remain open. Total: **14 modules, 1 complete, 13 remaining**.
+
+## CMS remediation checkpoint — 8 September 2026
+
+Sections 68–70, 79–81 and 107 now have central shared settings, document categories, independent file visibility/publication, archive/restore, reusable CTA/PDF references, explicit review/approve/publish transitions and field-level history. These changes preserve the existing live revision while drafts are edited. The 22 source MySQL tables were copied and verified into SQLite; local migrations then added settings and media lifecycle fields. The MySQL source remains unchanged for later migration planning.
+
+Validation: 58 SQLite tests / 419 assertions; local homepage opens after migration; SQLite integrity and foreign-key checks pass. A local scheduler worker is active for this session, without a persistent service installation. Future social exports (71), domain-specific reuse/preview (79–80) and homepage media/reference controls (123) remain dependencies of their scoped modules. This checkpoint awaits user testing and does not mark all remaining PDF requirements complete.

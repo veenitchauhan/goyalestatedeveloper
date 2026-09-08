@@ -58,3 +58,7 @@ Audit entries now show actor names, affected record types and before/after acces
 User acceptance: complete setup and reach the requested page; open Roles, create a custom read-only role, assign it to a test account and verify edit denial; change that role and verify immediate enforcement; inspect its before/after audit entry. No new production users, passwords or authenticator secrets were changed by development. Total remains **14 / 1 complete / 13 remaining** until acceptance.
 
 Verification for this checkpoint: **53 tests / 337 assertions pass on SQLite and the isolated MySQL test database.** The live browser review was interrupted; the complete setup journey is covered by feature tests and awaits the user's visual/interactive review.
+
+### CMS checkpoint — 8 September 2026
+
+User authorized continuing from the PDF and SQLite for development. Central settings, strict editorial approval/archive, field-level audit diffs, typed editors, reusable CTAs, PDF references, document categories and media archive/publication controls are implemented. A session-local scheduler worker is running; automatic restart after a reboot is not installed. Existing MySQL data is retained unchanged, with final migration deferred. SQLite checks: 58 tests / 419 assertions. User testing is pending; totals remain 14 / 1 / 13. Optional social export variants and domain references remain linked to future domain work; homepage-specific controls remain Module 4.

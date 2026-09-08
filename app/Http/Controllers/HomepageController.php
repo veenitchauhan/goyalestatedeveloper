@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreEnquiryRequest;
 use App\Models\Enquiry;
 use App\Models\Homepage;
+use App\Models\SiteSetting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -12,7 +13,7 @@ class HomepageController extends Controller
 {
     public function index(): View
     {
-        $content = Homepage::main()->content;
+        $content = SiteSetting::applyTo(Homepage::main()->content);
         $sections = collect($content['sections'])->where('enabled', true)->sortBy('order');
 
         return view('home', compact('content', 'sections'));

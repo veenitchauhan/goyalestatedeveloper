@@ -2,7 +2,7 @@
 @section('content')
 @php($hasContact=$sections->contains('id','contact'))
 <section class="hero" aria-labelledby="hero-title">
-    @php($heroImage=\App\Models\Media::where('is_public',true)->whereKey($content['hero']['media_id']??null)->first())
+    @php($heroImage=\App\Models\Media::where('is_public',true)->where('publication_status','published')->whereNull('archived_at')->whereKey($content['hero']['media_id']??null)->first())
     <img class="hero-architecture" src="{{ $heroImage ? route('media.show',$heroImage) : asset('assets/architecture/hero.svg') }}" alt="{{ $heroImage?->alt ?? 'Conceptual architectural illustration of high-rise structures and a tower crane' }}" width="1200" height="1000" fetchpriority="high">
     <div class="hero-inner">
         <p class="eyebrow"><span class="orange-line"></span>{{ $content['hero']['eyebrow'] }}</p>
