@@ -48,6 +48,7 @@ class ProjectPanoramaTest extends TestCase
             $this->post('/admin/projects/'.$entry->id.'/status', ['action' => $action, 'version' => 1])->assertSessionHasNoErrors();
         }
         $this->get('/projects/panorama-test')->assertOk()->assertSee('Open interactive view')->assertSee('Approved test panorama')->assertSee(route('media.show', $media));
+        $this->assertStringContainsString("script-src 'self'", $this->get('/projects/panorama-test')->headers->get('Content-Security-Policy'));
         $this->get('/admin/projects/'.$entry->id.'/edit')->assertOk()->assertSee('360° panorama');
         $media->update(['is_public' => false]);
         $this->get('/projects/panorama-test')->assertOk()->assertDontSee('Open interactive view')->assertDontSee(route('media.show', $media));

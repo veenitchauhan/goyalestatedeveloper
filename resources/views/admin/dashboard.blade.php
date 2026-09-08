@@ -6,6 +6,8 @@
 @can('pages.view')<section><h2>Company & capabilities</h2><p>Manage company pages, business areas, people and equipment.</p><a href="{{ route('admin.corporate.index') }}">Open company content →</a></section>@endcan
 @if(auth()->user()->can('projects.view') || auth()->user()->can('projects.view-assigned'))<section><h2>Projects & progress</h2><p>Manage project information, progress stages and site galleries.</p><a href="{{ route('admin.projects.index') }}">Open projects →</a></section>@endif
 @can('pages.view')<section><h2>Locations & expansion</h2><p>Manage verified operating areas and planned expansion.</p><a href="{{ route('admin.locations.index') }}">Open locations →</a></section>@endcan
+@can('jobs.view')<section><h2>Careers & openings</h2><p>Create roles, internships and graduate opportunities.</p><a href="{{ route('admin.jobs.index') }}">Manage openings →</a></section>@endcan
+@if(auth()->user()->can('candidates.view') || auth()->user()->can('candidates.view-assigned'))<section><h2>Candidate pipeline</h2><p>Review applications and coordinate recruitment.</p><a href="{{ route('admin.candidates.index') }}">Review candidates →</a></section>@endif
 @can('media.manage')<section><h2>Media library</h2><p>Manage images and documents, visibility and branded image versions.</p><a href="{{ route('admin.media.index') }}">Open media →</a></section>@endcan
 @can('leads.view')<section><h2>Website enquiries</h2><p>Read enquiries submitted through the website.</p><a href="{{ route('admin.enquiries') }}">View enquiries →</a></section>@endcan
 @can('users.manage')<section><h2>Users</h2><p>Create users, assign roles and manage account access.</p><a href="{{ route('admin.users.index') }}">Manage users →</a></section>@endcan

@@ -78,6 +78,9 @@ class ContentPublisher
 
     public function apply(ContentEntry $entry, ContentRevision $revision): void
     {
+        if ($entry->type === 'job') {
+            Validator::make($revision->payload, CareerContent::rules($entry, true))->validate();
+        }
         if ($entry->type === 'location') {
             Validator::make($revision->payload, LocationContent::rules($entry, $revision->payload, true))->validate();
         }

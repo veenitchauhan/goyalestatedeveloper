@@ -1,13 +1,16 @@
 <?php
 
+use App\Http\Controllers\Admin\CandidateController;
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\CorporateContentController;
+use App\Http\Controllers\Admin\JobController;
 use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\CareerController;
 use App\Http\Controllers\CorporateController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Middleware\RequireTwoFactor;
@@ -30,6 +33,10 @@ foreach (['about' => 'about', 'business' => 'business', 'capabilities' => 'capab
 foreach (['about/people/{slug}' => 'team_member', 'about/milestones/{slug}' => 'company_milestone', 'about/employee-stories/{slug}' => 'employee_story', 'business/services/{slug}' => 'service', 'capabilities/equipment/{slug}' => 'equipment', 'about/{slug}' => 'company_page', 'business/{slug}' => 'business_unit', 'capabilities/{slug}' => 'capability'] as $path => $type) {
     Route::get('/'.$path, [CorporateController::class, 'show'])->defaults('type', $type)->name(config('corporate.'.$type.'.route'));
 }
+Route::get('/careers', [CareerController::class, 'index'])->name('careers.index');
+Route::post('/careers/apply', [CareerController::class, 'apply'])->middleware('throttle:5,1')->name('careers.general-apply');
+Route::get('/careers/{slug}', [CareerController::class, 'show'])->name('careers.show');
+Route::post('/careers/{slug}/apply', [CareerController::class, 'apply'])->middleware('throttle:5,1')->name('careers.apply');
 Route::get('/locations', fn () => view('locations.index', CorporateContent::layout('Our locations') + ['items' => LocationContent::active(), 'canonical' => route('locations.index')]))->name('locations.index');
 Route::get('/locations/{slug}', function (string $slug) {
     $entry = ContentEntry::where('type', 'location')->where('slug', $slug)->whereNotNull('published_revision_id')->with('publishedRevision')->firstOrFail();
@@ -85,6 +92,18 @@ Route::middleware(['auth', 'auth.session'])->prefix('admin')->name('admin.')->gr
     Route::middleware(['two-factor.required', 'can:admin.view'])->group(function () {
         Route::view('/', 'admin.dashboard')->name('dashboard');
         Route::view('/account', 'admin.account')->name('account');
+        Route::get('/jobs', [JobController::class, 'index'])->middleware('can:jobs.view')->name('jobs.index');
+        Route::get('/jobs/create', [JobController::class, 'create'])->middleware('can:jobs.edit')->name('jobs.create');
+        Route::post('/jobs', [JobController::class, 'store'])->middleware('can:jobs.edit')->name('jobs.store');
+        Route::get('/jobs/{entry}/edit', [JobController::class, 'edit'])->middleware('can:jobs.edit')->name('jobs.edit');
+        Route::put('/jobs/{entry}', [JobController::class, 'update'])->middleware('can:jobs.edit')->name('jobs.update');
+        Route::post('/jobs/{entry}/status', [JobController::class, 'transition'])->middleware('can:jobs.edit')->name('jobs.transition');
+        Route::get('/jobs/{entry}/preview', [JobController::class, 'preview'])->middleware('can:jobs.view')->name('jobs.preview');
+        Route::get('/candidates', [CandidateController::class, 'index'])->name('candidates.index');
+        Route::get('/candidates/export', [CandidateController::class, 'export'])->name('candidates.export');
+        Route::get('/candidates/{candidate}', [CandidateController::class, 'show'])->name('candidates.show');
+        Route::put('/candidates/{candidate}', [CandidateController::class, 'update'])->name('candidates.update');
+        Route::get('/candidates/{candidate}/resume', [CandidateController::class, 'resume'])->name('candidates.resume');
         Route::get('/locations', [LocationController::class, 'index'])->middleware('can:pages.view')->name('locations.index');
         Route::get('/locations/create', [LocationController::class, 'create'])->middleware('can:pages.create')->name('locations.create');
         Route::post('/locations', [LocationController::class, 'store'])->middleware('can:pages.create')->name('locations.store');

@@ -14,7 +14,7 @@ class SecurityHeaders
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('Referrer-Policy', 'same-origin');
         $response->headers->set('X-Frame-Options', 'DENY');
-        $scriptSource = $request->is('admin', 'admin/*', 'login', 'user/*', 'two-factor-challenge') ? "'self'" : "'none'";
+        $scriptSource = $request->is('admin', 'admin/*', 'login', 'user/*', 'two-factor-challenge', 'projects/*') ? "'self'" : "'none'";
         $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src {$scriptSource}; style-src 'self'; img-src 'self' data:; base-uri 'self'; frame-ancestors 'none'; form-action 'self'");
         if (! app()->isProduction()) {
             $response->headers->set('X-Robots-Tag', 'noindex, nofollow');

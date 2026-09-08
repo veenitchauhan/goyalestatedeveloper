@@ -22,6 +22,8 @@
 @can('pages.view')
 <a href="{{ route('admin.locations.index') }}" @if(request()->routeIs('admin.locations.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">◎</span>Locations & expansion</a>
 @endcan
+@can('jobs.view')<a href="{{ route('admin.jobs.index') }}" @if(request()->routeIs('admin.jobs.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▣</span>Careers & openings</a>@endcan
+@if(auth()->user()->can('candidates.view') || auth()->user()->can('candidates.view-assigned'))<a href="{{ route('admin.candidates.index') }}" @if(request()->routeIs('admin.candidates.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">♙</span>Candidate pipeline</a>@endif
 @can('media.manage')
 <a href="{{ route('admin.media.index') }}" @if(request()->routeIs('admin.media.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▧</span>Media library</a>
 @endcan
