@@ -78,3 +78,11 @@ Publishing requires verified facts with an internal approval/source reference an
 Verification: 99 tests / 889 assertions passed; Pint and diff checks passed. Chrome desktop review covered the project editor, adding/removing an unsaved stage and the public empty portfolio. Populated-page visual review with approved assets and the full responsive matrix remain pending.
 
 This is a Module 6 checkpoint, not acceptance of the entire PDF. Remaining project work includes direct gallery uploads within the project editor (currently uses the central media library), 360-degree media support once its approved format is selected, and deeper visualization review with real assets. Location hierarchy, Knowledge Bank relationships, project-specific contact routing and structured data connect in Modules 7, 9, 10 and 12. User acceptance remains pending; no accepted-module count is advanced.
+
+## MySQL cutover and project uploads — 8 September 2026
+
+At the user's request, migrated 31 current SQLite tables into the empty MySQL database on port 3306, compared all records and checked 27 foreign-key relationships. Kept private pre-cutover backups and verified the CMS session after switching. Application credentials remain uncommitted.
+
+Saved projects now offer an inline media uploader, retaining unsaved project edits through an asynchronous upload. The existing media validation, public/private gates, original preservation and watermark generation are reused. Public approved uploads become available immediately in cover, gallery, timeline and document selectors; private uploads remain unavailable until reviewed. Uploading does not silently publish or revise a project. Project access and media access are both required.
+
+Verification: 102 tests / 904 assertions pass using isolated SQLite, Pint passes, MySQL migration status is current and the authenticated project list opens in Chrome. The 360-degree viewer and populated-asset visual review remain outstanding; this does not mark Module 6 fully accepted.

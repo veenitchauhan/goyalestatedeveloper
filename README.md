@@ -2,7 +2,7 @@
 
 Local site: http://goyalestatedeveloper.test · Login: http://goyalestatedeveloper.test/login
 
-Laravel 13.30.1 / PHP 8.4 / SQLite (local) / Blade. Composer dependencies are pinned in composer.lock. Small Alpine interactions and compiled frontend assets will be introduced with the relevant UI modules; the current foundation needs no frontend build process.
+Laravel 13.30.1 / PHP 8.4 / MySQL (local) / Blade. Composer dependencies are pinned in composer.lock. Small Alpine interactions and compiled frontend assets will be introduced with the relevant UI modules; the current foundation needs no frontend build process.
 
 ## Delivery status
 
@@ -16,7 +16,7 @@ Module 1 is committed as `62976e6`: architecture, vhost, checkpoint and single-l
 
 The main address now displays the corporate homepage based on the reread 94-page brief: full company name, specified hero tagline, corporate navigation, business categories, an interactive ten-stage construction process, project section, Tricity positioning, careers, FAQs and a working enquiry form. Module counts and development instructions are absent from the visitor homepage. The checkpoint moved to `/admin/development`, protected by authentication, two-factor requirements and settings permission.
 
-Homepage copy and section visibility/order are stored in SQLite and editable at `/admin/homepage` by an authorized content editor. The enquiry form validates, rate limits, checks consent and stores submissions for authorized review at `/admin/enquiries`. It does not send email or connect to a CRM yet. The CRM module remains pending. Homepage saves now create private revisions; publishing requires separate permission.
+Homepage copy and section visibility/order are stored in MySQL and editable at `/admin/homepage` by an authorized content editor. The enquiry form validates, rate limits, checks consent and stores submissions for authorized review at `/admin/enquiries`. It does not send email or connect to a CRM yet. The CRM module remains pending. Homepage saves now create private revisions; publishing requires separate permission.
 
 The architectural SVG is a labelled concept illustration. The supplied PDF contains no real project photographs, project records, verified statistics, contact numbers, credentials or jobs to populate those features. Empty project/job states are honest; phone/WhatsApp actions remain hidden until configured. Legal copy, real media, detailed business content and project filters remain for later modules. The public design has been approved; this is not production completion.
 
@@ -38,9 +38,9 @@ The first local Super Admin was created after explicit user approval. The ignore
 
 ## Local database
 
-SQLite is active locally in ignored `database/development.sqlite`. All 22 original MySQL tables were copied and checked before switching; accounts, password hashes, content and settings were preserved. SQLite integrity and foreign-key checks pass. The original isolated MySQL database on port 3307 is untouched. Session/cache files are unchanged; queued jobs use SQLite.
+MySQL is active at `127.0.0.1:3306`, database `goyalestatedeveloper`. On 8 September, the current SQLite data was transferred to the empty authorized target: all 31 tables were compared record by record (JSON normalized), and 27 foreign keys were verified. All 15 migrations are applied. The CMS session was checked after cutover. Credentials are only in the ignored local `.env`.
 
-The previous MySQL environment is backed up privately in `storage/app/private/mysql-env-before-sqlite.backup`. Do not restore that environment as a shortcut later: the MySQL copy will become stale while SQLite receives edits. At final handover, create a fresh MySQL target, apply migrations, import the current SQLite records, validate relationships/content/authentication and rerun the full suite before switching. Neither databases nor credentials belong in Git.
+The pre-cutover SQLite database and environment backup are private under `storage/app/private/mysql-cutover-20260908-122344/`. The original SQLite file is also retained. These snapshots become stale as MySQL receives edits; do not switch back without reconciling new data. The older MySQL instance on port 3307 was not modified.
 
 ## Install and verify
 
@@ -48,12 +48,12 @@ The previous MySQL environment is backed up privately in `storage/app/private/my
 composer install
 cp .env.example .env # Only for a fresh checkout; never overwrite existing credentials.
 php artisan key:generate
-touch database/database.sqlite
+# Create the configured MySQL database and set DB_PASSWORD in .env first.
 php artisan migrate --seed
 php artisan test --compact
 ```
 
-The regular test suite uses SQLite in memory. MySQL verification is deferred until the final data migration.
+The regular test suite uses SQLite in memory. The MySQL application schema and migrated records have been verified; tests must never use the application database.
 
 Never point automated tests at the application database. This machine's Composer is available through `php tmp/tools/composer.phar`; it is excluded from Git.
 

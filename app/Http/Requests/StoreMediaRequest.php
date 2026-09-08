@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreMediaRequest extends FormRequest
 {
@@ -14,6 +15,7 @@ class StoreMediaRequest extends FormRequest
     public function rules(): array
     {
         return ['file' => [$this->isMethod('post') ? 'required' : 'nullable', 'file', 'mimes:jpg,jpeg,png,webp,pdf,mp4', 'max:20480'],
+            'project_entry_id' => ['nullable', 'integer', Rule::exists('content_entries', 'id')->where('type', 'project')],
             'title' => 'required|string|max:180', 'alt' => 'nullable|string|max:255', 'caption' => 'nullable|string|max:2000', 'description' => 'nullable|string|max:5000',
             'category' => 'required|in:Projects,Machinery,Team,Careers,Company,Videos,Documents,Social',
             'location' => 'nullable|string|max:255', 'project' => 'nullable|string|max:255', 'source' => 'nullable|string|max:255', 'taken_at' => 'nullable|date|before_or_equal:today',

@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreMediaRequest;
+use App\Models\ContentEntry;
 use App\Models\Media;
 use App\Models\SiteSetting;
 use App\Services\AuditRecorder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -48,11 +51,16 @@ class MediaController extends Controller
         return view('admin.media.edit', ['media' => new Media(['category' => 'Company', 'sort_order' => 0, 'is_public' => false, 'publication_status' => 'draft', 'watermark' => SiteSetting::current()['watermark']])]);
     }
 
-    public function store(StoreMediaRequest $request, AuditRecorder $audit): RedirectResponse
+    public function store(StoreMediaRequest $request, AuditRecorder $audit): RedirectResponse|JsonResponse
     {
         $file = $request->file('file');
-        $data = $request->safe()->except('file');
+        $data = $request->safe()->except(['file', 'project_entry_id']);
         abort_if(($request->boolean('is_public') || $request->input('publication_status') === 'published') && ! $request->user()->can('media.publish'), 403);
+        $project = $request->filled('project_entry_id') ? ContentEntry::where('type', 'project')->findOrFail($request->integer('project_entry_id')) : null;
+        if ($project) {
+            Gate::authorize('update', $project);
+            $data['project'] = $project->slug;
+        }
         $mime = $file->getMimeType();
         if (! in_array($mime, ['image/jpeg', 'image/png', 'image/webp', 'application/pdf', 'video/mp4'])) {
             throw ValidationException::withMessages(['file' => 'Unsupported file contents.']);
@@ -71,13 +79,20 @@ class MediaController extends Controller
         }
         $audit->record('media.uploaded', $media);
 
+        if ($request->expectsJson()) {
+            return response()->json(['id' => $media->id, 'title' => $media->title, 'mime' => $media->mime, 'selectable' => $media->is_public && $media->publication_status === 'published'], 201);
+        }
+        if ($project) {
+            return redirect()->route('admin.projects.edit', $project)->with('status', 'Media uploaded. Select the approved file in the project gallery and save your draft.');
+        }
+
         return redirect()->route('admin.media.edit', $media)->with('status', 'Media uploaded. The original is preserved privately.');
     }
 
     public function update(StoreMediaRequest $request, Media $media, AuditRecorder $audit): RedirectResponse
     {
         abort_if($media->archived_at, 422, 'Restore archived media before editing.');
-        $data = $request->safe()->except('file');
+        $data = $request->safe()->except(['file', 'project_entry_id']);
         if (str_starts_with($media->mime, 'image/')) {
             $this->checkImage(Storage::disk('local')->path($media->original_path), $data['alt'] ?? '');
         }

@@ -14,3 +14,7 @@ The vhost source is `infra/apache/goyalestatedeveloper.test.conf`. Install it un
 6. Send feedback or explicitly approve Module 2. No further module is authorized automatically.
 
 The checkpoint is intentionally not the finished website. Laravel and MySQL are now installed, and /login serves the Fortify login page. First-administrator provisioning is pending approval; CMS comes in Module 3. See README.md for MySQL start/stop commands and Module 2 test instructions.
+
+## Current database — 8 September 2026
+
+The application now uses MySQL at `127.0.0.1:3306`, database `goyalestatedeveloper`. The local `.env` holds credentials. The 31-table SQLite snapshot and configuration backup are retained privately; see README for the cutover and recovery boundary. The older port-3307 instance is untouched. All 15 migrations are applied. Automated tests continue to use isolated in-memory SQLite.

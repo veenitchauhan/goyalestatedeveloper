@@ -58,6 +58,23 @@
 @php($row=[])<template><fieldset data-row><div class="form-grid"><div><label for="faqs-__INDEX__-question">Question</label><input id="faqs-__INDEX__-question" name="faqs[__INDEX__][question]" type="text" value="{{ $row['question']??'' }}" ></div><div><label for="faqs-__INDEX__-answer">Answer</label><textarea id="faqs-__INDEX__-answer" name="faqs[__INDEX__][answer]" rows="3">{{ $row['answer']??'' }}</textarea></div></div><button type="button" class="quiet" data-move="up">Move up</button> <button type="button" class="quiet" data-move="down">Move down</button> <button type="button" class="quiet" data-remove>Remove item</button></fieldset></template><button type="button" data-add>Add item</button></details>
 <section><h2>Verification & search</h2><label for="seo_title">SEO title</label><input id="seo_title" name="seo_title" value="{{ old('seo_title',$payload['seo_title']??'') }}"><label for="seo_description">SEO description</label><textarea id="seo_description" name="seo_description" rows="2">{{ old('seo_description',$payload['seo_description']??'') }}</textarea><label for="source_note">Source / approval reference (internal)</label><textarea id="source_note" name="source_note" rows="3">{{ old('source_note',$payload['source_note']??'') }}</textarea><input type="hidden" name="verified" value="0"><label><input type="checkbox" name="verified" value="1" @checked(old('verified',$payload['verified']??false))> These project facts are verified and approved for publication.</label><button>Save project draft</button></section></form>
 @if($entry->exists)
+@can('media.upload')
+@can('media.manage')
+<section id="project-upload"><h2>Upload project media</h2><p>Upload here without losing your unsaved project edits. Approved files become available in the selectors above; add them to the gallery and save the project draft.</p>
+<form method="post" action="{{ route('admin.media.store') }}" enctype="multipart/form-data" data-project-upload>@csrf
+<input type="hidden" name="project_entry_id" value="{{ $entry->id }}"><input type="hidden" name="category" value="Projects"><input type="hidden" name="sort_order" value="0">
+<label for="upload-file">File (JPEG, PNG, WebP, PDF or MP4; up to 20 MB)</label><input type="file" id="upload-file" name="file" accept=".jpg,.jpeg,.png,.webp,.pdf,.mp4" required>
+<label for="upload-title">Media title</label><input id="upload-title" name="title" maxlength="180" required>
+<label for="upload-alt">Image description for accessibility</label><input id="upload-alt" name="alt" maxlength="255">
+<label for="upload-caption">Caption</label><input id="upload-caption" name="caption" maxlength="2000">
+<label for="upload-source">Photographer / approval source</label><input id="upload-source" name="source" maxlength="255">
+<input type="hidden" name="document_category" value="Project document">
+@can('media.publish')<label for="upload-status">Publication</label><select id="upload-status" name="publication_status"><option value="draft">Private draft — review in Media library</option><option value="published">Approved for public use</option></select><label for="upload-access">Visitor access</label><select id="upload-access" name="is_public"><option value="0">Private</option><option value="1">Public when published</option></select>@else<input type="hidden" name="publication_status" value="draft"><input type="hidden" name="is_public" value="0">@endcan
+@foreach(\App\Models\SiteSetting::current()['watermark'] as $key=>$value)<input type="hidden" name="watermark[{{ $key }}]" value="{{ is_bool($value) ? (int)$value : $value }}">@endforeach
+<p class="muted">Uses the website watermark settings and keeps the original file unchanged.</p><button>Upload media</button><p data-upload-status role="status" aria-live="polite"></p>
+</form></section>
+@endcan
+@endcan
 <section><h2>Review & publication</h2><p>{{ str($entry->status)->headline() }} · Version {{ $revision->version }}</p><a href="{{ route('admin.projects.preview',$entry) }}" target="_blank" rel="noopener">Preview saved draft ↗</a>
 <form method="post" action="{{ route('admin.projects.transition',$entry) }}">@csrf<input type="hidden" name="version" value="{{ $revision->version }}"><label for="note">Review note</label><textarea id="note" name="note" rows="2"></textarea>
 @if(in_array($entry->status,['draft','unpublished']))<button name="action" value="review">Submit for review</button>@endif
