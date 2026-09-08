@@ -196,3 +196,14 @@ Each module closes only after scoped behavior exists, relevant tests pass, the u
 ## Audit boundary
 
 This commit corrects traceability, planning and the internal progress count. It does not implement the gaps above, disable security, reset credentials, publish new business facts or declare the remaining platform ready. No additional live account data or secrets were needed for this audit.
+
+## Post-audit implementation update — Module 2 remediation
+
+The section matrix above remains the baseline audit at `4ae29f3`; the following is subsequent implementation, not a claim that all partial requirements are now complete.
+
+- §§63–65: protected Super Admin role management, editable nonprivileged roles, conflict checks, seed preservation and finer gates on existing content/media actions added. Roles for future domains remain subject to those modules' end-to-end tests.
+- §67: named actors and before/after role, access, publication-status and selected media metadata added. Saved content version references are recorded; complete content/SEO field comparisons remain for Module 3.
+- §76: setup now explains the sequence, accepts fresh login as recent password confirmation, protects QR/recovery values after confirmation expires, and requires recovery acknowledgement before returning to the saved destination in the enrollment session. Security has not been disabled.
+- §§98–99: the overview now links to real available workspaces; operational business/traffic totals still belong to future modules.
+
+Module 2 awaits user acceptance. Module 3's full editorial approval/archive behavior, global settings and media/document gaps remain open. Total: **14 modules, 1 complete, 13 remaining**.

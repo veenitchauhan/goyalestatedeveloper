@@ -8,7 +8,7 @@ class StoreMediaRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()->can('media.manage');
+        return $this->user()->can('media.manage') && $this->user()->can($this->isMethod('post') ? 'media.upload' : 'media.edit');
     }
 
     public function rules(): array

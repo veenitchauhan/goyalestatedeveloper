@@ -73,7 +73,9 @@ class ContentController extends Controller
     {
         abort_unless(in_array($entry->type, ['homepage', 'page', 'block', 'statistic', 'menu']), 404);
         $data = $request->validate(['action' => 'required|in:review,publish,schedule,return,unpublish', 'version' => 'required|integer', 'scheduled_at' => 'nullable|required_if:action,schedule|date|after:now', 'note' => 'nullable|string|max:1000']);
-        abort_unless($request->user()->can($data['action'] === 'review' ? 'pages.edit' : 'pages.publish'), 403);
+        abort_unless($request->user()->can(match ($data['action']) {
+            'review' => 'pages.edit', 'unpublish' => 'pages.unpublish', default => 'pages.publish'
+        }), 403);
         $publisher->transition($entry, $data['action'], (int) $data['version'], $data['scheduled_at'] ?? null, $data['note'] ?? null);
 
         return back()->with('status', 'Content status updated.');
@@ -99,6 +101,6 @@ class ContentController extends Controller
         }
         $sections = collect($content['sections'])->where('enabled', true)->sortBy('order');
 
-        return view($entry->type === 'homepage' ? 'home' : 'page',compact('content','sections','payload','entry') + ['preview' => true]);
+        return view($entry->type === 'homepage' ? 'home' : 'page', compact('content', 'sections', 'payload', 'entry') + ['preview' => true]);
     }
 }

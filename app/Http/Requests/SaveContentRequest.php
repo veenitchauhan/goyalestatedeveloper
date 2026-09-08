@@ -9,7 +9,7 @@ class SaveContentRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()->can('pages.edit');
+        return $this->user()->can($this->isMethod('post') ? 'pages.create' : 'pages.edit');
     }
 
     public function rules(): array

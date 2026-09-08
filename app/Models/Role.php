@@ -9,6 +9,11 @@ class Role extends Model
 {
     protected $fillable = ['name', 'label'];
 
+    protected function casts(): array
+    {
+        return ['revision' => 'integer'];
+    }
+
     public function permissions(): BelongsToMany
     {
         return $this->belongsToMany(Permission::class);

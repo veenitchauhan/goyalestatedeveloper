@@ -4,7 +4,8 @@
 <label for="review-note">Review note (optional)</label><textarea name="note" id="review-note" rows="2" maxlength="1000"></textarea>
 <button name="action" value="review">Submit for review</button>
 @can('pages.publish')<button name="action" value="publish">Publish now</button><button class="quiet" name="action" value="return">Return to draft / cancel schedule</button>
-@if($entry->type!=='homepage')<button class="quiet" name="action" value="unpublish">Unpublish</button>@endif
-<label for="scheduled-at">Schedule publication ({{ config('app.timezone') }})</label><input type="datetime-local" id="scheduled-at" name="scheduled_at"><button name="action" value="schedule">Approve & schedule</button>@endcan</form>
+
+<label for="scheduled-at">Schedule publication ({{ config('app.timezone') }})</label><input type="datetime-local" id="scheduled-at" name="scheduled_at"><button name="action" value="schedule">Approve & schedule</button>@endcan
+@if($entry->type!=='homepage') @can('pages.unpublish')<button class="quiet" name="action" value="unpublish">Unpublish</button>@endcan @endif</form>
 <details><summary>Revision history</summary><ul>@foreach($entry->revisions()->latest('version')->get() as $item)<li>Version {{ $item->version }} · {{ $item->created_at }} @if($entry->published_revision_id===$item->id) · Published @endif<form method="post" action="{{ route('admin.content.restore',$entry) }}">@csrf<input type="hidden" name="version" value="{{ $revision->version }}"><input type="hidden" name="revision_id" value="{{ $item->id }}"><button class="quiet">Restore version {{ $item->version }} as draft</button></form></li>@endforeach</ul>
 <ul>@foreach(\Illuminate\Support\Facades\DB::table('approval_events')->whereIn('content_revision_id',$entry->revisions()->select('id'))->latest('id')->get() as $event)<li>{{ str($event->action)->headline() }} · {{ $event->created_at }}@if($event->note) — {{ $event->note }}@endif</li>@endforeach</ul></details></section>

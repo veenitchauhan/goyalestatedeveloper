@@ -15,7 +15,9 @@ class RolePermissionSeeder extends Seeder
             foreach (config('permissions') as $name => $definition) {
                 $role = Role::firstOrCreate(['name' => $name], ['label' => $definition['label']]);
                 $ids = collect($definition['permissions'])->map(fn ($permission) => Permission::firstOrCreate(['name' => $permission])->id);
-                $role->permissions()->sync($ids);
+                if ($role->wasRecentlyCreated || $role->name === 'super-admin') {
+                    $role->permissions()->sync($ids);
+                }
             }
         });
     }

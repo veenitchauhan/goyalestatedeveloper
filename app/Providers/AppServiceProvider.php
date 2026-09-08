@@ -27,7 +27,17 @@ class AppServiceProvider extends ServiceProvider
         foreach ([TwoFactorAuthenticationEnabled::class => 'auth.two_factor_enabled', TwoFactorAuthenticationConfirmed::class => 'auth.two_factor_confirmed', TwoFactorAuthenticationDisabled::class => 'auth.two_factor_disabled', RecoveryCodesGenerated::class => 'auth.recovery_codes_generated', PasswordUpdatedViaController::class => 'auth.password_updated'] as $eventClass => $action) {
             Event::listen($eventClass, fn ($event) => app(AuditRecorder::class)->record($action, $event->user, actorId: $event->user->id));
         }
-        Event::listen(Login::class, fn (Login $event) => app(AuditRecorder::class)->record('auth.login', $event->user, actorId: $event->user->id));
+        Event::listen(Login::class, function (Login $event) {
+            if (request()->hasSession()) {
+                request()->session()->put('auth.password_confirmed_at', time());
+            }
+            app(AuditRecorder::class)->record('auth.login', $event->user, actorId: $event->user->id);
+        });
+        Event::listen(TwoFactorAuthenticationConfirmed::class, function ($event) {
+            if ($event->user->hasRole('super-admin') && request()->hasSession()) {
+                request()->session()->put('admin.setup_recovery_pending', true);
+            }
+        });
         Event::listen(Logout::class, function (Logout $event) {
             if ($event->user) {
                 app(AuditRecorder::class)->record('auth.logout', $event->user, actorId: $event->user->id);

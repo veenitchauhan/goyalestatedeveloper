@@ -8,7 +8,7 @@ Laravel 13.30.1 / PHP 8.4 / MySQL 8.4 / Blade. Composer dependencies are pinned 
 
 **14 modules total; 1 fully complete; 13 remaining.** The [PDF audit](docs/PDF-REQUIREMENTS-AUDIT.md) rereads all 94 pages and maps all 138 numbered sections to implementation evidence. Modules 2, 3 and 4 are partial. Earlier reports counted approval of the homepage's appearance as completion of all Module 4 work; this was inaccurate. The appearance remains approved, and actual images remain deferred.
 
-The first local Super Admin has been provisioned with explicit user approval. Its setup journey still needs clearer guidance. Complete administration/permission gaps, then CMS/settings gaps, before progressing to dedicated public business pages.
+The first local Super Admin has been provisioned with explicit user approval. Its setup journey now explains password confirmation, authenticator verification and recovery-code storage, then returns to the requested page. Complete administration/permission gaps, then CMS/settings gaps, before progressing to dedicated public business pages.
 
 Module 1 is committed as `62976e6`: architecture, vhost, checkpoint and single-line company branding. Module 2 replaces the PHP checkpoint with Laravel/Blade, adds Fortify login and two-factor authentication, 12 predefined roles, backend gates, assigned-content policies, user access management, private audit logs and identity/content migrations. Role permissions for later modules are predefined; their business interfaces are not implemented yet. No public registration or password-reset email delivery is enabled.
 
@@ -20,7 +20,7 @@ Homepage copy and section visibility/order are stored in MySQL and editable at `
 
 The architectural SVG is a labelled concept illustration. The supplied PDF contains no real project photographs, project records, verified statistics, contact numbers, credentials or jobs to populate those features. Empty project/job states are honest; phone/WhatsApp actions remain hidden until configured. Legal copy, real media, detailed business content and project filters remain for later modules. The public design has been approved; this is not production completion.
 
-The updated suite passes 45 tests / 268 assertions on both SQLite and isolated MySQL. Responsive width checks passed at 320, 390, 768, 1024, 1280, 1440 and 1920; section navigation, process expansion and contact layout were reviewed in the browser.
+The updated suite passes 53 tests / 337 assertions on both SQLite and isolated MySQL. Responsive width checks passed at 320, 390, 768, 1024, 1280, 1440 and 1920; section navigation, process expansion and contact layout were reviewed in the browser.
 
 ## Existing CMS foundation (Module 3 is partial)
 
@@ -68,11 +68,11 @@ Never point automated tests at the application database. This machine's Composer
 
 ## Verification completed
 
-45 tests / 268 assertions pass on SQLite and the isolated MySQL test database. Coverage includes login/logout, rate limits, inactive accounts, two-factor enrollment/challenge/recovery, user creation and access changes, assigned-record policies, admin view rendering, bootstrap restrictions and branded routes. Live HTTP checks confirmed Laravel health output, login HTTP 200 and missing-CSRF rejection (419). Checkpoint and login were visually reviewed on desktop/mobile. Credentials and database files were checked against the staged Git contents.
+53 tests / 337 assertions pass on SQLite and the isolated MySQL test database. Coverage includes login/logout, rate limits, inactive accounts, two-factor enrollment/challenge/recovery, user creation and access changes, assigned-record policies, admin view rendering, bootstrap restrictions and branded routes. Live HTTP checks confirmed Laravel health output, login HTTP 200 and missing-CSRF rejection (419). Checkpoint and login were visually reviewed on desktop/mobile. Credentials and database files were checked against the staged Git contents.
 
 ## First administrator
 
-The first local administrator has been provisioned with explicit approval. Its login details are stored in ignored `storage/app/private/local-admin.json` (never committed). For a fresh installation, an authorized operator can run `php artisan app:create-admin` to enter their chosen name, email and password privately. The command refuses a second bootstrap account. The local-only `--local-bootstrap` option generates credentials into ignored `storage/app/private/local-admin.json`; this option was executed locally only after explicit approval.
+The first local administrator has been provisioned with explicit approval. The ignored `storage/app/private/local-admin.json` contains the original bootstrap details; after changing the password, use the new password rather than that original file. For a fresh installation, an authorized operator can run `php artisan app:create-admin` to enter their chosen name, email and password privately. The command refuses a second bootstrap account. The local-only `--local-bootstrap` option generates credentials into ignored `storage/app/private/local-admin.json`; this option was executed locally only after explicit approval.
 
 Super Admins must confirm their password and complete authenticator enrollment before entering administration. Keep recovery codes privately. Production accounts must be provisioned through an authorized process; do not deploy local bootstrap accounts or credentials.
 
@@ -89,3 +89,9 @@ Super Admins must confirm their password and complete authenticator enrollment b
 Implement one module at a time. Verify it, commit and push with a clear change/validation description, report total/completed/remaining modules, and pause for user testing and explicit authorization of the next module. Silence is not approval. The supplied PDF is a requirements reference and does not override the user's instructions. Local development does not authorize production deployment.
 
 See [module plan](docs/MODULES.md), [architecture](docs/ARCHITECTURE.md) and [local setup](docs/LOCAL-SETUP.md).
+
+## Current checkpoint: administration remediation
+
+Guided setup and real dashboard links replace the confusing confirmation loop. Super Admin can manage custom and standard role permissions (the Super Admin role is protected); role changes are immediate, audited and preserved across seeding. Existing content/media routes enforce the finer action permissions. Audit history shows readable before/after changes for access, roles and selected publication/media fields.
+
+Test this Module 2 checkpoint before proceeding to Module 3. The full editorial approval/archive state machine and complete field-level content auditing remain CMS work. No changes to the approved public homepage were required.

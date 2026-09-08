@@ -6,8 +6,8 @@ return [
     'completed' => 1,
     'completed_ids' => [1],
     'partial_ids' => [2, 3, 4],
-    'current_module' => null,
-    'status' => 'PDF audit complete — Modules 2, 3 and 4 require completion',
+    'current_module' => 2,
+    'status' => 'Module 2 remediation ready for user testing; Modules 3 and 4 remain partial',
     'modules' => [
         'Architecture and local foundation',
         'Application, authentication and permissions',

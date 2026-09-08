@@ -1,6 +1,6 @@
 <?php
 
-return [
+$roles = [
     'super-admin' => ['label' => 'Super Admin', 'permissions' => ['admin.view', 'users.manage', 'roles.view', 'audit.view', 'pages.view', 'pages.edit', 'pages.publish', 'projects.view', 'projects.edit', 'projects.publish', 'jobs.view', 'jobs.edit', 'jobs.publish', 'candidates.view', 'candidates.edit', 'candidates.export', 'seo.manage', 'campaigns.manage', 'media.manage', 'leads.view', 'leads.edit', 'leads.assign', 'leads.export', 'settings.manage']],
     'admin' => ['label' => 'Admin', 'permissions' => ['admin.view', 'pages.view', 'pages.edit', 'pages.publish', 'projects.view', 'projects.edit', 'projects.publish', 'jobs.view', 'jobs.edit', 'jobs.publish', 'seo.manage', 'media.manage']],
     'project-manager' => ['label' => 'Project Manager', 'permissions' => ['admin.view', 'projects.view', 'projects.edit']],
@@ -14,3 +14,20 @@ return [
     'business-development' => ['label' => 'Business Development', 'permissions' => ['admin.view', 'leads.view-assigned', 'leads.edit-assigned']],
     'viewer' => ['label' => 'Viewer', 'permissions' => ['admin.view']],
 ];
+
+$actions = [
+    'pages.edit' => ['pages.create'],
+    'pages.publish' => ['pages.approve', 'pages.unpublish', 'pages.archive'],
+    'media.manage' => ['media.upload', 'media.edit', 'media.publish'],
+];
+foreach ($roles as &$role) {
+    foreach ($actions as $existing => $permissions) {
+        if (in_array($existing, $role['permissions'])) {
+            $role['permissions'] = [...$role['permissions'], ...$permissions];
+        }
+    }
+}
+unset($role);
+$roles['super-admin']['permissions'][] = 'roles.manage';
+
+return $roles;

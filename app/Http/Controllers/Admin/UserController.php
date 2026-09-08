@@ -23,6 +23,7 @@ class UserController extends Controller
     public function store(StoreUserRequest $request, AuditRecorder $audit): RedirectResponse
     {
         DB::transaction(function () use ($request, $audit) {
+            Role::whereKey($request->integer('role_id'))->lockForUpdate()->firstOrFail();
             $user = User::create($request->safe()->only(['name', 'email', 'password']));
             $user->roles()->sync([$request->integer('role_id')]);
             $audit->record('user.created', $user, ['after_roles' => $user->roles()->pluck('name')->all()]);
@@ -36,7 +37,7 @@ class UserController extends Controller
         DB::transaction(function () use ($request, $user, $audit) {
             Role::where('name', 'super-admin')->lockForUpdate()->firstOrFail();
             $user = User::whereKey($user->id)->lockForUpdate()->firstOrFail();
-            $role = Role::findOrFail($request->integer('role_id'));
+            $role = Role::whereKey($request->integer('role_id'))->lockForUpdate()->firstOrFail();
             if ($user->is($request->user()) && (! $request->boolean('is_active') || $role->name !== 'super-admin')) {
                 throw ValidationException::withMessages(['role_id' => 'You cannot remove your own administrator access.']);
             }

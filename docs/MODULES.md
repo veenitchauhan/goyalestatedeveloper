@@ -32,7 +32,7 @@ Approved logo and real project/media assets; company facts and leadership; verif
 | Module | Implementation | User acceptance | Next module authorized |
 |---|---|---|---|
 | 1 | Complete; see MODULE-1-VERIFICATION.md | Accepted by user | Yes, Module 2 |
-| 2 | Partial: authentication foundation works; setup journey, editable roles/granular permissions and audit details incomplete | Account created with explicit approval; no module acceptance | Remediation follows the PDF audit |
+| 2 | Remediation implemented: guided setup, destination return, usable overview, protected role editing, granular current-action gates and before/after audit details | Awaiting user testing; not counted complete | Pause before Module 3 |
 | 4 | Partial: approved visual direction; full section/media controls, footer/404 and verification incomplete | Visual appearance accepted only; real imagery deferred | CMS work was authorized; full module remains open |
 | 3 | Partial: baseline revisions/pages/media work; global settings, approval/archive, document controls and broader reuse incomplete | No module acceptance | Finish scoped gaps after Module 2 remediation |
 
@@ -46,3 +46,15 @@ Use [the section-by-section audit](PDF-REQUIREMENTS-AUDIT.md) alongside each mod
 - **Modules 5–14:** Demonstrate the specified public page and corresponding administration workflow with the appropriate role. Separate missing client facts/assets from missing software. Keep future developments inactive until authorized, while proving their architecture works.
 
 Commit and push each verified change with its scope and validation. Pause for testing at every completed module; no implicit acceptance from a Git push or a passing automated suite.
+
+## Module 2 remediation checkpoint — 8 September 2026
+
+Implemented guided authenticator enrollment with recent-login confirmation, recovery-code acknowledgement and return to the requested CMS page. Unfinished setup shows setup navigation instead of repeatedly exposing gated CMS links. Security secrets remain hidden when password confirmation expires. A working overview links to actual available tools.
+
+Super Admin can create custom roles, edit non-Super-Admin role labels/permissions and delete only unassigned custom roles. Super Admin privileges and identity administration are protected; stale role edits are rejected. Seed reruns preserve edited permissions. Separate create/edit and media upload/edit/publish plus page-unpublish checks apply to the current routes. Page approval/archive permissions are catalogued; enforcement of the complete editorial state machine belongs to the next CMS checkpoint, not claimed here.
+
+Audit entries now show actor names, affected record types and before/after access, role-permission and selected media/status values; content revisions identify the relevant draft versions. Full field-by-field content/SEO comparison remains a Module 3 requirement. Passwords, authenticator secrets and recovery codes are outside the audit allowlist.
+
+User acceptance: complete setup and reach the requested page; open Roles, create a custom read-only role, assign it to a test account and verify edit denial; change that role and verify immediate enforcement; inspect its before/after audit entry. No new production users, passwords or authenticator secrets were changed by development. Total remains **14 / 1 complete / 13 remaining** until acceptance.
+
+Verification for this checkpoint: **53 tests / 337 assertions pass on SQLite and the isolated MySQL test database.** The live browser review was interrupted; the complete setup journey is covered by feature tests and awaits the user's visual/interactive review.

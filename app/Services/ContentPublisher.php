@@ -20,7 +20,7 @@ class ContentPublisher
             }
             $revision = $entry->revisions()->create(['version' => $version + 1, 'payload' => $payload, 'author_id' => auth()->id()]);
             $entry->update(['status' => 'draft', 'scheduled_at' => null, 'scheduled_revision_id' => null]);
-            app(AuditRecorder::class)->record('content.draft_saved', $entry);
+            app(AuditRecorder::class)->record('content.draft_saved', $entry, ['before_revision' => $version, 'after_revision' => $revision->version]);
 
             return $revision;
         });
@@ -34,6 +34,8 @@ class ContentPublisher
             if ($revision->version !== $version) {
                 throw ValidationException::withMessages(['version' => 'The draft has changed. Review the latest version first.']);
             }
+            $beforeStatus = $entry->status;
+            $beforeRevision = $entry->publishedRevision?->version;
             if ($action === 'publish') {
                 $this->apply($entry, $revision);
             } elseif ($action === 'schedule') {
@@ -47,7 +49,7 @@ class ContentPublisher
                 $entry->update(['status' => $action === 'review' ? 'review' : 'draft', 'scheduled_at' => null, 'scheduled_revision_id' => null]);
             }
             DB::table('approval_events')->insert(['content_revision_id' => $revision->id, 'actor_id' => auth()->id(), 'action' => $action, 'note' => $note, 'created_at' => now(), 'updated_at' => now()]);
-            app(AuditRecorder::class)->record('content.'.$action, $entry);
+            app(AuditRecorder::class)->record('content.'.$action, $entry, ['before_status' => $beforeStatus, 'after_status' => $entry->status, 'before_revision' => $beforeRevision, 'after_revision' => $revision->version]);
         });
     }
 

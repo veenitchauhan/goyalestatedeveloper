@@ -51,6 +51,7 @@ class MediaController extends Controller
     {
         $file = $request->file('file');
         $data = $request->safe()->except('file');
+        abort_if($request->boolean('is_public') && ! $request->user()->can('media.publish'), 403);
         $mime = $file->getMimeType();
         if (! in_array($mime, ['image/jpeg', 'image/png', 'image/webp', 'application/pdf', 'video/mp4'])) {
             throw ValidationException::withMessages(['file' => 'Unsupported file contents.']);
@@ -78,6 +79,8 @@ class MediaController extends Controller
         if (str_starts_with($media->mime, 'image/')) {
             $this->checkImage(Storage::disk('local')->path($media->original_path), $data['alt'] ?? '');
         }
+        abort_if($request->boolean('is_public') !== $media->is_public && ! $request->user()->can('media.publish'), 403);
+        $changes = ['before_title' => $media->title, 'before_public' => $media->is_public, 'before_order' => $media->sort_order, 'before_alt' => $media->alt, 'before_watermark' => $media->watermark];
         $oldPath = $media->web_path;
         $media->fill($data);
         $this->derive($media);
@@ -85,7 +88,7 @@ class MediaController extends Controller
         if ($oldPath && $oldPath !== $media->web_path) {
             Storage::disk('local')->delete($oldPath);
         }
-        $audit->record('media.updated', $media);
+        $audit->record('media.updated', $media, [...$changes, 'after_title' => $media->title, 'after_public' => $media->is_public, 'after_order' => $media->sort_order, 'after_alt' => $media->alt, 'after_watermark' => $media->watermark]);
 
         return back()->with('status', 'Media settings saved; the web version was regenerated from the original.');
     }
@@ -163,9 +166,9 @@ class MediaController extends Controller
         abort_unless($media->is_public || ($request->user()?->can('media.manage') || $request->user()?->can('pages.edit')), 404);
         $path = $media->web_path ?? $media->original_path;
         if ($media->mime === 'application/pdf') {
-            return Storage::disk('local')->download($path,'document-'.$media->id.'.pdf',['Content-Type' => 'application/pdf']);
+            return Storage::disk('local')->download($path, 'document-'.$media->id.'.pdf', ['Content-Type' => 'application/pdf']);
         }
 
-        return Storage::disk('local')->response($path,null,['Content-Type' => $media->web_path ? 'image/webp' : $media->mime]);
+        return Storage::disk('local')->response($path, null, ['Content-Type' => $media->web_path ? 'image/webp' : $media->mime]);
     }
 }
