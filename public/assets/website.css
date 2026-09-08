@@ -63,3 +63,20 @@
 .project-showcase-copy{align-self:center;padding:40px;min-width:0}.project-showcase-copy>p:not(.eyebrow){font-size:clamp(18px,2vw,25px);line-height:1.65;margin:20px 0 28px;color:#d7e2df}
 .project-showcase-copy .eyebrow{color:#e6a376}.project-showcase-actions{display:flex;flex-wrap:wrap;gap:24px;align-items:center}.project-showcase-actions .button{border-radius:6px;gap:18px}.project-showcase-actions .text-link{color:#e3e9e4}.project-showcase:not(:has(figure)){grid-template-columns:1fr}
 @media(max-width:700px){.section-about .section-wrap{grid-template-columns:1fr;gap:28px;padding:48px 6%}.company-visual img{aspect-ratio:1.4}.company-story h2{margin:16px 0 22px}.company-story .lead{font-size:16px}.project-showcase{grid-template-columns:1fr}.project-showcase figure img{min-height:0;height:auto;aspect-ratio:1.4}.project-showcase-copy{padding:26px}.project-showcase-actions{align-items:flex-start;flex-direction:column;gap:22px}}
+
+/* Shared readable typography for the homepage and public pages. */
+body{font-size:16px;line-height:1.65}
+h2,.presence-copy h2,.company-story h2,#capabilities .process-intro h2{font-size:clamp(28px,3vw,40px);line-height:1.2;letter-spacing:-.025em}
+.hero h1,.error-page h1{font-size:clamp(36px,4.5vw,60px);line-height:1.12;letter-spacing:-.03em}
+h3,.business-card h3,.corporate-card h3{font-size:22px;line-height:1.35}
+.lead,.company-story .lead,.careers-copy>p,.hero-description{font-size:17px;line-height:1.7}
+.section-heading>p,.business-card p,.process-intro>p:last-of-type,.presence-copy>p,.contact-intro>p,.faq-list details>p,.process-list details>p,.corporate-card p,.corporate-body{font-size:16px;line-height:1.7}
+.project-showcase-copy>p:not(.eyebrow){font-size:18px;line-height:1.65}
+.desktop-nav,.mobile-nav,.footer-nav,.header-cta,.button,.text-link,.contact-form label,.contact-form .consent,.form-errors,.form-success,.corporate-subnav,.corporate-breadcrumb{font-size:14px;line-height:1.5}
+.contact-form input:not([type=checkbox]),.contact-form select,.contact-form textarea{font-size:16px;line-height:1.5}
+.eyebrow,.hero .eyebrow,.card-top,.card-detail,.step-number,.process-visual,.hero-baseline,.hero-baseline .visual-caption,.footer-top p,.footer-bottom,.careers-copy .muted,.presence-copy small,.corporate-facts dt,.signature,.company-story .signature,.footer-settings{font-size:12px;line-height:1.6}
+.business-art figcaption,.presence-concept figcaption,.company-visual figcaption span,.project-showcase figcaption,.process-art figcaption span{font-size:12px;line-height:1.5}
+.process-list h3,.faq-list summary{font-size:18px;line-height:1.5}
+.company-name{font-size:14px;white-space:normal;line-height:1.5}
+@media(max-width:760px){.hero h1{font-size:36px}.company-name{font-size:12px}.hero-baseline{flex-wrap:wrap;gap:10px}.hero-baseline .visual-caption{width:85%}.hero-inner{padding-bottom:150px}.hero .eyebrow{flex-wrap:wrap}.footer-top p{letter-spacing:.07em}}
+.contact-intro>p.eyebrow,.presence-copy>p.eyebrow,.careers-copy>p.eyebrow{font-size:12px}
