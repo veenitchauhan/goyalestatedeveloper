@@ -13,7 +13,7 @@ class TrackConsentedVisit
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
-        if (! $request->isMethod('GET') || $response->getStatusCode() !== 200 || ! $request->routeIs('home', 'corporate.*', 'projects.*', 'locations.*', 'careers.*', 'knowledge.*', 'campaigns.show', 'contact', 'search') || $request->session()->get('analytics_consent') !== true) {
+        if (! $request->isMethod('GET') || $response->getStatusCode() !== 200 || ! $request->routeIs('home', 'corporate.*', 'projects.*', 'locations.*', 'careers.*', 'knowledge.*', 'campaigns.show', 'developments.*', 'contact', 'search') || $request->session()->get('analytics_consent') !== true) {
             return $response;
         }
         $touch = ['landing_path' => '/'.ltrim($request->path(), '/'), 'referrer_host' => parse_url($request->headers->get('referer', ''), PHP_URL_HOST) ?: null, 'device' => preg_match('/Mobile|Android|iPhone/i', $request->userAgent() ?? '') ? 'Mobile' : 'Desktop / other'];

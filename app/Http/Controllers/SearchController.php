@@ -7,6 +7,7 @@ use App\Models\Enquiry;
 use App\Models\Media;
 use App\Services\CareerContent;
 use App\Services\CorporateContent;
+use App\Services\DevelopmentContent;
 use App\Services\KnowledgeContent;
 use App\Services\LocationContent;
 use App\Services\ProjectContent;
@@ -20,7 +21,7 @@ class SearchController extends Controller
         $q = $request->validate(['q' => 'nullable|string|max:150'])['q'] ?? '';
         $results = collect();
         if (mb_strlen(trim($q)) >= 2) {
-            $pool = KnowledgeContent::items();
+            $pool = KnowledgeContent::items()->concat(DevelopmentContent::items());
             foreach (['service' => CorporateContent::items('service'), 'project' => ProjectContent::items(), 'location' => LocationContent::active(), 'job' => CareerContent::openings()] as $type => $items) {
                 foreach ($items as $item) {
                     $pool->push([...$item, 'type' => $type, 'url' => $type === 'job' ? route('careers.show', $item['slug']) : $item['url']]);

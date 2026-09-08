@@ -22,7 +22,10 @@ class SeoContent
         foreach (['/' => $home['seo']['title'], '/about' => 'About us', '/business' => 'Business', '/capabilities' => 'Capabilities', '/capabilities/equipment' => 'Equipment', '/about/leadership' => 'Leadership', '/about/journey' => 'Our journey', '/about/employee-stories' => 'Employee stories', '/projects' => 'Projects', '/locations' => 'Locations', '/careers' => 'Careers', '/insights' => 'Insights', '/knowledge-bank' => 'Knowledge Bank', '/faqs' => 'FAQs', '/contact' => 'Contact'] as $path => $title) {
             $items->put($path, ['path' => $path, 'title' => $title, 'description' => $path === '/' ? $home['seo']['description'] : '', 'type' => 'hub']);
         }
-        $records = KnowledgeContent::items();
+        if (DevelopmentContent::enabled()) {
+            $items->put('/developments', ['path' => '/developments', 'title' => 'Developments', 'description' => '', 'type' => 'hub']);
+        }
+        $records = KnowledgeContent::items()->concat(DevelopmentContent::items());
         foreach (array_keys(config('corporate')) as $type) {
             $records = $records->concat(CorporateContent::items($type)->map(fn ($item) => [...$item, 'type' => $type]));
         }

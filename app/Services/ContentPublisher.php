@@ -78,6 +78,9 @@ class ContentPublisher
 
     public function apply(ContentEntry $entry, ContentRevision $revision): void
     {
+        if ($entry->type === 'development') {
+            Validator::make($revision->payload, DevelopmentContent::rules($entry, true))->validate();
+        }
         if ($entry->type === 'campaign') {
             Validator::make($revision->payload, CampaignContent::rules($entry, true))->validate();
         }

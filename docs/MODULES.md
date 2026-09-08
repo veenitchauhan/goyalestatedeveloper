@@ -158,3 +158,14 @@ Public metadata includes canonical, robots, Open Graph and Twitter card fields. 
 Verification: 140 tests / 1,468 assertions pass on isolated SQLite; Pint and diff checks pass. The additive SEO metadata/redirect migrations are applied to MySQL. Chrome loaded and visually displayed the SEO dashboard and active sidebar state. Tests cover local noindex, sitemap exclusions, stale SEO writes, canonical loops, internal redirects, markup escaping, private field exclusion, job expiry and authorization. No company claims, location facts or SEO copy were invented. Guidance checked against Google Search Central’s sitemap, canonical and structured-data documentation. Full populated-content/mobile review and user acceptance remain pending.
 
 Progress: **12/14 reached; 2/14 main modules remain**, plus earlier review/integration gaps. Next: Future Developments (Module 13), inactive by default. Final Validation/Handover is Module 14. Accepted-module count remains unchanged.
+
+
+## Future developments checkpoint — 8 September 2026
+
+Module 13 provides `/admin/developments` with revisioned development descriptions, category/location, amenities, construction progress, public gallery, masterplan and brochure references. Publication uses the existing review/approval workflow and requires verified content. The public feature is disabled by default through a version-checked administrator setting; disabled developments are absent from public routes, navigation, search and sitemap inventory. No business content or inventory was fabricated in MySQL.
+
+Inventory follows development → tower → floor → unit, with Available/Hold/Booked/Sold/Blocked states, version checks, validated parent relationships and explicit verification before public visibility. Hidden parents hide their descendants. Public unit details include approved dimensions, type, facing, room counts and plans; prices require a separate public-price choice. Masterplan tower markers link to the corresponding inventory. Site-visit submissions validate currently public, available units and create unassigned CRM requests requiring staff confirmation; they do not reserve units or automatically confirm appointments.
+
+Verification: 144 tests / 1,524 assertions pass on isolated SQLite. Pint and diff checks pass. The additive inventory migration is applied to MySQL. The authenticated development editor was loaded and visually inspected in Chrome. Populated masterplan/inventory and mobile acceptance remain pending approved assets/data. No AI property assistant, external booking integration or automated appointment notifications are claimed; those remain integration gaps.
+
+Progress: **13/14 reached; 1/14 main module remains** — Final Validation & Handover — plus earlier content, review and integration gaps. Accepted-module count remains unchanged.
