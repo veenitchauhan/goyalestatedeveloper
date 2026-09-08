@@ -1,0 +1,8 @@
+/tmp/
+/.env
+/vendor/
+/node_modules/
+/storage/*.sqlite
+/storage/logs/*
+/public/build/
+.DS_Store
