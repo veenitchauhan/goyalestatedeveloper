@@ -28,8 +28,9 @@
     <div class="section-wrap">
     @switch($section['id'])
     @case('about')
-        <div class="about-heading"><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2></div>
-        <div class="about-copy"><p class="lead">{{ $section['text'] }}</p><div class="signature"><span class="mini-structure" aria-hidden="true">╱╱╱</span>{{ $section['label'] }}</div></div>
+        @php($aboutImage=$sectionAssets->get($section['media_id']??null))
+        @if($section['artwork_enabled']??true)<figure class="company-visual"><img src="{{ $aboutImage ? route('media.show',$aboutImage) : asset('assets/architecture/delivery.webp') }}" alt="{{ $aboutImage?->alt ?: 'Architectural concept model with drawings and material samples' }}" width="1536" height="1024" loading="lazy">@if($aboutImage?->caption)<figcaption>{{ $aboutImage->caption }}</figcaption>@elseif(!$aboutImage)<figcaption>Design thinking. Built into every detail. <span>Concept illustration</span></figcaption>@endif</figure>@endif
+        <div class="company-story"><div class="about-heading"><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2></div><div class="about-copy"><p class="lead">{{ $section['text'] }}</p><div class="signature">{{ $section['label'] }}</div><a class="text-link dark-link" href="{{ route('corporate.about.index') }}">Explore our company ↗</a></div></div>
         @break
     @case('business')
         <div class="section-heading"><div><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2></div><p>{{ $section['text'] }}</p></div>
@@ -55,7 +56,10 @@
         @php($featuredProjects=\App\Services\ProjectContent::items()->where('featured',true)->take(6))
         @if($featuredProjects->isNotEmpty())<div class="project-cards">@foreach($featuredProjects as $project)<article><p class="eyebrow dark">{{ $project['city'] }} · {{ $project['status'] }}</p><h3>{{ $project['title'] }}</h3><p>{{ $project['stage'] }} — {{ $project['progress'] }}% complete</p><a class="text-link dark-link" href="{{ $project['url'] }}">Explore project ↗</a></article>@endforeach</div><a class="text-link dark-link" href="{{ route('projects.index') }}">View all projects ↗</a>
         @else
-        <div class="project-note"><div class="project-outline" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div><div><p>{{ $section['empty'] }}</p>@if($hasContact)<a class="text-link dark-link" href="#contact">{{ $section['cta'] }} ↗</a>@endif</div></div><a class="text-link dark-link" href="{{ route('projects.index') }}">Explore projects ↗</a>
+        @php($projectImage=$sectionAssets->get($section['media_id']??null))
+        <div class="project-showcase">
+        @if($section['artwork_enabled']??true)<figure><img src="{{ $projectImage ? route('media.show',$projectImage) : asset('assets/architecture/construction-journey.webp') }}" alt="{{ $projectImage?->alt ?: 'Concept illustration of construction from structural frame to completed architecture' }}" width="1024" height="1024" loading="lazy">@if($projectImage?->caption)<figcaption>{{ $projectImage->caption }}</figcaption>@elseif(!$projectImage)<figcaption>Concept illustration · Not a completed company project</figcaption>@endif</figure>@endif
+        <div class="project-showcase-copy"><p class="eyebrow">PROJECTS & POSSIBILITIES</p><p>{{ $section['empty'] }}</p><div class="project-showcase-actions">@if($hasContact)<a class="button orange" href="{{ route('contact') }}">{{ $section['cta'] }} ↗</a>@endif<a class="text-link" href="{{ route('projects.index') }}">Explore projects ↗</a></div></div></div>
         @endif
         @break
     @case('presence')
@@ -80,7 +84,7 @@
     @php($sectionImage=$sectionAssets->get($section['media_id']??null))
     @php($sectionVideo=$sectionAssets->get($section['video_id']??null))
     @php($sectionCta=$ctas->get($section['cta_id']??null))
-    @if(!in_array($section['id'],['capabilities','presence']) && $sectionImage && str_starts_with($sectionImage->mime,'image/'))<figure class="section-media"><img src="{{ route('media.show',$sectionImage) }}" alt="{{ $sectionImage->alt }}" loading="lazy" width="1200" height="800">@if($sectionImage->caption)<figcaption>{{ $sectionImage->caption }}</figcaption>@endif</figure>@endif
+    @if((!in_array($section['id'],['about','capabilities','presence','projects']) || ($section['id']==='projects' && $featuredProjects->isNotEmpty())) && $sectionImage && str_starts_with($sectionImage->mime,'image/'))<figure class="section-media"><img src="{{ route('media.show',$sectionImage) }}" alt="{{ $sectionImage->alt }}" loading="lazy" width="1200" height="800">@if($sectionImage->caption)<figcaption>{{ $sectionImage->caption }}</figcaption>@endif</figure>@endif
     @if($sectionVideo?->mime==='video/mp4')<figure class="section-media"><video controls playsinline preload="none" aria-label="{{ $sectionVideo->title }}"><source src="{{ route('media.show',$sectionVideo) }}" type="video/mp4"></video>@if($sectionVideo->caption)<figcaption>{{ $sectionVideo->caption }}</figcaption>@endif @if($sectionVideo->description)<p>{{ $sectionVideo->description }}</p>@endif</figure>@endif
     @if($sectionCta)<div class="section-action"><a class="button orange" href="{{ $sectionCta['url'] }}">{{ $sectionCta['title'] }} ↗</a></div>@endif
     </div>

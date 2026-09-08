@@ -44,3 +44,22 @@
 @media(max-width:700px){.process-art{max-width:540px;margin-top:24px}.process-art img{aspect-ratio:1.5}#capabilities .process-list{margin-top:12px}}
 @media(prefers-reduced-motion:reduce){#capabilities .process-list details{transition:none}}
 .business-art{margin:20px -1px 25px;position:relative;overflow:hidden;border-radius:8px;background:#cddad7}.business-art img{display:block;width:100%;aspect-ratio:1.5;height:auto;object-fit:cover}.business-art figcaption{position:absolute;bottom:0;left:0;padding:5px 9px;background:#14232ccc;color:#fff;font-size:9px;letter-spacing:.03em}.business-card{border-radius:12px;overflow:hidden}.presence-concept{margin:0;min-width:0;align-self:center;border-radius:14px;overflow:hidden;background:#183139}.presence-concept img{display:block;width:100%;height:auto}.presence-concept figcaption{padding:12px 18px;color:#c6d5d5;font-size:10px}.hero-architecture{width:100%;height:100%;inset:0;object-fit:cover;object-position:center;opacity:.75}.hero-inner{background:linear-gradient(90deg,#101c2480,transparent 75%)}
+
+/* Company introduction and project enquiry feature. */
+.section-about .section-wrap{grid-template-columns:1.05fr 1fr;gap:6%;align-items:center;padding-top:76px;padding-bottom:76px}
+.company-visual{margin:0;min-width:0;position:relative;overflow:hidden;border-radius:14px;background:#173139;box-shadow:0 14px 36px #14232c12}
+.company-visual img{display:block;width:100%;height:auto;aspect-ratio:1.05;object-fit:cover}
+.company-visual figcaption{position:absolute;bottom:0;left:0;right:0;padding:30px 24px 20px;background:linear-gradient(transparent,#101c24ed);color:#fff5e7;font-size:14px;line-height:1.6}
+.company-visual figcaption span{display:block;color:#d4dfdd;font-size:10px;margin-top:4px}
+.company-story h2{font-size:clamp(34px,3.8vw,54px);margin:22px 0 26px}
+.company-story .lead{font-size:17px;line-height:1.85;color:#4f6167}
+.company-story .signature{margin:26px 0;padding:18px 20px;border:0;border-left:3px solid #de8250;background:#e9e7db;font-size:13px;line-height:1.7}
+.company-story .text-link{font-weight:600}
+.section-about .section-wrap:not(:has(.company-visual)){grid-template-columns:1fr}.section-about .section-wrap:not(:has(.company-visual)) .company-story{max-width:900px}
+.project-showcase{display:grid;grid-template-columns:1.05fr 1fr;background:#173039;border:1px solid #2b454c;border-radius:16px;overflow:hidden;color:#eff2e9}
+.project-showcase figure{position:relative;margin:0;min-width:0;background:#203940}
+.project-showcase figure img{display:block;width:100%;height:100%;min-height:340px;max-height:460px;object-fit:cover}
+.project-showcase figcaption{position:absolute;bottom:0;left:0;right:0;padding:24px 20px 14px;background:linear-gradient(transparent,#101c24df);font-size:10px;color:#e1e9e6}
+.project-showcase-copy{align-self:center;padding:40px;min-width:0}.project-showcase-copy>p:not(.eyebrow){font-size:clamp(18px,2vw,25px);line-height:1.65;margin:20px 0 28px;color:#d7e2df}
+.project-showcase-copy .eyebrow{color:#e6a376}.project-showcase-actions{display:flex;flex-wrap:wrap;gap:24px;align-items:center}.project-showcase-actions .button{border-radius:6px;gap:18px}.project-showcase-actions .text-link{color:#e3e9e4}.project-showcase:not(:has(figure)){grid-template-columns:1fr}
+@media(max-width:700px){.section-about .section-wrap{grid-template-columns:1fr;gap:28px;padding:48px 6%}.company-visual img{aspect-ratio:1.4}.company-story h2{margin:16px 0 22px}.company-story .lead{font-size:16px}.project-showcase{grid-template-columns:1fr}.project-showcase figure img{min-height:0;height:auto;aspect-ratio:1.4}.project-showcase-copy{padding:26px}.project-showcase-actions{align-items:flex-start;flex-direction:column;gap:22px}}
