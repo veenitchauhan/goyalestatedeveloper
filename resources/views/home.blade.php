@@ -61,6 +61,7 @@
         @break
     @case('insights')
         <div class="section-heading"><div><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2></div><p>{{ $section['text'] }}</p></div><div class="faq-list">@foreach($section['items'] as $item)<details><summary>{{ $item['title'] }}<span aria-hidden="true">＋</span></summary><p>{{ $item['text'] }}</p></details>@endforeach</div>
+        <div class="project-cards">@foreach(\App\Services\KnowledgeContent::items()->where('featured',true)->take(6) as $article)<article><p class="eyebrow dark">{{ $article['category'] }}</p><h3><a href="{{ $article['url'] }}">{{ $article['title'] }}</a></h3><p>{{ $article['short_answer'] }}</p></article>@endforeach</div><p><a class="text-link dark-link" href="{{ route('knowledge.article.index') }}">Explore insights ↗</a> · <a href="{{ route('knowledge.knowledge.index') }}">Knowledge Bank</a> · <a href="{{ route('knowledge.faq.index') }}">FAQs</a></p>
         @break
     @case('contact')
         <div class="contact-intro"><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2><p>{{ $section['text'] }}</p><div class="contact-details">@if($content['contact']['email'])<a href="mailto:{{ $content['contact']['email'] }}">{{ $content['contact']['email'] }}</a>@endif @if($content['contact']['phone'])<a href="tel:{{ preg_replace('/[^+0-9]/','',$content['contact']['phone']) }}">{{ $content['contact']['phone'] }}</a>@endif @if($content['contact']['address'])<p>{{ $content['contact']['address'] }}</p>@endif</div></div>

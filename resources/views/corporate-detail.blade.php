@@ -19,4 +19,5 @@
 @if($related->isNotEmpty())<section class="corporate-group"><h2>Explore further</h2>@include('partials.corporate-cards',['items'=>$related])</section>@endif
 @if($ctas->isNotEmpty())<aside class="corporate-callout"><h2>Continue the conversation.</h2><div class="error-actions">@foreach($ctas as $cta)<a class="button ink" href="{{ $cta['url'] }}">{{ $cta['title'] }} ↗</a>@endforeach</div></aside>@endif
 </div></article>
+@include('partials.related-knowledge')
 @endsection

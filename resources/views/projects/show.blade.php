@@ -36,4 +36,5 @@
 </div></article>
 <script src="{{ asset('assets/project-viewer.js') }}" defer></script>
 <script src="{{ asset('assets/project-panorama.js') }}" defer></script>
+@include('partials.related-knowledge')
 @endsection

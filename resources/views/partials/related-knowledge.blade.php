@@ -1,0 +1,2 @@
+@php($linkedKnowledge=\App\Services\KnowledgeContent::relatedTo($entry))
+@if($linkedKnowledge->isNotEmpty())<section class="corporate-container corporate-group"><h2>Related insights & answers</h2>@foreach($linkedKnowledge as $item)@if($item['type']==='faq')<details><summary>{{ $item['title'] }}</summary><p class="cms-prose">{{ $item['short_answer'] }}</p><a href="{{ $item['url'] }}">Read the full answer →</a></details>@else<p><a href="{{ $item['url'] }}">{{ $item['title'] }} ↗</a></p>@endif @endforeach</section>@endif

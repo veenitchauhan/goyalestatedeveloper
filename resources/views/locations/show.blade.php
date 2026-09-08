@@ -8,4 +8,5 @@
 @if($services->isNotEmpty())<section class="corporate-group"><h2>Relevant services</h2>@include('partials.corporate-cards',['items'=>$services])</section>@endif
 @if($projects->isNotEmpty())<section class="corporate-group"><h2>Projects in this area</h2><div class="project-cards">@foreach($projects as $project)<article><h3><a href="{{ $project['url'] }}">{{ $project['title'] }}</a></h3><p>{{ $project['stage'] }} · {{ $project['progress'] }}% complete</p></article>@endforeach</div></section>@endif
 <aside class="corporate-callout"><h2>Discuss your project.</h2><a class="button ink" href="{{ route('home') }}#contact">Start a conversation ↗</a></aside></div></article>
+@include('partials.related-knowledge')
 @endsection

@@ -6,4 +6,5 @@
 @include('partials.statistics',['statistics'=>\App\Models\ContentEntry::publishedItems('statistic')->whereIn('id',$payload['statistic_ids']??[])])
 @foreach(\App\Models\ContentEntry::publishedItems('cta')->whereIn('id',$payload['cta_ids']??[]) as $cta)<p><a class="button orange" href="{{ $cta['url'] }}">{{ $cta['title'] }} ↗</a></p>@endforeach
 @foreach(\App\Models\Media::whereIn('id',$payload['document_ids']??[])->where('mime','application/pdf')->where('is_public',true)->where('publication_status','published')->whereNull('archived_at')->orderBy('sort_order')->get() as $document)<p><a href="{{ route('media.show',$document) }}">Download {{ $document->title }} (PDF)</a></p>@endforeach
-</div></article>@endsection
+</div></article>@include('partials.related-knowledge')
+@endsection

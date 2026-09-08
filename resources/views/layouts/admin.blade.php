@@ -22,6 +22,7 @@
 @can('pages.view')
 <a href="{{ route('admin.locations.index') }}" @if(request()->routeIs('admin.locations.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">◎</span>Locations & expansion</a>
 @endcan
+@can('pages.view')<a href="{{ route('admin.knowledge.index') }}" @if(request()->routeIs('admin.knowledge.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▤</span>Insights, Knowledge & FAQs</a>@endcan
 @can('jobs.view')<a href="{{ route('admin.jobs.index') }}" @if(request()->routeIs('admin.jobs.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▣</span>Careers & openings</a>@endcan
 @if(auth()->user()->can('candidates.view') || auth()->user()->can('candidates.view-assigned'))<a href="{{ route('admin.candidates.index') }}" @if(request()->routeIs('admin.candidates.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">♙</span>Candidate pipeline</a>@endif
 @can('media.manage')
@@ -49,7 +50,7 @@
 <div class="workspace-main">
 <header class="topbar"><a class="brand" href="{{ route('home') }}">{{ config('app.name') }}</a>
 @auth
-<nav aria-label="Account" class="top-menu"><a href="{{ route('home') }}">View website ↗</a><a href="{{ route('admin.account') }}" @if(request()->routeIs('admin.account')) aria-current="page" @endif>Settings</a><form method="post" action="{{ route('logout') }}">@csrf<button class="quiet">Sign out</button></form></nav>
+<nav aria-label="Account" class="top-menu"><a href="{{ route('admin.search') }}" @if(request()->routeIs('admin.search')) aria-current="page" @endif>Search</a><a href="{{ route('home') }}">View website ↗</a><a href="{{ route('admin.account') }}" @if(request()->routeIs('admin.account')) aria-current="page" @endif>Settings</a><form method="post" action="{{ route('logout') }}">@csrf<button class="quiet">Sign out</button></form></nav>
 @endauth
 </header>
 <main id="main">@if(session('status'))<p class="notice" role="status">{{ match(session('status')) { 'two-factor-authentication-enabled' => 'Scan the code below to finish setting up two-factor authentication.', 'two-factor-authentication-confirmed' => 'Two-factor authentication confirmed. You can now open the overview.', 'two-factor-authentication-disabled' => 'Two-factor authentication disabled.', 'recovery-codes-generated' => 'New recovery codes generated. Previous codes no longer work.', 'password-updated' => 'Your password was updated.', default => session('status') } }}</p>@endif

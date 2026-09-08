@@ -5,9 +5,9 @@ return [
     'host' => 'goyalestatedeveloper.test',
     'completed' => 1,
     'completed_ids' => [1],
-    'partial_ids' => [2, 3, 4, 5, 6, 7, 8],
-    'current_module' => 8,
-    'status' => 'Careers and recruitment checkpoint ready for testing; full module acceptance remains pending',
+    'partial_ids' => [2, 3, 4, 5, 6, 7, 8, 9],
+    'current_module' => 9,
+    'status' => 'Insights, Knowledge Bank and FAQs checkpoint ready for testing; full module acceptance remains pending',
     'modules' => [
         'Architecture and local foundation',
         'Application, authentication and permissions',

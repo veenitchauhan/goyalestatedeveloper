@@ -13,6 +13,8 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\CorporateController;
 use App\Http\Controllers\HomepageController;
+use App\Http\Controllers\KnowledgeController;
+use App\Http\Controllers\SearchController;
 use App\Http\Middleware\RequireTwoFactor;
 use App\Models\AuditLog;
 use App\Models\ContentEntry;
@@ -26,12 +28,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 
+Route::get('/search', [SearchController::class, 'index'])->name('search');
 Route::get('/', [HomepageController::class, 'index'])->name('home');
 foreach (['about' => 'about', 'business' => 'business', 'capabilities' => 'capabilities', 'capabilities/equipment' => 'equipment', 'about/leadership' => 'leadership', 'about/journey' => 'journey', 'about/employee-stories' => 'stories'] as $path => $group) {
     Route::get('/'.$path, [CorporateController::class, 'index'])->defaults('group', $group)->name('corporate.'.$group.'.index');
 }
 foreach (['about/people/{slug}' => 'team_member', 'about/milestones/{slug}' => 'company_milestone', 'about/employee-stories/{slug}' => 'employee_story', 'business/services/{slug}' => 'service', 'capabilities/equipment/{slug}' => 'equipment', 'about/{slug}' => 'company_page', 'business/{slug}' => 'business_unit', 'capabilities/{slug}' => 'capability'] as $path => $type) {
     Route::get('/'.$path, [CorporateController::class, 'show'])->defaults('type', $type)->name(config('corporate.'.$type.'.route'));
+}
+foreach (['insights' => 'article', 'knowledge-bank' => 'knowledge', 'faqs' => 'faq'] as $path => $type) {
+    Route::get('/'.$path, [KnowledgeController::class, 'index'])->defaults('type', $type)->name('knowledge.'.$type.'.index');
+    Route::get('/'.$path.'/{slug}', [KnowledgeController::class, 'show'])->defaults('type', $type)->name('knowledge.'.$type.'.show');
 }
 Route::get('/careers', [CareerController::class, 'index'])->name('careers.index');
 Route::post('/careers/apply', [CareerController::class, 'apply'])->middleware('throttle:5,1')->name('careers.general-apply');
@@ -90,8 +97,15 @@ Route::middleware(['auth', 'auth.session'])->prefix('admin')->name('admin.')->gr
         return redirect()->to($destination)->with('status', 'Account setup complete. Your workspace is ready.');
     })->middleware('password.confirm')->name('security.continue');
     Route::middleware(['two-factor.required', 'can:admin.view'])->group(function () {
+        Route::get('/search', [SearchController::class, 'admin'])->name('search');
         Route::view('/', 'admin.dashboard')->name('dashboard');
         Route::view('/account', 'admin.account')->name('account');
+        Route::get('/knowledge', [App\Http\Controllers\Admin\KnowledgeController::class, 'index'])->middleware('can:pages.view')->name('knowledge.index');
+        Route::get('/knowledge/create', [App\Http\Controllers\Admin\KnowledgeController::class, 'create'])->middleware('can:pages.create')->name('knowledge.create');
+        Route::post('/knowledge', [App\Http\Controllers\Admin\KnowledgeController::class, 'store'])->middleware('can:pages.create')->name('knowledge.store');
+        Route::get('/knowledge/{entry}/edit', [App\Http\Controllers\Admin\KnowledgeController::class, 'edit'])->middleware('can:pages.edit')->name('knowledge.edit');
+        Route::put('/knowledge/{entry}', [App\Http\Controllers\Admin\KnowledgeController::class, 'update'])->middleware('can:pages.edit')->name('knowledge.update');
+        Route::get('/knowledge/{entry}/preview', [App\Http\Controllers\Admin\KnowledgeController::class, 'preview'])->middleware('can:pages.view')->name('knowledge.preview');
         Route::get('/jobs', [JobController::class, 'index'])->middleware('can:jobs.view')->name('jobs.index');
         Route::get('/jobs/create', [JobController::class, 'create'])->middleware('can:jobs.edit')->name('jobs.create');
         Route::post('/jobs', [JobController::class, 'store'])->middleware('can:jobs.edit')->name('jobs.store');
