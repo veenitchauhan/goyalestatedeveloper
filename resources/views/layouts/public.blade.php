@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="{{ asset('assets/website.css') }}">
 </head>
 <body>
+@php($headerCta=\App\Models\ContentEntry::publishedItems('cta')->firstWhere('id',$content['hero']['primary_cta_id']??null))
 @php($menuItems=\App\Models\ContentEntry::publishedItems('menu'))
 @if($preview??false)<aside class="preview-notice">Private draft preview · This version is not necessarily published. Resize your browser to review mobile layouts.</aside>@endif
 <a class="skip-link" href="#main">Skip to content</a>
@@ -24,11 +25,11 @@
     <div class="header-inner">
         <a class="company-name" href="{{ route('home') }}">@if($logo=\App\Models\SiteSetting::image($siteSettings['branding']['logo_id']))<img class="company-logo" src="{{ route('media.show',$logo) }}" alt="">@endif{{ $siteSettings['company']['name'] }}</a>
         <nav class="desktop-nav" aria-label="Main navigation">
-            <a href="{{ route('home') }}" aria-current="page">Home</a>
+            <a href="{{ route('home') }}" @if(request()->routeIs('home')) aria-current="page" @endif>Home</a>
             @foreach($sections as $section) @if($section['nav'])<a href="{{ request()->routeIs('home') ? '' : route('home') }}#{{ $section['id'] }}">{{ $section['nav'] }}</a>@endif @endforeach
             @foreach($menuItems->whereIn('placement',['header','both']) as $item)<a href="{{ $item['url'] }}">{{ $item['title'] }}</a>@endforeach
         </nav>
-        @if($sections->contains('id','contact'))<a class="header-cta" href="{{ request()->routeIs('home') ? '' : route('home') }}#contact">Start a project ↗</a>@endif
+        @if($headerCta || $sections->contains('id','contact'))<a class="header-cta" href="{{ $headerCta['url'] ?? (route('home').'#contact') }}">{{ $headerCta['title'] ?? $content['hero']['primary_cta'] }} ↗</a>@endif
         <details class="mobile-nav"><summary>Menu <span aria-hidden="true">＋</span></summary><nav aria-label="Mobile navigation"><a href="{{ route('home') }}">Home</a>@foreach($sections as $section) @if($section['nav'])<a href="{{ request()->routeIs('home') ? '' : route('home') }}#{{ $section['id'] }}">{{ $section['nav'] }}</a>@endif @endforeach @foreach($menuItems->whereIn('placement',['header','both']) as $item)<a href="{{ $item['url'] }}">{{ $item['title'] }}</a>@endforeach</nav></details>
     </div>
 </header>

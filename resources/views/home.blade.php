@@ -1,18 +1,28 @@
 @extends('layouts.public')
 @section('content')
+@php($content=\App\Models\Homepage::editableContent($content))
+@php($ctas=\App\Models\ContentEntry::publishedItems('cta')->keyBy('id'))
+@php($primaryCta=$ctas->get($content['hero']['primary_cta_id']))
+@php($secondaryCta=$ctas->get($content['hero']['secondary_cta_id']))
 @php($hasContact=$sections->contains('id','contact'))
 <section class="hero" aria-labelledby="hero-title">
-    @php($heroImage=\App\Models\Media::where('is_public',true)->where('publication_status','published')->whereNull('archived_at')->whereKey($content['hero']['media_id']??null)->first())
+    @php($heroImage=\App\Models\Media::where('is_public',true)->where('publication_status','published')->whereNull('archived_at')->where('mime','like','image/%')->whereKey($content['hero']['media_id']??null)->first())
     <img class="hero-architecture" src="{{ $heroImage ? route('media.show',$heroImage) : asset('assets/architecture/hero.svg') }}" alt="{{ $heroImage?->alt ?? 'Conceptual architectural illustration of high-rise structures and a tower crane' }}" width="1200" height="1000" fetchpriority="high">
     <div class="hero-inner">
         <p class="eyebrow"><span class="orange-line"></span>{{ $content['hero']['eyebrow'] }}</p>
         <h1 id="hero-title">{{ $content['hero']['line_one'] }}<br>{{ $content['hero']['line_two'] }}<br><span>{{ $content['hero']['line_three'] }}</span></h1>
         <p class="hero-description">{{ $content['hero']['description'] }}</p>
-        <div class="hero-actions">@if($hasContact)<a class="button orange" href="#contact">{{ $content['hero']['primary_cta'] }} <span aria-hidden="true">↗</span></a>@endif @if($sections->contains('id','projects'))<a class="text-link" href="#projects">{{ $content['hero']['secondary_cta'] }} <span aria-hidden="true">↗</span></a>@endif</div>
+        <div class="hero-actions">@if($primaryCta || $hasContact)<a class="button orange" href="{{ $primaryCta['url'] ?? '#contact' }}">{{ $primaryCta['title'] ?? $content['hero']['primary_cta'] }} <span aria-hidden="true">↗</span></a>@endif @if($secondaryCta || $sections->contains('id','projects'))<a class="text-link" href="{{ $secondaryCta['url'] ?? '#projects' }}">{{ $secondaryCta['title'] ?? $content['hero']['secondary_cta'] }} <span aria-hidden="true">↗</span></a>@endif</div>
     </div>
-    <div class="hero-baseline"><span>TRICITY ROOTS. A FORWARD VISION.</span><span class="visual-caption">{{ $heroImage ? $heroImage->caption : 'Architectural concept · not a project photograph' }}</span><a href="#{{ $sections->first()['id'] ?? 'main' }}" aria-label="Explore the company">↓</a></div>
+    <div class="hero-baseline"><span>{{ $content['hero']['baseline'] }}</span><span class="visual-caption">{{ $heroImage ? $heroImage->caption : 'Architectural concept · not a project photograph' }}</span><a href="#{{ $sections->first()['id'] ?? 'main' }}" aria-label="Explore the company">↓</a></div>
 </section>
-@include('partials.statistics',['statistics'=>\App\Models\ContentEntry::publishedItems('statistic')])
+@php($heroVideo=\App\Models\Media::where('is_public',true)->where('publication_status','published')->whereNull('archived_at')->where('mime','video/mp4')->whereKey($content['hero']['video_id'])->first())
+@if($heroVideo)<details class="hero-film"><summary>{{ $content['hero']['video_label'] ?: $heroVideo->title }}</summary><figure><video controls playsinline preload="none" @if($heroImage) poster="{{ route('media.show',$heroImage) }}" @endif aria-label="{{ $heroVideo->title }}"><source src="{{ route('media.show',$heroVideo) }}" type="video/mp4"></video>@if($heroVideo->caption)<figcaption>{{ $heroVideo->caption }}</figcaption>@endif @if($heroVideo->description)<p>{{ $heroVideo->description }}</p>@endif</figure></details>@endif
+@php($statistics=\App\Models\ContentEntry::publishedItems('statistic'))
+@if($content['statistics']['mode']!=='hidden')
+@include('partials.statistics',['statistics'=>$content['statistics']['mode']==='selected' ? $statistics->whereIn('id',$content['statistics']['ids']) : $statistics])
+@endif
+@php($sectionAssets=\App\Models\Media::where('is_public',true)->where('publication_status','published')->whereNull('archived_at')->whereIn('id',$sections->flatMap(fn($section)=>[$section['media_id']??null,$section['video_id']??null])->filter()->unique())->get()->keyBy('id'))
 @foreach($sections as $section)
 <section id="{{ $section['id'] }}" class="section section-{{ $section['id'] }}">
     <div class="section-wrap">
@@ -53,6 +63,12 @@
         <form method="post" action="{{ route('enquiries.store') }}">@csrf<div class="form-grid"><div><label for="name">Your name *</label><input id="name" name="name" value="{{ old('name') }}" autocomplete="name" maxlength="150" required></div><div><label for="email">Email address *</label><input id="email" name="email" type="email" value="{{ old('email') }}" autocomplete="email" required></div><div><label for="phone">Phone number</label><input id="phone" name="phone" type="tel" value="{{ old('phone') }}" autocomplete="tel" maxlength="25"></div><div><label for="location">Project / enquiry location *</label><input id="location" name="location" value="{{ old('location') }}" maxlength="150" required></div><div class="full"><label for="type">How can we help? *</label><select id="type" name="type" required><option value="">Select your enquiry type</option>@foreach(['Construction','Infrastructure','Project delivery','Development opportunity','Vendor / partner','Career','General'] as $type)<option @selected(old('type')===$type)>{{ $type }}</option>@endforeach</select></div><div class="full"><label for="message">Tell us about your requirement *</label><textarea id="message" name="message" rows="4" minlength="10" maxlength="5000" required>{{ old('message') }}</textarea></div></div><div class="honey" aria-hidden="true"><label for="website">Website</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div><label class="consent"><input name="consent" type="checkbox" value="1" @checked(old('consent')) required><span>I agree that my details may be used to respond to this enquiry.</span></label><button class="button ink">{{ $section['cta'] }} <span aria-hidden="true">↗</span></button></form></div>
         @break
     @endswitch
+    @php($sectionImage=$sectionAssets->get($section['media_id']??null))
+    @php($sectionVideo=$sectionAssets->get($section['video_id']??null))
+    @php($sectionCta=$ctas->get($section['cta_id']??null))
+    @if($sectionImage && str_starts_with($sectionImage->mime,'image/'))<figure class="section-media"><img src="{{ route('media.show',$sectionImage) }}" alt="{{ $sectionImage->alt }}" loading="lazy" width="1200" height="800">@if($sectionImage->caption)<figcaption>{{ $sectionImage->caption }}</figcaption>@endif</figure>@endif
+    @if($sectionVideo?->mime==='video/mp4')<figure class="section-media"><video controls playsinline preload="none" aria-label="{{ $sectionVideo->title }}"><source src="{{ route('media.show',$sectionVideo) }}" type="video/mp4"></video>@if($sectionVideo->caption)<figcaption>{{ $sectionVideo->caption }}</figcaption>@endif @if($sectionVideo->description)<p>{{ $sectionVideo->description }}</p>@endif</figure>@endif
+    @if($sectionCta)<div class="section-action"><a class="button orange" href="{{ $sectionCta['url'] }}">{{ $sectionCta['title'] }} ↗</a></div>@endif
     </div>
 </section>
 @endforeach

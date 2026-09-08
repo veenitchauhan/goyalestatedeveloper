@@ -17,4 +17,23 @@ class Homepage extends Model
     {
         return static::where('key', 'main')->firstOrFail();
     }
+
+    public static function editableContent(array $content): array
+    {
+        $content['hero'] += [
+            'baseline' => 'TRICITY ROOTS. A FORWARD VISION.',
+            'video_label' => 'Watch our construction film',
+            'media_id' => null,
+            'video_id' => null,
+            'primary_cta_id' => null,
+            'secondary_cta_id' => null,
+        ];
+        $content['statistics'] ??= ['mode' => 'all', 'ids' => []];
+        foreach ($content['sections'] as &$section) {
+            $section += ['media_id' => null, 'video_id' => null, 'cta_id' => null];
+        }
+        unset($section);
+
+        return $content;
+    }
 }
