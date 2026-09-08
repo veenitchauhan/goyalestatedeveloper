@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\ContentEntry;
 use App\Models\Media;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -47,6 +48,15 @@ class ProjectContent
             $rules['progress'][] = 'in:100';
         }
         $image = fn () => Rule::exists('media', 'id')->where('is_public', true)->where('publication_status', 'published')->whereNull('archived_at')->where(fn ($q) => $q->where('mime', 'like', 'image/%'));
+        $rules['panorama_media_id'] = ['bail', 'nullable', 'integer', $image(), function (string $attribute, mixed $value, \Closure $fail): void {
+            $media = Media::find($value);
+            $path = $media ? Storage::disk('local')->path($media->web_path ?: $media->original_path) : '';
+            $size = is_file($path) ? @getimagesize($path) : false;
+            if (! $size || abs($size[0] / $size[1] - 2) > 0.02) {
+                $fail('Select a full 360° equirectangular image with a 2:1 width-to-height ratio.');
+            }
+        }];
+        $rules['panorama_caption'] = ['nullable', 'string', 'max:500'];
         $rules['cover_media_id'] = ['nullable', 'integer', $image()];
         foreach (['equipment_ids', 'related_ids', 'document_ids'] as $field) {
             $rules[$field] = ['sometimes', 'array', 'max:30'];
@@ -83,7 +93,7 @@ class ProjectContent
 
     public static function detail(ContentEntry $entry, array $payload, bool $preview = false): View
     {
-        $ids = [$payload['cover_media_id'] ?? null, $payload['before_media_id'] ?? null, $payload['after_media_id'] ?? null, ...($payload['document_ids'] ?? []), ...array_column($payload['gallery'] ?? [], 'media_id'), ...array_column($payload['timeline'] ?? [], 'media_id')];
+        $ids = [$payload['panorama_media_id'] ?? null, $payload['cover_media_id'] ?? null, $payload['before_media_id'] ?? null, $payload['after_media_id'] ?? null, ...($payload['document_ids'] ?? []), ...array_column($payload['gallery'] ?? [], 'media_id'), ...array_column($payload['timeline'] ?? [], 'media_id')];
         $media = Media::whereIn('id', array_filter($ids))->where('is_public', true)->where('publication_status', 'published')->whereNull('archived_at')->get()->keyBy('id');
         $equipment = ContentEntry::publishedItems('equipment')->whereIn('id', $payload['equipment_ids'] ?? []);
         $related = self::items()->whereIn('id', $payload['related_ids'] ?? []);

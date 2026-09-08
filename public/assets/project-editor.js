@@ -48,7 +48,7 @@
                     const name = select.name;
                     const image = data.mime.startsWith('image/');
                     const gallery = name.startsWith('gallery[') && name.endsWith('[media_id]');
-                    const imageField = ['cover_media_id','before_media_id','after_media_id'].includes(name) || (name.startsWith('timeline[') && name.endsWith('[media_id]'));
+                    const imageField = ['cover_media_id','before_media_id','after_media_id','panorama_media_id'].includes(name) || (name.startsWith('timeline[') && name.endsWith('[media_id]'));
                     if ((gallery && (image || data.mime === 'video/mp4')) || (imageField && image) || (name === 'document_ids[]' && data.mime === 'application/pdf')) {
                         select.add(new Option(data.title, data.id));
                     }
