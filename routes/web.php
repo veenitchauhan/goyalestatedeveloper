@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\CorporateContentController;
+use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\RoleController;
@@ -16,6 +17,7 @@ use App\Models\Enquiry;
 use App\Models\Homepage;
 use App\Models\SiteSetting;
 use App\Services\CorporateContent;
+use App\Services\LocationContent;
 use App\Services\ProjectContent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +30,13 @@ foreach (['about' => 'about', 'business' => 'business', 'capabilities' => 'capab
 foreach (['about/people/{slug}' => 'team_member', 'about/milestones/{slug}' => 'company_milestone', 'about/employee-stories/{slug}' => 'employee_story', 'business/services/{slug}' => 'service', 'capabilities/equipment/{slug}' => 'equipment', 'about/{slug}' => 'company_page', 'business/{slug}' => 'business_unit', 'capabilities/{slug}' => 'capability'] as $path => $type) {
     Route::get('/'.$path, [CorporateController::class, 'show'])->defaults('type', $type)->name(config('corporate.'.$type.'.route'));
 }
+Route::get('/locations', fn () => view('locations.index', CorporateContent::layout('Our locations') + ['items' => LocationContent::active(), 'canonical' => route('locations.index')]))->name('locations.index');
+Route::get('/locations/{slug}', function (string $slug) {
+    $entry = ContentEntry::where('type', 'location')->where('slug', $slug)->whereNotNull('published_revision_id')->with('publishedRevision')->firstOrFail();
+    abort_unless(LocationContent::active()->has($entry->id), 404);
+
+    return LocationContent::detail($entry, $entry->publishedRevision->payload);
+})->name('locations.show');
 Route::get('/projects', function (Request $request) {
     $filters = $request->validate(['status' => ['nullable', Rule::in(ProjectContent::STATUSES)], 'sector' => ['nullable', Rule::in(ProjectContent::SECTORS)], 'city' => 'nullable|string|max:255']);
     $all = ProjectContent::items();
@@ -76,6 +85,11 @@ Route::middleware(['auth', 'auth.session'])->prefix('admin')->name('admin.')->gr
     Route::middleware(['two-factor.required', 'can:admin.view'])->group(function () {
         Route::view('/', 'admin.dashboard')->name('dashboard');
         Route::view('/account', 'admin.account')->name('account');
+        Route::get('/locations', [LocationController::class, 'index'])->middleware('can:pages.view')->name('locations.index');
+        Route::get('/locations/create', [LocationController::class, 'create'])->middleware('can:pages.create')->name('locations.create');
+        Route::post('/locations', [LocationController::class, 'store'])->middleware('can:pages.create')->name('locations.store');
+        Route::get('/locations/{entry}/edit', [LocationController::class, 'edit'])->middleware('can:pages.edit')->name('locations.edit');
+        Route::put('/locations/{entry}', [LocationController::class, 'update'])->middleware('can:pages.edit')->name('locations.update');
         Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
         Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
         Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');

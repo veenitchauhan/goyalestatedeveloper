@@ -54,7 +54,7 @@
         @endif
         @break
     @case('presence')
-        <div class="presence-copy"><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2><p>{{ $section['text'] }}</p><small>{{ $section['future'] }}</small></div><div class="presence-art" aria-label="Abstract illustration of the Tricity foundation"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div><div class="presence-point"><i></i><span>{{ $section['label'] }}</span></div><span class="compass" aria-hidden="true">N ↑</span></div>
+        <div class="presence-copy"><a class="text-link dark-link" href="{{ route('locations.index') }}">Explore our locations ↗</a><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2><p>{{ $section['text'] }}</p><small>{{ $section['future'] }}</small></div><div class="presence-art" aria-label="Abstract illustration of the Tricity foundation"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div><div class="presence-point"><i></i><span>{{ $section['label'] }}</span></div><span class="compass" aria-hidden="true">N ↑</span></div>
         @break
     @case('careers')
         <div><p class="eyebrow">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2></div><div class="careers-copy"><p>{{ $section['text'] }}</p><p class="muted">{{ $section['empty'] }}</p>@if($hasContact)<a class="button light" href="#contact">{{ $section['cta'] }} ↗</a>@endif</div>

@@ -10,6 +10,7 @@ use App\Models\Media;
 use App\Models\SiteSetting;
 use App\Services\ContentPublisher;
 use App\Services\CorporateContent;
+use App\Services\LocationContent;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -77,7 +78,7 @@ class ContentController extends Controller
 
     public function transition(Request $request, ContentEntry $entry, ContentPublisher $publisher): RedirectResponse
     {
-        abort_unless((in_array($entry->type, ['homepage', 'settings', 'page', 'block', 'statistic', 'menu', 'cta']) || CorporateContent::supports($entry->type)), 404);
+        abort_unless((in_array($entry->type, ['homepage', 'settings', 'page', 'block', 'statistic', 'menu', 'cta', 'location']) || CorporateContent::supports($entry->type)), 404);
         if ($entry->type === 'settings') {
             abort_unless($request->user()->can('settings.manage'), 403);
         }
@@ -92,7 +93,7 @@ class ContentController extends Controller
 
     public function restore(Request $request, ContentEntry $entry, ContentPublisher $publisher): RedirectResponse
     {
-        abort_unless((in_array($entry->type, ['homepage', 'settings', 'page', 'block', 'statistic', 'menu', 'cta']) || CorporateContent::supports($entry->type)), 404);
+        abort_unless((in_array($entry->type, ['homepage', 'settings', 'page', 'block', 'statistic', 'menu', 'cta', 'location']) || CorporateContent::supports($entry->type)), 404);
         if ($entry->type === 'settings') {
             abort_unless($request->user()->can('settings.manage'), 403);
         }
@@ -105,11 +106,14 @@ class ContentController extends Controller
 
     public function preview(ContentEntry $entry): View
     {
-        abort_unless((in_array($entry->type, ['homepage', 'settings', 'page', 'block', 'statistic', 'menu', 'cta']) || CorporateContent::supports($entry->type)), 404);
+        abort_unless((in_array($entry->type, ['homepage', 'settings', 'page', 'block', 'statistic', 'menu', 'cta', 'location']) || CorporateContent::supports($entry->type)), 404);
         if ($entry->type === 'settings') {
             abort_unless(auth()->user()->can('settings.manage'), 403);
         }
         $payload = $entry->revisions()->latest('version')->firstOrFail()->payload;
+        if ($entry->type === 'location') {
+            return LocationContent::detail($entry, $payload, true);
+        }
         if (CorporateContent::supports($entry->type)) {
             return CorporateContent::detail($entry, $payload, true);
         }

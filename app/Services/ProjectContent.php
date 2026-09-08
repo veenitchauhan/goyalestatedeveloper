@@ -48,6 +48,7 @@ class ProjectContent
             $rules['progress'][] = 'in:100';
         }
         $image = fn () => Rule::exists('media', 'id')->where('is_public', true)->where('publication_status', 'published')->whereNull('archived_at')->where(fn ($q) => $q->where('mime', 'like', 'image/%'));
+        $rules['location_entry_id'] = ['nullable', 'integer', Rule::in(LocationContent::active()->where('level', 'city')->keys()->all())];
         $rules['panorama_media_id'] = ['bail', 'nullable', 'integer', $image(), function (string $attribute, mixed $value, \Closure $fail): void {
             $media = Media::find($value);
             $path = $media ? Storage::disk('local')->path($media->web_path ?: $media->original_path) : '';
