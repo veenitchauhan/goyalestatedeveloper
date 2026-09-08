@@ -16,7 +16,7 @@
         <h1>A considered start.<br>A solid foundation.</h1>
         <p class="description">The Laravel foundation for your corporate digital platform. Review each module before the next one begins.</p>
         <a class="button" href="{{ route('health') }}">Check local connection <span aria-hidden="true">↗</span></a>
-        <p><a href="{{ route('login') }}">Open administration →</a></p><p class="note">Development checkpoint only. The corporate homepage has been approved. CMS testing is next.</p>
+        <p><a href="{{ route('login') }}">Open administration →</a></p><p class="note">Development checkpoint only. The homepage visual direction is approved. Full modules are counted separately; the PDF audit identifies the remaining work.</p>
     </section>
     <section class="panel" aria-labelledby="progress-title">
         <p class="eyebrow" id="progress-title">DELIVERY PROGRESS</p>
@@ -26,7 +26,7 @@
     </section>
     <section class="roadmap" aria-labelledby="roadmap-title">
         <div class="section-heading"><h2 id="roadmap-title">The path ahead</h2><span>One module at a time</span></div>
-        <ol>@foreach(config('development.modules') as $index => $module)<li><span class="number">{{ sprintf('%02d', $index + 1) }}</span><span>{{ $module }}</span><small>{{ in_array($index + 1, config('development.completed_ids')) ? 'Complete' : ($index + 1 === config('development.current_module') ? 'In progress' : 'Upcoming') }}</small></li>@endforeach</ol>
+        <ol>@foreach(config('development.modules') as $index => $module)<li><span class="number">{{ sprintf('%02d', $index + 1) }}</span><span>{{ $module }}</span><small>{{ in_array($index + 1, config('development.completed_ids')) ? 'Complete' : (in_array($index + 1, config('development.partial_ids', [])) ? 'Partial' : ($index + 1 === config('development.current_module') ? 'In progress' : 'Upcoming')) }}</small></li>@endforeach</ol>
     </section>
 </main>
 <footer><span>{{ config('app.name') }}</span><span>{{ config('development.host') }}</span></footer>

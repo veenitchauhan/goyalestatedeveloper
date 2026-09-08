@@ -1,6 +1,8 @@
 # Delivery plan: 14 modules
 
-Status: 14 total, 2 complete (Modules 1 and 4), 12 remaining. The user approved the homepage and deferred real images to later CMS uploads. Module 3 CMS implementation is ready for testing, and the first local administrator has now been provisioned with explicit authorization. Modules 2 and 3 now await user testing. No next module has started.
+Status corrected after the 8 September PDF audit: **14 total, 1 fully complete, 13 remaining.** Module 1 is complete. Modules 2, 3 and 4 are partial. The user accepted the homepage's visual direction, not the entire Module 4 specification; the earlier count of two completed modules was inaccurate. The first administrator exists, but authentication setup remains a usability hurdle. The full traceability review is in [PDF requirements audit](PDF-REQUIREMENTS-AUDIT.md), covering all 138 sections across 94 pages.
+
+Keep the accepted appearance and defer real imagery as requested. Finish the Module 2 access/permission/audit gaps, then Module 3 CMS/settings/media, then close Module 4's outstanding controls and verification. Dedicated public pages belong to Module 5; homepage anchors do not fulfill them. The 14-module total is unchanged.
 
 Each row is a separate development and testing checkpoint. Completion requires implementation, verification and resolution of the user testing checkpoint. Stop after every module and wait for the user to test and authorize the next one. Do not change the total silently if scope changes.
 
@@ -30,6 +32,17 @@ Approved logo and real project/media assets; company facts and leadership; verif
 | Module | Implementation | User acceptance | Next module authorized |
 |---|---|---|---|
 | 1 | Complete; see MODULE-1-VERIFICATION.md | Accepted by user | Yes, Module 2 |
-| 2 | Laravel/MySQL foundation implemented; tests pass | First local administrator provisioned with explicit approval; user testing pending | User explicitly prioritized homepage correction |
-| 4 | Approved corporate homepage; real imagery deferred by user | Accepted | Yes, carry on with CMS |
-| 3 | Revision workflow, pages, reusable blocks/statistics, menus, homepage settings and private-original media library implemented and tested; local scheduler requires a running worker | Awaiting CMS testing; local administrator provisioned | No |
+| 2 | Partial: authentication foundation works; setup journey, editable roles/granular permissions and audit details incomplete | Account created with explicit approval; no module acceptance | Remediation follows the PDF audit |
+| 4 | Partial: approved visual direction; full section/media controls, footer/404 and verification incomplete | Visual appearance accepted only; real imagery deferred | CMS work was authorized; full module remains open |
+| 3 | Partial: baseline revisions/pages/media work; global settings, approval/archive, document controls and broader reuse incomplete | No module acceptance | Finish scoped gaps after Module 2 remediation |
+
+## Revised module acceptance gates
+
+Use [the section-by-section audit](PDF-REQUIREMENTS-AUDIT.md) alongside each module row, not merely the abbreviated scope column. No work is complete because its permission names or database foundations exist.
+
+- **Module 2:** A new Super Admin can understand and complete setup, return to the intended page, and use available screens. Test role/permission edits, separate action gates and readable old/new audit details without exposing secrets. Do not remove PDF-required security to avoid explaining it.
+- **Module 3:** A nondeveloper can find central settings, manage menus/statistics/documents/media, edit reusable content and move it through review/approval/publication/archive. Verify published content survives draft edits, relation/visibility checks hold, and schedules have a working operational setup.
+- **Module 4:** Keep the approved appearance, complete the specified homepage/footer/404 controls and test the listed responsive/accessibility cases. Connect references as domain modules land; record these dependencies rather than claiming their selectors already work. Obtain an explicit decision on optional storytelling elements.
+- **Modules 5–14:** Demonstrate the specified public page and corresponding administration workflow with the appropriate role. Separate missing client facts/assets from missing software. Keep future developments inactive until authorized, while proving their architecture works.
+
+Commit and push each verified change with its scope and validation. Pause for testing at every completed module; no implicit acceptance from a Git push or a passing automated suite.

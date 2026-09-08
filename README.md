@@ -6,7 +6,9 @@ Laravel 13.30.1 / PHP 8.4 / MySQL 8.4 / Blade. Composer dependencies are pinned 
 
 ## Delivery status
 
-14 modules total; 2 accepted/completed (Modules 1 and 4); 12 remaining. The homepage is approved, with real images deferred by the user. Module 3 is at its CMS testing checkpoint. The first local Super Admin has now been provisioned with explicit user approval; Module 2 still needs user testing. Pause for this checkpoint before continuing development.
+**14 modules total; 1 fully complete; 13 remaining.** The [PDF audit](docs/PDF-REQUIREMENTS-AUDIT.md) rereads all 94 pages and maps all 138 numbered sections to implementation evidence. Modules 2, 3 and 4 are partial. Earlier reports counted approval of the homepage's appearance as completion of all Module 4 work; this was inaccurate. The appearance remains approved, and actual images remain deferred.
+
+The first local Super Admin has been provisioned with explicit user approval. Its setup journey still needs clearer guidance. Complete administration/permission gaps, then CMS/settings gaps, before progressing to dedicated public business pages.
 
 Module 1 is committed as `62976e6`: architecture, vhost, checkpoint and single-line company branding. Module 2 replaces the PHP checkpoint with Laravel/Blade, adds Fortify login and two-factor authentication, 12 predefined roles, backend gates, assigned-content policies, user access management, private audit logs and identity/content migrations. Role permissions for later modules are predefined; their business interfaces are not implemented yet. No public registration or password-reset email delivery is enabled.
 
@@ -18,9 +20,9 @@ Homepage copy and section visibility/order are stored in MySQL and editable at `
 
 The architectural SVG is a labelled concept illustration. The supplied PDF contains no real project photographs, project records, verified statistics, contact numbers, credentials or jobs to populate those features. Empty project/job states are honest; phone/WhatsApp actions remain hidden until configured. Legal copy, real media, detailed business content and project filters remain for later modules. The public design has been approved; this is not production completion.
 
-The updated suite passes 41 tests / 245 assertions on both SQLite and isolated MySQL. Responsive width checks passed at 320, 390, 768, 1024, 1280, 1440 and 1920; section navigation, process expansion and contact layout were reviewed in the browser.
+The updated suite passes 45 tests / 268 assertions on both SQLite and isolated MySQL. Responsive width checks passed at 320, 390, 768, 1024, 1280, 1440 and 1920; section navigation, process expansion and contact layout were reviewed in the browser.
 
-## CMS testing checkpoint (Module 3)
+## Existing CMS foundation (Module 3 is partial)
 
 - `/admin/homepage`: grouped copy/contact/SEO controls, section visibility/order, and an approved-media hero image selector. Current illustrations remain until an image is selected and the draft is published.
 - `/admin/content`: pages, reusable text blocks, verified statistics and header/footer links. Published statistics appear on the homepage and can also be selected on pages; blocks and statistics resolve their latest published version rather than duplicating text.
@@ -32,7 +34,7 @@ Scheduled publishing is implemented and tested, but no persistent scheduler serv
 
 Testing sequence after administrator setup: save a headline draft and confirm the public homepage is unchanged; preview and publish; create a page using a reusable block/statistic; change the block once and verify reuse; upload an image, toggle watermark and compare the unchanged original; set media private and verify visitor access is denied. Uploading real images is optional at this checkpoint. Project, careers, article and campaign selectors will connect when those modules are implemented. The media library stores videos now; dedicated video presentation belongs to the relevant public content modules.
 
-The first local Super Admin was created after explicit user approval. Credentials are in ignored `storage/app/private/local-admin.json`; sign in and enroll an authenticator. No sample business records were added. Module 3 is not counted complete until this testing checkpoint is resolved.
+The first local Super Admin was created after explicit user approval. Credentials are in ignored `storage/app/private/local-admin.json`; sign in and enroll an authenticator. No sample business records were added. Module 3 requires additional implementation as detailed in the PDF audit, as well as user testing. The existing tools are not the full specified CMS.
 
 ## Local database
 
@@ -66,7 +68,7 @@ Never point automated tests at the application database. This machine's Composer
 
 ## Verification completed
 
-41 tests / 245 assertions pass on SQLite and the isolated MySQL test database. Coverage includes login/logout, rate limits, inactive accounts, two-factor enrollment/challenge/recovery, user creation and access changes, assigned-record policies, admin view rendering, bootstrap restrictions and branded routes. Live HTTP checks confirmed Laravel health output, login HTTP 200 and missing-CSRF rejection (419). Checkpoint and login were visually reviewed on desktop/mobile. Credentials and database files were checked against the staged Git contents.
+45 tests / 268 assertions pass on SQLite and the isolated MySQL test database. Coverage includes login/logout, rate limits, inactive accounts, two-factor enrollment/challenge/recovery, user creation and access changes, assigned-record policies, admin view rendering, bootstrap restrictions and branded routes. Live HTTP checks confirmed Laravel health output, login HTTP 200 and missing-CSRF rejection (419). Checkpoint and login were visually reviewed on desktop/mobile. Credentials and database files were checked against the staged Git contents.
 
 ## First administrator
 
@@ -80,7 +82,7 @@ Super Admins must confirm their password and complete authenticator enrollment b
 2. After authorized admin provisioning, sign in, confirm password and enroll two-factor authentication.
 3. Inspect Users, Roles & permissions, and Audit log. Add a test Viewer account and verify it cannot access Users, Roles or Audit log directly.
 4. Sign out/in and test authenticator or recovery-code login. Review mobile layout.
-5. Report feedback. Module 3 development was authorized after homepage approval; further modules wait for the current CMS checkpoint.
+5. Report feedback. The PDF audit identifies additional Module 2 and Module 3 implementation gaps before either module can be accepted.
 
 ## Working agreement
 
