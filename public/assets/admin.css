@@ -76,7 +76,6 @@ input,select,textarea{border-color:#cdd8dc;border-radius:6px;padding:11px 12px;f
 
 /* Consistent workspace typography, including compact navigation and forms. */
 body{font-size:15px;line-height:1.6}
-h1{font-size:clamp(26px,3vw,32px);line-height:1.25}
 .sidebar nav a,.top-menu>a,.top-menu button,button,.button,label,.cms-shell main>form[method=get]>label,.cards section p,.cards section>a,.corporate-records p,.corporate-admin-actions a,.cms-shell table,.cms-shell main>nav,.cms-shell legend{font-size:14px}
 input,select,textarea{font-size:16px}
 .eyebrow,.badge,.muted,.tag,.profile-details dt,.sidebar-bottom,.workspace-brand small,.cms-shell th,.cms-shell code{font-size:12px}
