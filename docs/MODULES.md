@@ -62,3 +62,9 @@ Verification for this checkpoint: **53 tests / 337 assertions pass on SQLite and
 ### CMS checkpoint — 8 September 2026
 
 User authorized continuing from the PDF and SQLite for development. Central settings, strict editorial approval/archive, field-level audit diffs, typed editors, reusable CTAs, PDF references, document categories and media archive/publication controls are implemented. A session-local scheduler worker is running; automatic restart after a reboot is not installed. Existing MySQL data is retained unchanged, with final migration deferred. SQLite checks: 58 tests / 419 assertions. User testing is pending; totals remain 14 / 1 / 13. Optional social export variants and domain references remain linked to future domain work; homepage-specific controls remain Module 4.
+
+### Module 5 implementation checkpoint — 8 September 2026
+
+User authorized pushing to `main` and proceeding. Corporate CMS and dedicated company/business/capability/equipment/people/journey/story pages are implemented, with typed relational facts, publication isolation, shared media/CTAs, parent visibility rules, private approval references and draft-only seed outlines. See the latest README checkpoint for routes and review steps. Project and knowledge associations remain dependent on the corresponding domain modules.
+
+Validation: 81 tests / 741 assertions on SQLite; Pint and diff checks pass. Desktop and 390px visual review plus the PDF's 13 width/overflow checks passed on the new business hub. Chrome automation became blocked again before completing the homepage recheck. User acceptance and populated-page visual review remain pending; no completion count is advanced. Total remains 14 / 1 accepted / 13 remaining.

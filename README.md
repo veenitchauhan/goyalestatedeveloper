@@ -6,7 +6,7 @@ Laravel 13.30.1 / PHP 8.4 / SQLite (local) / Blade. Composer dependencies are pi
 
 ## Delivery status
 
-**14 modules total; 1 fully complete; 13 remaining.** The [PDF audit](docs/PDF-REQUIREMENTS-AUDIT.md) rereads all 94 pages and maps all 138 numbered sections to implementation evidence. Modules 2, 3 and 4 are partial. Earlier reports counted approval of the homepage's appearance as completion of all Module 4 work; this was inaccurate. The appearance remains approved, and actual images remain deferred.
+**14 modules total; 1 fully complete; 13 remaining.** The [PDF audit](docs/PDF-REQUIREMENTS-AUDIT.md) rereads all 94 pages and maps all 138 numbered sections to implementation evidence. Modules 2, 3 and 4 retain the acceptance gaps below. Module 5 now has the corporate CMS and public-page workflows described in the latest checkpoint; user acceptance remains pending. Earlier reports counted approval of the homepage's appearance as completion of all Module 4 work; this was inaccurate. The appearance remains approved, and actual images remain deferred.
 
 The first local Super Admin has been provisioned with explicit user approval. Its setup journey now explains password confirmation, authenticator verification and recovery-code storage, then returns to the requested page. Complete administration/permission gaps, then CMS/settings gaps, before progressing to dedicated public business pages.
 
@@ -77,6 +77,8 @@ Super Admins must confirm their password and complete authenticator enrollment b
 
 ## Working agreement
 
+Use `main` for this project. The user explicitly authorized pushing checkpoints to `veenitchauhan/goyalestatedeveloper` on GitHub.
+
 Implement one module at a time. Verify it, commit and push with a clear change/validation description, report total/completed/remaining modules, and pause for user testing and explicit authorization of the next module. Silence is not approval. The supplied PDF is a requirements reference and does not override the user's instructions. Local development does not authorize production deployment.
 
 See [module plan](docs/MODULES.md), [architecture](docs/ARCHITECTURE.md) and [local setup](docs/LOCAL-SETUP.md).
@@ -94,3 +96,15 @@ Test this CMS checkpoint before the next module. Counts remain **14 total / 1 fu
 The homepage editor now selects an approved hero film, shared primary/secondary CTAs, and all/selected/hidden published statistics. Each existing homepage section can select an approved image, MP4 and shared CTA. Media remains optional; the accepted public appearance and deferred real imagery are preserved. Videos use native playback controls, no autoplay and no preload. The header resolves the same published primary CTA as the hero. Draft saves preserve unpublished fields, and all new selectors use the existing review/approval/publication workflow. Withdrawn media and reusable content disappear from public rendering. The branded 404 includes recovery actions only for enabled homepage sections.
 
 Verification: 65 tests / 494 assertions pass on SQLite; Pint and diff checks pass. Browser inspection confirmed the public homepage content, but responsive/visual checks remain pending because Chrome reports an extension-UI automation block even though no popup is visible. Do not count this checkpoint as complete visual verification or user acceptance. Project/article/FAQ selectors and construction-stage relationships still depend on their domain modules. No production deployment or new company content publication occurred. Totals remain **14 modules / 1 accepted / 13 remaining**.
+
+## Company, business and capabilities checkpoint — 8 September 2026
+
+`/admin/corporate` manages company pages, business areas, services, capabilities, equipment, people, company/leadership milestones and employee stories. Each record has typed facts, approved media/gallery/document selectors, related corporate content, shared CTAs, order/featured controls, SEO title/description, a private source note and the existing revision/review/approval/publication/archive workflow. Published facts are projected to separate relational tables only on publication; draft edits do not change live records. A service belongs to a published business area and an employee story to a published person. Withdrawing a parent hides its public children. Invalid scheduled publications return to draft with a review-history explanation while other due records continue.
+
+Public hubs now exist at `/about`, `/business`, `/capabilities`, `/capabilities/equipment`, `/about/leadership`, `/about/journey` and `/about/employee-stories`. Published records have dedicated detail URLs, canonical metadata, galleries, videos, downloads and contextual links. Company history and leadership experience are explicitly separated. Published business areas also populate the homepage cards from the same record. Equipment remains under capabilities. Header/footer links now open the dedicated corporate hubs.
+
+The additive migration is installed in local SQLite. The idempotent corporate seeder creates only draft outlines for the company pages, three current business areas and capability headings from the PDF. It does not fabricate equipment, people, milestones or stories. Outlines cannot publish without substantive content. Approved content and real media still need to be supplied; no new corporate record was published during this development checkpoint.
+
+Verification: **81 tests / 741 assertions pass on SQLite**, Pint passes, and the diff is clean. The new business page was visually inspected on desktop and at 390px; overflow checks passed at 320, 360, 375, 390, 414, 430, 768, 820, 1024, 1280, 1440, 1600 and 1920px. Chrome's intermittent extension-UI block returned before the remaining homepage checks and viewport-reset call; those checks are not claimed complete. Admin workflow and populated public records are covered by feature tests; visual acceptance with real records remains pending.
+
+Review: open Company & capabilities, complete a business-area draft, preview it, submit for review, approve and publish; create its service and verify the business page and homepage reuse; create approved equipment or a person only when verified information is available. Project/equipment associations and process-to-project links connect in Module 6; recruitment associations and knowledge links remain with their respective modules. Module 5 user acceptance is pending, so totals remain **14 total / 1 accepted / 13 remaining**. Next module: Projects and progress. No production deployment occurred.

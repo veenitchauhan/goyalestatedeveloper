@@ -33,10 +33,12 @@
         @break
     @case('business')
         <div class="section-heading"><div><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2></div><p>{{ $section['text'] }}</p></div>
-        <div class="business-grid">@foreach($section['items'] as $item)
+        @php($publishedBusiness=\App\Services\CorporateContent::items('business_unit'))
+        @php($businessCards=$publishedBusiness->isNotEmpty() ? $publishedBusiness->map(fn($item)=>['title'=>$item['title'],'text'=>$item['summary'],'detail'=>'','url'=>$item['url']]) : collect($section['items']))
+        <div class="business-grid">@foreach($businessCards as $item)
             <article class="business-card"><div class="card-top"><span>{{ sprintf('%02d',$loop->iteration) }}</span><span aria-hidden="true">↗</span></div>
             <svg class="service-drawing" viewBox="0 0 300 170" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.2">@if($loop->index===0)<path d="M70 145V35l85-25 75 30v105M70 35l75 32 85-27M145 67v95M85 42v102m15-97v99m15-92v93m15-86v88M70 70l75 31 85-28M70 100l75 31 85-28M155 65v93m20-99v95m20-101v93m20-99v95"/>@elseif($loop->index===1)<path d="M20 135l125-55 135 45M25 150l120-54 130 42M80 118V35m135 83V35M80 35q68 92 135 0M80 60q68 85 135 0M80 35v115m135-115v112M105 75v48m25-31v20m25-15v15m25-22v27m25-56v70"/>@else<path d="M30 135l105-55 140 38-106 48ZM75 113V57l80-36 80 25v89M75 57l83 25 77-36M158 82v80M100 69v56m30-48v64m53-71v80m28-94v83"/><path d="M42 35h30m-15-15v30m190 96h30m-15-15v30"/>@endif</svg>
-            <h3>{{ $item['title'] }}</h3><p>{{ $item['text'] }}</p><div class="card-detail">{{ $item['detail'] }}</div></article>
+            <h3>@if($item['url']??null)<a href="{{ $item['url'] }}">{{ $item['title'] }} ↗</a>@else{{ $item['title'] }}@endif</h3><p>{{ $item['text'] }}</p>@if($item['detail'])<div class="card-detail">{{ $item['detail'] }}</div>@endif</article>
         @endforeach</div>
         @break
     @case('capabilities')

@@ -77,6 +77,9 @@ class ContentPublisher
 
     public function apply(ContentEntry $entry, ContentRevision $revision): void
     {
+        if (CorporateContent::supports($entry->type)) {
+            app(CorporateContent::class)->apply($entry, $revision);
+        }
         if ($entry->type === 'settings') {
             SiteSetting::where('key', 'global')->firstOrFail()->update(['data' => $revision->payload]);
         }
@@ -96,7 +99,15 @@ class ContentPublisher
                     return 0;
                 }
                 $revision = $entry->revisions()->findOrFail($entry->scheduled_revision_id);
-                $this->apply($entry, $revision);
+                try {
+                    $this->apply($entry, $revision);
+                } catch (ValidationException $exception) {
+                    $entry->update(['status' => 'draft', 'approver_id' => null, 'scheduled_at' => null, 'scheduled_revision_id' => null]);
+                    DB::table('approval_events')->insert(['content_revision_id' => $revision->id, 'action' => 'publication_blocked', 'note' => implode(' ', $exception->validator->errors()->all()), 'created_at' => now(), 'updated_at' => now()]);
+                    app(AuditRecorder::class)->record('content.publication_blocked', $entry);
+
+                    return 0;
+                }
                 DB::table('approval_events')->insert(['content_revision_id' => $revision->id, 'action' => 'scheduled_publish', 'created_at' => now(), 'updated_at' => now()]);
                 app(AuditRecorder::class)->record('content.scheduled_publish', $entry);
 

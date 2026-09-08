@@ -9,6 +9,7 @@ use App\Models\Homepage;
 use App\Models\Media;
 use App\Models\SiteSetting;
 use App\Services\ContentPublisher;
+use App\Services\CorporateContent;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -76,7 +77,7 @@ class ContentController extends Controller
 
     public function transition(Request $request, ContentEntry $entry, ContentPublisher $publisher): RedirectResponse
     {
-        abort_unless(in_array($entry->type, ['homepage', 'settings', 'page', 'block', 'statistic', 'menu', 'cta']), 404);
+        abort_unless((in_array($entry->type, ['homepage', 'settings', 'page', 'block', 'statistic', 'menu', 'cta']) || CorporateContent::supports($entry->type)), 404);
         if ($entry->type === 'settings') {
             abort_unless($request->user()->can('settings.manage'), 403);
         }
@@ -91,7 +92,7 @@ class ContentController extends Controller
 
     public function restore(Request $request, ContentEntry $entry, ContentPublisher $publisher): RedirectResponse
     {
-        abort_unless(in_array($entry->type, ['homepage', 'settings', 'page', 'block', 'statistic', 'menu', 'cta']), 404);
+        abort_unless((in_array($entry->type, ['homepage', 'settings', 'page', 'block', 'statistic', 'menu', 'cta']) || CorporateContent::supports($entry->type)), 404);
         if ($entry->type === 'settings') {
             abort_unless($request->user()->can('settings.manage'), 403);
         }
@@ -104,11 +105,14 @@ class ContentController extends Controller
 
     public function preview(ContentEntry $entry): View
     {
-        abort_unless(in_array($entry->type, ['homepage', 'settings', 'page', 'block', 'statistic', 'menu', 'cta']), 404);
+        abort_unless((in_array($entry->type, ['homepage', 'settings', 'page', 'block', 'statistic', 'menu', 'cta']) || CorporateContent::supports($entry->type)), 404);
         if ($entry->type === 'settings') {
             abort_unless(auth()->user()->can('settings.manage'), 403);
         }
         $payload = $entry->revisions()->latest('version')->firstOrFail()->payload;
+        if (CorporateContent::supports($entry->type)) {
+            return CorporateContent::detail($entry, $payload, true);
+        }
         $content = Homepage::main()->content;
         if ($entry->type === 'homepage') {
             $content = $payload;

@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\Admin\ContentController;
+use App\Http\Controllers\Admin\CorporateContentController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\CorporateController;
 use App\Http\Controllers\HomepageController;
 use App\Models\AuditLog;
 use App\Models\ContentEntry;
@@ -15,6 +17,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomepageController::class, 'index'])->name('home');
+foreach (['about' => 'about', 'business' => 'business', 'capabilities' => 'capabilities', 'capabilities/equipment' => 'equipment', 'about/leadership' => 'leadership', 'about/journey' => 'journey', 'about/employee-stories' => 'stories'] as $path => $group) {
+    Route::get('/'.$path, [CorporateController::class, 'index'])->defaults('group', $group)->name('corporate.'.$group.'.index');
+}
+foreach (['about/people/{slug}' => 'team_member', 'about/milestones/{slug}' => 'company_milestone', 'about/employee-stories/{slug}' => 'employee_story', 'business/services/{slug}' => 'service', 'capabilities/equipment/{slug}' => 'equipment', 'about/{slug}' => 'company_page', 'business/{slug}' => 'business_unit', 'capabilities/{slug}' => 'capability'] as $path => $type) {
+    Route::get('/'.$path, [CorporateController::class, 'show'])->defaults('type', $type)->name(config('corporate.'.$type.'.route'));
+}
 Route::post('/enquiries', [HomepageController::class, 'store'])->middleware('throttle:5,1')->name('enquiries.store');
 Route::get('/health', function (Request $request) {
     abort_if(app()->isProduction(), 404);
@@ -47,6 +55,11 @@ Route::middleware(['auth', 'auth.session'])->prefix('admin')->name('admin.')->gr
         Route::view('/development', 'checkpoint')->middleware('can:settings.manage')->name('development');
         Route::get('/settings', [SettingController::class, 'edit'])->middleware('can:settings.manage')->name('settings.edit');
         Route::put('/settings', [SettingController::class, 'update'])->middleware('can:settings.manage')->name('settings.update');
+        Route::get('/corporate', [CorporateContentController::class, 'index'])->middleware('can:pages.view')->name('corporate.index');
+        Route::get('/corporate/create', [CorporateContentController::class, 'create'])->middleware('can:pages.create')->name('corporate.create');
+        Route::post('/corporate', [CorporateContentController::class, 'store'])->middleware('can:pages.create')->name('corporate.store');
+        Route::get('/corporate/{entry}/edit', [CorporateContentController::class, 'edit'])->middleware('can:pages.edit')->name('corporate.edit');
+        Route::put('/corporate/{entry}', [CorporateContentController::class, 'update'])->middleware('can:pages.edit')->name('corporate.update');
         Route::get('/homepage', [App\Http\Controllers\Admin\HomepageController::class, 'edit'])->middleware('can:pages.edit')->name('homepage.edit');
         Route::put('/homepage', [App\Http\Controllers\Admin\HomepageController::class, 'update'])->middleware('can:pages.edit')->name('homepage.update');
         Route::get('/content', [ContentController::class, 'index'])->middleware('can:pages.view')->name('content.index');
