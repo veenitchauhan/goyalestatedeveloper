@@ -1,6 +1,6 @@
 # Delivery plan: 14 modules
 
-Current sequence: **12 of 14 modules reached; 2 main modules remain to build** (Future Developments and Final Validation/Handover), alongside earlier review/integration gaps. At the user’s request, always include both the reached/total and remaining/total counts in progress reports. Sequence progress is not full acceptance: Module 1 is accepted, Modules 2–12 have partial/checkpoint implementations, and Modules 13–14 are next. Historical audit counts below record acceptance rather than sequence progress.
+Current sequence: **13/14 checkpoints reached; 1/14 remains open for final acceptance and launch readiness.** Module 14's local build, automated tests, public viewport checks and isolated backup restoration have passed. Remaining implementation/integration and approved-content requirements are listed below. Checkpoint sequence is not full PDF acceptance; the accepted-module count remains unchanged.
 
 Status corrected after the 8 September PDF audit: **14 total, 1 fully complete, 13 remaining.** Module 1 is complete. Modules 2, 3 and 4 are partial. The user accepted the homepage's visual direction, not the entire Module 4 specification; the earlier count of two completed modules was inaccurate. The first administrator exists, but authentication setup remains a usability hurdle. The full traceability review is in [PDF requirements audit](PDF-REQUIREMENTS-AUDIT.md), covering all 138 sections across 94 pages.
 
@@ -178,3 +178,41 @@ Module 14 is in progress. Public hub checks now verify rendered headings and exi
 The original PDF audit is clearly marked historical and has a current implementation/gap update. Vite build verification remains open: node_modules and a JavaScript lockfile are absent. Current pages serve committed public assets. No dependency changes were made. Backup restoration, broader responsive/accessibility/performance review, provider-specific integrations and production operations remain unfinished; approved company/legal content and assets remain required inputs. No production-readiness or full PDF-completion claim is made.
 
 Progress: **13/14 checkpoints reached; 1/14 remains open**, with Module 14 underway. Accepted count remains unchanged.
+
+
+## Final validation evidence and operational handover — 8 September 2026
+
+- Full isolated SQLite suite: **147 tests / 1,594 assertions passed**. Blade templates compile; Composer validation and diff checks pass.
+- Public browser matrix: **70 route/viewport checks passed**, covering fourteen public/login pages at 320, 390, 768, 1024 and 1440 pixels. No horizontal overflow or unexpected HTTP status was observed. Contact-page mobile and desktop screenshots were visually reviewed. This is not a populated-content or complete CMS accessibility audit.
+- Declared frontend dependencies installed with pnpm 11.19.0 and committed lockfile. Production build passes on Node 24.19.0. Removed unused Bunny font fetching from the scaffold; the existing rendered site uses its existing system fonts and committed public assets. Both PHP and locked JS dependency advisory checks reported no advisories at verification time.
+- Private snapshot at `storage/app/private/final-backup-20260908-141142` contains SQL, environment and storage archive with restrictive permissions. Restoration into a fresh MySQL 8.4 instance, accessible only through a temporary socket, matched **38 tables / 224 rows** and **6 storage files**, plus the environment checksum. mysqlcheck passed. The temporary server was shut down. The working database was not overwritten. Evidence/scripts remain in ignored `tmp/final-validation`; neither credentials nor customer records are committed. This local snapshot is not an off-site backup service.
+
+### Repeatable build and verification
+
+Use PHP 8.4, Composer, Node 24 and pnpm 11.19.0. On an existing installation, use `composer install`, `pnpm install --frozen-lockfile`, `pnpm run build`, and `php artisan test --compact`. Tests use isolated SQLite. Do not use the fresh-install setup command against an existing environment or regenerate an existing APP_KEY. Public pages currently reference versioned-in-Git `public/assets` files rather than the scaffold Vite bundle.
+
+### Production operations still to configure on the selected host
+
+Use the web root `public/`, HTTPS, production environment, debug disabled and secure session cookies. Retain the existing application key and protect the environment, private uploads and database credentials. Apply migrations only after a verified backup. Local diagnostic routes must stay unavailable in production. Two-factor enforcement is mandatory outside local development.
+
+Run Laravel's scheduler every minute (`php artisan schedule:run`) through the host's scheduler. The registered scheduled task publishes approved due content. Supervise `php artisan queue:work --tries=3 --timeout=60`, restart workers after deployment, and review `php artisan queue:failed` and application logs. These commands are operational instructions; no persistent production services were installed or claimed. Configure real mail transport before enabling notifications. Monitor `/up`, application errors, queue failures, disk usage and backup age through the selected hosting provider.
+
+For backups, use a private MySQL client option file or a secret manager; never put a password in command history. Capture a consistent `mysqldump --single-transaction --no-tablespaces --set-gtid-purged=OFF` plus `storage/app` and the existing environment/key. Coordinate file writes during production snapshots. Encrypt and retain backups off-site according to the approved retention policy. Rehearse restoration into an isolated database and file directory, compare records/checksums, then test the restored application before any cutover. Never test restoration by overwriting the active database.
+
+### Requirements that prevent full PDF/launch completion
+
+1. Approved company/contact/legal content, real assets and populated business records; publishing and acceptance by the owner.
+2. Hosting/domain and live email/WhatsApp/call provider configuration, provider-specific adapters and end-to-end delivery verification; AI website/property assistants are not implemented by the normalized source/lead adapters.
+3. Earlier software scope gaps: document-rich vendor/land intake, editorial calendar, social derivatives, advanced structured-data/content checks and analytics retention. These are not resolved merely by receiving credentials.
+4. Populated CMS/public responsive and accessibility acceptance, production performance/monitoring, supervised services and ongoing off-site backups on the chosen host.
+
+**13/14 checkpoints reached; final acceptance remains 1/14 open.** Local validation evidence is complete for the boundaries above; the full PDF is not declared complete and production deployment has not been performed.
+
+
+### Confirmed hosting target and owner-managed inputs
+
+The owner confirmed `goyalestatedeveloper.com` on Hostinger and will manage provider configuration and approved company/contact/legal content. Production `APP_URL` must be `https://goyalestatedeveloper.com`; local configuration remains unchanged. The exact Hostinger plan and deployment access have not been supplied. Verify PHP 8.4 CLI/web support, Composer platform requirements, MySQL, private storage and cron/worker support on that plan before uploading. Deploy this repository, not Hostinger's separate Laravel auto-installer skeleton.
+
+For shared hosting without a persistent worker supervisor, assess a bounded scheduled queue worker (`queue:work --stop-when-empty --max-time=50 --tries=3 --timeout=45`) with overlap protection on the selected host; use a supervised worker on a VPS. Do not assume VPS administration commands are available on shared hosting. Keep the Laravel application and private storage outside public_html and expose only public assets/front controller using the host-supported document-root setup.
+
+Hostinger references checked: https://www.hostinger.com/support/which-programming-languages-and-frameworks-are-supported-at-hostinger/ and https://www.hostinger.com/support/which-server-capabilities-are-supported-at-hostinger/. Plan-level verification and actual deployment remain pending access. Owner-managed content/provider inputs are deferred by the owner, not fabricated or silently configured. The software gaps listed above remain separate from that deferral.

@@ -234,3 +234,8 @@ The historical matrix above must not be used as a current missing-feature list. 
 Launch remains unapproved. Approved company/legal content and assets are input dependencies. Provider integrations, backup/restore rehearsal, supervised scheduler/queue operation and full responsive review are unfinished work, not merely content dependencies. The project has no installed Vite dependencies or JS lockfile; a reproducible Vite build was not verified. Current rendered pages use committed public/assets files, whose references are checked by the public-hub test.
 
 Progress: **13/14 checkpoints reached; Module 14 is in progress (1/14 remains)**. The accepted-module count remains 1; checkpoint sequence does not measure full PDF completion.
+
+
+### Final local verification follow-up
+
+The earlier missing-build and restore-verification limitations are now resolved locally: the locked pnpm production build succeeds, PHP/JS advisory checks report no known advisories, 147 tests pass, 70 public viewport checks pass, and an isolated MySQL restore matched 38 tables/224 rows plus six storage files and the environment checksum. See the final operational handover in MODULES.md. Live integrations, approved content, remaining software scope and production operations are still open; these checks do not establish full PDF completion.

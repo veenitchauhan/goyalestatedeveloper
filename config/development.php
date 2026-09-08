@@ -7,7 +7,7 @@ return [
     'completed_ids' => [1],
     'partial_ids' => [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
     'current_module' => 14,
-    'status' => 'Final validation in progress; production readiness and full acceptance remain pending',
+    'status' => 'Local validation passed; remaining PDF scope, production readiness and acceptance are pending',
     'modules' => [
         'Architecture and local foundation',
         'Application, authentication and permissions',
