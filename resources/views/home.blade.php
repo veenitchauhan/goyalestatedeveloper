@@ -51,7 +51,8 @@
     @case('projects')
         <div class="section-heading"><div><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2></div><p>{{ $section['text'] }}</p></div>
         @php($featuredProjects=\App\Services\ProjectContent::items()->where('featured',true)->take(6))
-        @if($featuredProjects->isNotEmpty())<div class="project-cards">@foreach($featuredProjects as $project)<article><p class="eyebrow dark">{{ $project['city'] }} · {{ $project['status'] }}</p><h3>{{ $project['title'] }}</h3><p>{{ $project['stage'] }} — {{ $project['progress'] }}% complete</p><a class="text-link dark-link" href="{{ $project['url'] }}">Explore project ↗</a></article>@endforeach</div><a class="text-link dark-link" href="{{ route('projects.index') }}">View all projects ↗</a>
+        @if($featuredProjects->isNotEmpty())<div class="project-cards">@foreach($featuredProjects as $project)<article>@include('partials.card-image', ['card' => $project])
+<p class="eyebrow dark">{{ $project['city'] }} · {{ $project['status'] }}</p><h3>{{ $project['title'] }}</h3><p>{{ $project['stage'] }} — {{ $project['progress'] }}% complete</p><a class="text-link dark-link" href="{{ $project['url'] }}">Explore project ↗</a></article>@endforeach</div><a class="text-link dark-link" href="{{ route('projects.index') }}">View all projects ↗</a>
         @else
         @php($projectImage=$sectionAssets->get($section['media_id']??null))
         <div class="project-showcase">

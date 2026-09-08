@@ -6,7 +6,8 @@
 @if(isset($payload['latitude'],$payload['longitude']))<section class="corporate-group"><h2>On the map</h2><p>Latitude {{ $payload['latitude'] }} · longitude {{ $payload['longitude'] }}</p><a class="text-link dark-link" href="https://www.openstreetmap.org/?mlat={{ (float)$payload['latitude'] }}&amp;mlon={{ (float)$payload['longitude'] }}#map=12/{{ (float)$payload['latitude'] }}/{{ (float)$payload['longitude'] }}" target="_blank" rel="noopener noreferrer">Open detailed map ↗</a></section>@endif
 @if($children->isNotEmpty())<section class="corporate-group"><h2>Explore this area</h2>@foreach($children as $child)<p><a href="{{ $child['url'] }}">{{ $child['title'] }} ↗</a></p>@endforeach</section>@endif
 @if($services->isNotEmpty())<section class="corporate-group"><h2>Relevant services</h2>@include('partials.corporate-cards',['items'=>$services])</section>@endif
-@if($projects->isNotEmpty())<section class="corporate-group"><h2>Projects in this area</h2><div class="project-cards">@foreach($projects as $project)<article><h3><a href="{{ $project['url'] }}">{{ $project['title'] }}</a></h3><p>{{ $project['stage'] }} · {{ $project['progress'] }}% complete</p></article>@endforeach</div></section>@endif
+@if($projects->isNotEmpty())<section class="corporate-group"><h2>Projects in this area</h2><div class="project-cards">@foreach($projects as $project)<article>@include('partials.card-image', ['card' => $project])
+<h3><a href="{{ $project['url'] }}">{{ $project['title'] }}</a></h3><p>{{ $project['stage'] }} · {{ $project['progress'] }}% complete</p></article>@endforeach</div></section>@endif
 <aside class="corporate-callout"><h2>Discuss your project.</h2><a class="button ink" href="{{ route('contact',['cta'=>'locations-show']) }}">Start a conversation ↗</a></aside></div></article>
 @include('partials.related-knowledge')
 @endsection

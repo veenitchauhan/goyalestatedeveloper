@@ -53,3 +53,8 @@
 .public-page .project-cards article p{font-size:16px}
 .public-page .project-cards article .eyebrow{font-size:12px}
 .public-page .project-filters label,.public-page .project-filters>a,.public-page .contact-form label,.stage-control label,.gallery-control label,.career-application label{font-size:14px}
+
+.listing-card-image{display:block;margin-bottom:24px;border-radius:8px;overflow:hidden;background:#e3e8e5}
+.listing-card-image img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;transition:transform .2s ease}
+.listing-card-image:hover img{transform:scale(1.025)}
+@media(prefers-reduced-motion:reduce){.listing-card-image img{transition:none}}
