@@ -30,8 +30,8 @@ class CreateAdmin extends Command
         }
         $data = $this->option('local-bootstrap')
             ? ['name' => 'Local Administrator', 'email' => 'admin@goyalestatedeveloper.test', 'password' => bin2hex(random_bytes(24)).'Aa1']
-            : ['name' => $this->ask('Full name'), 'email' => strtolower((string) $this->ask('Email')), 'password' => $this->secret('Password (12+ characters with letters and numbers)')];
-        $validator = Validator::make($data, ['name' => 'required|string|max:150', 'email' => 'required|email|unique:users,email', 'password' => ['required', Password::min(12)->letters()->numbers()]]);
+            : ['name' => $this->ask('Full name'), 'email' => strtolower((string) $this->ask('Email')), 'password' => $this->secret('Password (8+ characters with letters and numbers)')];
+        $validator = Validator::make($data, ['name' => 'required|string|max:150', 'email' => 'required|email|unique:users,email', 'password' => ['required', Password::min(8)->letters()->numbers()]]);
         if ($validator->fails()) {
             foreach ($validator->errors()->all() as $error) {
                 $this->error($error);

@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Models\User;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class IdentityAccessTest extends TestCase
@@ -48,12 +49,12 @@ class IdentityAccessTest extends TestCase
     public function test_super_admin_can_create_user_and_audit_excludes_secrets(): void
     {
         $admin = $this->userWithRole('super-admin');
-        $this->actingAs($admin)->withSession(['auth.password_confirmed_at' => time()])->post('/admin/users', ['name' => 'Editor', 'email' => 'editor@example.test', 'password' => 'ExamplePassword123', 'password_confirmation' => 'ExamplePassword123', 'role_id' => Role::where('name', 'project-editor')->value('id')])->assertSessionHasNoErrors()->assertRedirect();
+        $this->actingAs($admin)->withSession(['auth.password_confirmed_at' => time()])->post('/admin/users', ['name' => 'Editor', 'email' => 'editor@example.test', 'password' => 'Test1234', 'password_confirmation' => 'Test1234', 'role_id' => Role::where('name', 'project-editor')->value('id')])->assertSessionHasNoErrors()->assertRedirect();
         $user = User::where('email', 'editor@example.test')->firstOrFail();
         $this->assertTrue($user->hasRole('project-editor'));
         $audit = AuditLog::where('action', 'user.created')->firstOrFail();
         $this->assertSame($admin->id, $audit->actor_id);
-        $this->assertStringNotContainsString('ExamplePassword123', $audit->toJson());
+        $this->assertStringNotContainsString('Test1234', $audit->toJson());
     }
 
     public function test_access_change_is_audited_and_self_lockout_is_prevented(): void
@@ -111,7 +112,7 @@ class IdentityAccessTest extends TestCase
         $this->artisan('app:create-admin')
             ->expectsQuestion('Full name', 'Test Administrator')
             ->expectsQuestion('Email', 'admin@example.test')
-            ->expectsQuestion('Password (12+ characters with letters and numbers)', 'LongTestPassword123')
+            ->expectsQuestion('Password (8+ characters with letters and numbers)', 'Test1234')
             ->assertSuccessful();
         $admin = User::where('email', 'admin@example.test')->firstOrFail();
         $this->assertTrue($admin->hasRole('super-admin'));
@@ -123,5 +124,26 @@ class IdentityAccessTest extends TestCase
     {
         $this->artisan('app:create-admin', ['--local-bootstrap' => true])->assertFailed();
         $this->assertDatabaseCount('users', 0);
+    }
+
+    public function test_password_updates_accept_eight_characters_and_reject_seven(): void
+    {
+        $user = $this->userWithRole('viewer');
+        $this->actingAs($user);
+        $this->put('/user/password', ['current_password' => 'password', 'password' => 'Test123', 'password_confirmation' => 'Test123'])
+            ->assertSessionHasErrors('password', null, 'updatePassword');
+        $this->assertTrue(Hash::check('password', $user->fresh()->password));
+        $this->put('/user/password', ['current_password' => 'password', 'password' => 'Test1234', 'password_confirmation' => 'Test1234'])
+            ->assertSessionHasNoErrors();
+        $this->assertTrue(Hash::check('Test1234', $user->fresh()->password));
+    }
+
+    public function test_user_creation_rejects_seven_character_passwords(): void
+    {
+        $admin = $this->userWithRole('super-admin');
+        $this->actingAs($admin)->withSession(['auth.password_confirmed_at' => time()])
+            ->post('/admin/users', ['name' => 'Editor', 'email' => 'short@example.test', 'password' => 'Test123', 'password_confirmation' => 'Test123', 'role_id' => Role::where('name', 'viewer')->value('id')])
+            ->assertSessionHasErrors('password');
+        $this->assertDatabaseMissing('users', ['email' => 'short@example.test']);
     }
 }
