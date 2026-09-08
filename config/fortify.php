@@ -75,6 +75,8 @@ return [
 
     'home' => '/admin',
 
+    'require_admin_two_factor' => env('ADMIN_REQUIRE_TWO_FACTOR', true),
+
     /*
     |--------------------------------------------------------------------------
     | Fortify Routes Prefix / Subdomain

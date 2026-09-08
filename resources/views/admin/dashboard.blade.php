@@ -8,5 +8,5 @@
 @can('users.manage')<section><h2>Users</h2><p>Create users, assign roles and manage account access.</p><a href="{{ route('admin.users.index') }}">Manage users →</a></section>@endcan
 @can('roles.view')<section><h2>Roles & permissions</h2><p>Review access boundaries and manage permitted actions.</p><a href="{{ route('admin.roles') }}">View roles →</a></section>@endcan
 @can('audit.view')<section><h2>Activity history</h2><p>Review who changed access, content and publication settings.</p><a href="{{ route('admin.audit') }}">View activity →</a></section>@endcan
-<section><h2>Account security</h2><p>{{ auth()->user()->two_factor_confirmed_at ? 'Your authenticator is connected.' : 'An authenticator has not been connected.' }}</p><a href="{{ route('admin.security') }}">Manage security →</a></section></div>
+@if(\App\Http\Middleware\RequireTwoFactor::enforced())<section><h2>Account security</h2><p>{{ auth()->user()->two_factor_confirmed_at ? 'Your authenticator is connected.' : 'An authenticator has not been connected.' }}</p><a href="{{ route('admin.security') }}">Manage security →</a></section>@endif</div>
 <p>Dedicated projects, recruitment, Knowledge Bank, CRM and analytics workspaces are still under development. The current tools above are ready to test.</p>@endsection

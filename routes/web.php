@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\CorporateController;
 use App\Http\Controllers\HomepageController;
+use App\Http\Middleware\RequireTwoFactor;
 use App\Models\AuditLog;
 use App\Models\ContentEntry;
 use App\Models\Enquiry;
@@ -32,6 +33,12 @@ Route::get('/health', function (Request $request) {
 })->name('health');
 Route::middleware(['auth', 'auth.session'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/security', function (Request $request) {
+        if (! RequireTwoFactor::enforced()) {
+            $request->session()->forget(['admin.setup_destination', 'admin.setup_recovery_pending']);
+
+            return redirect()->route('admin.dashboard');
+        }
+
         $recent = time() - $request->session()->get('auth.password_confirmed_at', 0) < config('auth.password_timeout', 10800);
         if (! $recent) {
             $request->session()->put('url.intended', route('admin.security'));
