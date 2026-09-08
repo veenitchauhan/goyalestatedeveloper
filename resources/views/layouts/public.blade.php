@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ asset('assets/website.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/projects.css') }}">
 </head>
-<body>
+<body class="{{ request()->routeIs('home') ? 'public-home' : 'public-page' }}">
 @php($headerCta=\App\Models\ContentEntry::publishedItems('cta')->firstWhere('id',$content['hero']['primary_cta_id']??null))
 @php($menuItems=\App\Models\ContentEntry::publishedItems('menu'))
 @if($preview??false)<aside class="preview-notice">Private draft preview · This version is not necessarily published. Resize your browser to review mobile layouts.</aside>@endif
@@ -20,18 +20,18 @@
         <a class="company-name" href="{{ route('home') }}">@if($logo=\App\Models\SiteSetting::image($siteSettings['branding']['logo_id']))<img class="company-logo" src="{{ route('media.show',$logo) }}" alt="">@endif{{ $siteSettings['company']['name'] }}</a>
         <nav class="desktop-nav" aria-label="Main navigation"><a href="{{ route('search') }}">Search</a>
             <a href="{{ route('home') }}" @if(request()->routeIs('home')) aria-current="page" @endif>Home</a>
-            @foreach($sections as $section) @if($section['nav'])<a href="{{ in_array($section['id'],['about','business','capabilities']) ? route('corporate.'.$section['id'].'.index') : ((in_array($section['id'],['careers','insights','contact']) ? route(match($section['id']) { 'careers'=>'careers.index', 'insights'=>'knowledge.article.index', default=>'contact' }) : ($section['id']==='projects' ? route('projects.index') : (request()->routeIs('home') ? '' : route('home')).'#'.$section['id']))) }}">{{ $section['nav'] }}</a>@endif @endforeach
+            @include('partials.public-navigation')
             @foreach($menuItems->whereIn('placement',['header','both']) as $item)<a href="{{ $item['url'] }}">{{ $item['title'] }}</a>@endforeach
         </nav>
         @if($headerCta || $sections->contains('id','contact'))<a class="header-cta" href="{{ $headerCta['url'] ?? route('contact') }}">{{ $headerCta['title'] ?? $content['hero']['primary_cta'] }} ↗</a>@endif
-        <details class="mobile-nav"><summary>Menu <span aria-hidden="true">＋</span></summary><nav aria-label="Mobile navigation"><a href="{{ route('search') }}">Search</a><a href="{{ route('home') }}">Home</a>@foreach($sections as $section) @if($section['nav'])<a href="{{ in_array($section['id'],['about','business','capabilities']) ? route('corporate.'.$section['id'].'.index') : ((in_array($section['id'],['careers','insights','contact']) ? route(match($section['id']) { 'careers'=>'careers.index', 'insights'=>'knowledge.article.index', default=>'contact' }) : ($section['id']==='projects' ? route('projects.index') : (request()->routeIs('home') ? '' : route('home')).'#'.$section['id']))) }}">{{ $section['nav'] }}</a>@endif @endforeach @foreach($menuItems->whereIn('placement',['header','both']) as $item)<a href="{{ $item['url'] }}">{{ $item['title'] }}</a>@endforeach</nav></details>
+        <details class="mobile-nav"><summary>Menu <span aria-hidden="true">＋</span></summary><nav aria-label="Mobile navigation"><a href="{{ route('search') }}">Search</a><a href="{{ route('home') }}">Home</a>@include('partials.public-navigation') @foreach($menuItems->whereIn('placement',['header','both']) as $item)<a href="{{ $item['url'] }}">{{ $item['title'] }}</a>@endforeach</nav></details>
     </div>
 </header>
 <main id="main">@if(isset($entry,$payload['title']))<nav class="corporate-subnav" aria-label="Breadcrumb"><a href="{{ route('home') }}">Home</a><span aria-current="page">{{ $payload['title'] }}</span></nav>@endif
 @yield('content')</main>
 <footer class="site-footer">
     <div class="footer-top"><a class="company-name" href="{{ route('home') }}">@if($logo=\App\Models\SiteSetting::image($siteSettings['branding']['logo_id']))<img class="company-logo" src="{{ route('media.show',$logo) }}" alt="">@endif{{ $siteSettings['company']['name'] }}</a><p>{{ $content['hero']['eyebrow'] }}</p></div>
-    <nav class="footer-nav" aria-label="Footer navigation">@if(\App\Services\DevelopmentContent::enabled())<a href="{{ route('developments.index') }}">Developments</a>@endif<a href="{{ route('search') }}">Search</a><a href="{{ route('knowledge.knowledge.index') }}">Knowledge Bank</a><a href="{{ route('knowledge.faq.index') }}">FAQs</a>@foreach($sections as $section) @if($section['nav'])<a href="{{ in_array($section['id'],['about','business','capabilities']) ? route('corporate.'.$section['id'].'.index') : ((in_array($section['id'],['careers','insights','contact']) ? route(match($section['id']) { 'careers'=>'careers.index', 'insights'=>'knowledge.article.index', default=>'contact' }) : ($section['id']==='projects' ? route('projects.index') : (request()->routeIs('home') ? '' : route('home')).'#'.$section['id']))) }}">{{ $section['nav'] }}</a>@endif @endforeach @foreach($menuItems->whereIn('placement',['footer','both']) as $item)<a href="{{ $item['url'] }}">{{ $item['title'] }}</a>@endforeach</nav>
+    <nav class="footer-nav" aria-label="Footer navigation">@if(\App\Services\DevelopmentContent::enabled())<a href="{{ route('developments.index') }}">Developments</a>@endif<a href="{{ route('search') }}">Search</a><a href="{{ route('knowledge.knowledge.index') }}">Knowledge Bank</a><a href="{{ route('knowledge.faq.index') }}">FAQs</a>@include('partials.public-navigation') @foreach($menuItems->whereIn('placement',['footer','both']) as $item)<a href="{{ $item['url'] }}">{{ $item['title'] }}</a>@endforeach</nav>
     <div class="footer-settings">
     @if($content['contact']['address'])<p>{{ $content['contact']['address'] }}</p>@endif
     @if($content['contact']['phone'])<a href="tel:{{ preg_replace('/[^+0-9]/','',$content['contact']['phone']) }}">{{ $content['contact']['phone'] }}</a>@endif

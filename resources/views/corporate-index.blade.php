@@ -13,7 +13,7 @@
 @else @include('partials.corporate-cards',['items'=>$items]) @endif
 </section>@endif
 @endforeach
-@if($groups->every(fn($items)=>$items->isEmpty()))<div class="corporate-empty"><span class="mini-structure" aria-hidden="true">╱╱╱</span><h2>More to share.</h2><p>Published {{ strtolower($group==='equipment' ? 'equipment profiles' : 'information') }} will appear here. For a specific requirement, please contact our team.</p>@if($sections->contains('id','contact'))<a class="button ink" href="{{ route('home') }}#contact">Start a conversation ↗</a>@endif</div>@endif
+@if($groups->every(fn($items)=>$items->isEmpty()))<div class="corporate-empty"><span class="mini-structure" aria-hidden="true">╱╱╱</span><h2>More to share.</h2><p>Published {{ strtolower($group==='equipment' ? 'equipment profiles' : 'information') }} will appear here. For a specific requirement, please contact our team.</p>@if($sections->contains('id','contact'))<a class="button ink" href="{{ route('contact') }}">Start a conversation ↗</a>@endif</div>@endif
 @if($group==='capabilities')<aside class="corporate-callout"><p class="eyebrow dark">SUPPORTING PROJECT EXECUTION</p><h2>Equipment & machinery.</h2><p>Explore equipment information alongside the capabilities it supports.</p><a class="text-link dark-link" href="{{ route('corporate.equipment.index') }}">Explore equipment ↗</a></aside>@endif
 </div>
 @endsection

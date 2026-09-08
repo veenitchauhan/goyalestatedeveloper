@@ -10,3 +10,40 @@
 .project-cards article h2{font-size:1.4rem;line-height:1.35}
 
 .corporate-cover video{display:block;width:100%;height:auto}
+
+/* Public pages share the same reading rhythm, controls and content panels. */
+.public-page .corporate-hero{padding:54px 0 58px;background:linear-gradient(115deg,#101c24,#1d343b)}
+.public-page .corporate-hero h1{font-size:clamp(36px,4.4vw,66px);max-width:1050px;margin:18px 0 22px;line-height:1.1}
+.public-page .corporate-hero .lead{font-size:17px;line-height:1.75;max-width:760px}
+.public-page .corporate-detail,.public-page .corporate-listing{padding-top:40px;padding-bottom:64px}
+.public-page .corporate-group>h2{font-size:clamp(27px,3vw,38px);margin-bottom:24px}
+.public-page .project-filters{padding:22px;background:#fffdf8;border:1px solid #dce2df;border-radius:10px;gap:16px;margin-bottom:30px}
+.public-page .project-filters label{font-weight:600;color:#42555c}
+.public-page .project-filters>a{padding:10px 4px;font-size:13px;min-height:44px;display:inline-flex;align-items:center}
+.public-page .project-filters a[aria-current=page]{background:#e8eeea;border-radius:6px;padding:10px 16px;text-decoration:none}
+.public-page .project-cards{gap:22px}
+.public-page .project-cards article,.public-page .corporate-card{background:#fffdf8;border:1px solid #dce2df;border-radius:10px;overflow:hidden;box-shadow:0 3px 14px #14232c04}
+.public-page .project-cards article{padding:28px;display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+.public-page .project-cards article .text-link{margin-top:auto;padding-top:8px;font-weight:600}
+.public-page .project-cards article p{color:#59686e;font-size:14px;line-height:1.75}
+.public-page .project-cards article .eyebrow{font-size:10px;color:#556963}
+.public-page .corporate-empty{max-width:none;padding:36px;background:#fffdf8;border:1px solid #dce2df;border-radius:10px}
+.public-page .corporate-empty h2{font-size:34px}
+.public-page .corporate-body,.public-page .cms-prose{line-height:1.85;max-width:78ch}
+.public-page .enquiry-panel,.public-page .career-application{padding:32px;background:#fffdf8;border:1px solid #dce2df;border-radius:12px}
+.public-page .enquiry-panel h2{font-size:28px;margin-bottom:12px;letter-spacing:-.025em}
+.public-page .form-help{font-size:14px;color:#59686e;margin-bottom:26px}
+.public-page .contact-form input:not([type=checkbox]),.public-page .contact-form textarea{background:white;border:1px solid #becacb;border-radius:6px;padding:12px 14px;color:#14232c;min-height:48px}
+.public-page .contact-form label{font-weight:600;color:#42555c;font-size:13px}
+.public-page .contact-form .consent{font-weight:400;align-items:flex-start;gap:12px;line-height:1.7}
+.public-page input[type=checkbox]{accent-color:#234b40;width:18px;height:18px;flex-shrink:0;margin-top:4px}
+.public-page .notice,.public-page .errors{padding:18px 22px;border-radius:8px;margin:0 0 24px;line-height:1.7}
+.public-page .notice{background:#eaf2e3;border:1px solid #cddfc1;color:#2d4b32}
+.public-page .errors{background:#fff0eb;border:1px solid #e4b7aa;color:#813c29}
+.public-page .button{border-radius:6px;min-height:48px;font-weight:600}
+.public-page .contact-details p{margin:12px 0}
+.public-page .corporate-subnav a[aria-current=page],.mobile-nav a[aria-current=page]{color:#c5663b;font-weight:700}
+.public-page .corporate-facts>div{padding:20px;background:#eaece6;border:0;border-radius:8px}
+.public-page details>summary{padding:8px 0;min-height:44px}
+.public-page .corporate-gallery img,.public-page .corporate-cover img{border-radius:8px}
+@media(max-width:700px){.public-page .corporate-hero{padding:36px 0 42px}.public-page .corporate-hero .lead{font-size:15px}.public-page .project-filters,.public-page .enquiry-panel,.public-page .career-application{padding:20px}.public-page .project-cards article{padding:23px}.public-page .corporate-empty{padding:24px}.public-page .corporate-detail{padding-top:26px}.public-page .project-filters button{width:100%}.public-page .enquiry-panel h2{font-size:24px}}

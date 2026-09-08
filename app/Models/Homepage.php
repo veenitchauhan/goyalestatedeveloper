@@ -30,7 +30,7 @@ class Homepage extends Model
         ];
         $content['statistics'] ??= ['mode' => 'all', 'ids' => []];
         foreach ($content['sections'] as &$section) {
-            $section += ['media_id' => null, 'video_id' => null, 'cta_id' => null];
+            $section += ['artwork_enabled' => true, 'card_1_id' => null, 'card_2_id' => null, 'card_3_id' => null, 'media_id' => null, 'video_id' => null, 'cta_id' => null];
         }
         unset($section);
 

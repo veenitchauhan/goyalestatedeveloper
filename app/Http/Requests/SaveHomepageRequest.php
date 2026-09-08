@@ -25,6 +25,9 @@ class SaveHomepageRequest extends FormRequest
             }
             $rules['content.'.$key] = is_bool($value) ? ['required', 'boolean'] : (is_int($value) ? ['required', 'integer', 'min:0', 'max:1000'] : ['nullable', 'string', 'max:5000']);
         }
+        foreach (array_keys($payload['sections']) as $index) {
+            $rules['content.sections.'.$index.'.artwork_enabled'] = ['sometimes', 'boolean'];
+        }
         foreach (['hero.line_one', 'hero.line_two', 'hero.line_three', 'seo.title', 'seo.description'] as $key) {
             $rules['content.'.$key] = ['required', 'string', 'max:500'];
         }
@@ -42,8 +45,8 @@ class SaveHomepageRequest extends FormRequest
         $rules['statistic_ids.*'] = ['integer', 'distinct', Rule::exists('content_entries', 'id')->where('type', 'statistic')->whereNotNull('published_revision_id')];
         $rules['section_assets'] = ['sometimes', 'array:'.implode(',', array_keys($payload['sections']))];
         foreach ($payload['sections'] as $index => $section) {
-            $rules['section_assets.'.$index] = ['sometimes', 'array:media_id,video_id,cta_id'];
-            foreach (['media_id' => 'hero_media_id', 'video_id' => 'hero_video_id', 'cta_id' => 'primary_cta_id'] as $field => $reference) {
+            $rules['section_assets.'.$index] = ['sometimes', 'array:media_id,video_id,cta_id,card_1_id,card_2_id,card_3_id'];
+            foreach (['card_1_id' => 'hero_media_id', 'card_2_id' => 'hero_media_id', 'card_3_id' => 'hero_media_id', 'media_id' => 'hero_media_id', 'video_id' => 'hero_video_id', 'cta_id' => 'primary_cta_id'] as $field => $reference) {
                 $rules['section_assets.'.$index.'.'.$field] = $rules[$reference];
             }
         }

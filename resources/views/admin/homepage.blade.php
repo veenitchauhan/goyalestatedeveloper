@@ -11,8 +11,9 @@
 @foreach($groups as $group=>$items)<details class="editor-group" open><summary>{{ str_starts_with($group,'sections.') ? (data_get($revision->payload,$group.'.nav') ?: data_get($revision->payload,$group.'.id')) : str($group)->headline() }}</summary>
 @if(str_starts_with($group,'sections.'))
 @php($sectionIndex=explode('.',$group)[1])
-@foreach(['media_id'=>'Section image','video_id'=>'Section video','cta_id'=>'Section CTA'] as $assetKey=>$assetLabel)
-<label for="section-{{ $sectionIndex }}-{{ $assetKey }}">{{ $assetLabel }}</label><select id="section-{{ $sectionIndex }}-{{ $assetKey }}" name="section_assets[{{ $sectionIndex }}][{{ $assetKey }}]"><option value="">None</option>
+@php($assetFields=['media_id'=>'Section image','video_id'=>'Section video','cta_id'=>'Section CTA'] + (data_get($revision->payload,$group.'.id')==='business' ? ['card_1_id'=>'Construction card image','card_2_id'=>'Infrastructure card image','card_3_id'=>'Project delivery card image'] : []))
+@foreach($assetFields as $assetKey=>$assetLabel)
+<label for="section-{{ $sectionIndex }}-{{ $assetKey }}">{{ $assetLabel }}</label><select id="section-{{ $sectionIndex }}-{{ $assetKey }}" name="section_assets[{{ $sectionIndex }}][{{ $assetKey }}]"><option value="">Default concept artwork / no override</option>
 @if($assetKey==='cta_id')
 @foreach($ctas as $cta)<option value="{{ $cta['id'] }}" @selected(old('section_assets.'.$sectionIndex.'.'.$assetKey,data_get($revision->payload,$group.'.'.$assetKey))==$cta['id'])>{{ $cta['title'] }}</option>@endforeach
 @else

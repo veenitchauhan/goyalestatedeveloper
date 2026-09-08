@@ -7,7 +7,7 @@
 @php($hasContact=$sections->contains('id','contact'))
 <section class="hero" aria-labelledby="hero-title">
     @php($heroImage=\App\Models\Media::where('is_public',true)->where('publication_status','published')->whereNull('archived_at')->where('mime','like','image/%')->whereKey($content['hero']['media_id']??null)->first())
-    <img class="hero-architecture" src="{{ $heroImage ? route('media.show',$heroImage) : asset('assets/architecture/hero.svg') }}" alt="{{ $heroImage?->alt ?? 'Conceptual architectural illustration of high-rise structures and a tower crane' }}" width="1200" height="1000" fetchpriority="high">
+    <img class="hero-architecture" src="{{ $heroImage ? route('media.show',$heroImage) : asset('assets/architecture/hero-concept.webp') }}" alt="{{ $heroImage?->alt ?? 'Conceptual architectural illustration of high-rise structures and a tower crane' }}" width="1200" height="1000" fetchpriority="high">
     <div class="hero-inner">
         <p class="eyebrow"><span class="orange-line"></span>{{ $content['hero']['eyebrow'] }}</p>
         <h1 id="hero-title">{{ $content['hero']['line_one'] }}<br>{{ $content['hero']['line_two'] }}<br><span>{{ $content['hero']['line_three'] }}</span></h1>
@@ -22,7 +22,7 @@
 @if($content['statistics']['mode']!=='hidden')
 @include('partials.statistics',['statistics'=>$content['statistics']['mode']==='selected' ? $statistics->whereIn('id',$content['statistics']['ids']) : $statistics])
 @endif
-@php($sectionAssets=\App\Models\Media::where('is_public',true)->where('publication_status','published')->whereNull('archived_at')->whereIn('id',$sections->flatMap(fn($section)=>[$section['media_id']??null,$section['video_id']??null])->filter()->unique())->get()->keyBy('id'))
+@php($sectionAssets=\App\Models\Media::where('is_public',true)->where('publication_status','published')->whereNull('archived_at')->whereIn('id',$sections->flatMap(fn($section)=>[$section['media_id']??null,$section['video_id']??null,$section['card_1_id']??null,$section['card_2_id']??null,$section['card_3_id']??null])->filter()->unique())->get()->keyBy('id'))
 @foreach($sections as $section)
 <section id="{{ $section['id'] }}" class="section section-{{ $section['id'] }}">
     <div class="section-wrap">
@@ -37,12 +37,17 @@
         @php($businessCards=$publishedBusiness->isNotEmpty() ? $publishedBusiness->map(fn($item)=>['title'=>$item['title'],'text'=>$item['summary'],'detail'=>'','url'=>$item['url']]) : collect($section['items']))
         <div class="business-grid">@foreach($businessCards as $item)
             <article class="business-card"><div class="card-top"><span>{{ sprintf('%02d',$loop->iteration) }}</span><span aria-hidden="true">↗</span></div>
-            <svg class="service-drawing" viewBox="0 0 300 170" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.2">@if($loop->index===0)<path d="M70 145V35l85-25 75 30v105M70 35l75 32 85-27M145 67v95M85 42v102m15-97v99m15-92v93m15-86v88M70 70l75 31 85-28M70 100l75 31 85-28M155 65v93m20-99v95m20-101v93m20-99v95"/>@elseif($loop->index===1)<path d="M20 135l125-55 135 45M25 150l120-54 130 42M80 118V35m135 83V35M80 35q68 92 135 0M80 60q68 85 135 0M80 35v115m135-115v112M105 75v48m25-31v20m25-15v15m25-22v27m25-56v70"/>@else<path d="M30 135l105-55 140 38-106 48ZM75 113V57l80-36 80 25v89M75 57l83 25 77-36M158 82v80M100 69v56m30-48v64m53-71v80m28-94v83"/><path d="M42 35h30m-15-15v30m190 96h30m-15-15v30"/>@endif</svg>
+            @if($section['artwork_enabled']??true)
+            @php($cardImage=$sectionAssets->get($section['card_'.($loop->index%3+1).'_id']??null))
+            <figure class="business-art"><img src="{{ $cardImage ? route('media.show',$cardImage) : asset('assets/architecture/'.['construction','infrastructure','delivery'][$loop->index%3].'.webp') }}" alt="{{ $cardImage?->alt ?: 'Concept illustration: '.$item['title'] }}" loading="lazy" width="1536" height="1024">@unless($cardImage)<figcaption>Concept illustration</figcaption>@endunless</figure>
+            @endif
+
             <h3>@if($item['url']??null)<a href="{{ $item['url'] }}">{{ $item['title'] }} ↗</a>@else{{ $item['title'] }}@endif</h3><p>{{ $item['text'] }}</p>@if($item['detail'])<div class="card-detail">{{ $item['detail'] }}</div>@endif</article>
         @endforeach</div>
         @break
     @case('capabilities')
-        <div class="process-intro"><p class="eyebrow">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2><p>{{ $section['text'] }}</p><div class="process-visual" aria-hidden="true"><span>PLAN</span><i></i><span>STRUCTURE</span><i></i><span>DELIVERY</span></div></div>
+        <div class="process-intro"><p class="eyebrow">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2><p>{{ $section['text'] }}</p>@php($processImage=$sectionAssets->get($section['media_id']??null))
+        @if($section['artwork_enabled']??true)<figure class="process-art"><img src="{{ $processImage ? route('media.show',$processImage) : asset('assets/architecture/construction-journey.webp') }}" alt="{{ $processImage?->alt ?: 'Concept illustration showing architectural plans, a concrete structure and a completed building in copper and teal' }}" width="1024" height="1024" loading="lazy"><figcaption>{{ $processImage?->caption ?: 'From first drawings to final details' }} @unless($processImage)<span>AI-generated concept illustration</span>@endunless</figcaption></figure>@endif<div class="process-visual" aria-hidden="true"><span>PLAN</span><i></i><span>STRUCTURE</span><i></i><span>DELIVERY</span></div></div>
         <div class="process-list">@foreach($section['items'] as $item)<details name="construction-process" @if($loop->first) open @endif><summary><span class="step-number">{{ sprintf('%02d',$loop->iteration) }}</span><h3>{{ $item['title'] }}</h3><span class="expand" aria-hidden="true">＋</span></summary><p>{{ $item['text'] }}</p></details>@endforeach</div>
         @break
     @case('projects')
@@ -54,7 +59,9 @@
         @endif
         @break
     @case('presence')
-        <div class="presence-copy"><a class="text-link dark-link" href="{{ route('locations.index') }}">Explore our locations ↗</a><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2><p>{{ $section['text'] }}</p><small>{{ $section['future'] }}</small></div><div class="presence-art" aria-label="Abstract illustration of the Tricity foundation"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div><div class="presence-point"><i></i><span>{{ $section['label'] }}</span></div><span class="compass" aria-hidden="true">N ↑</span></div>
+        <div class="presence-copy"><a class="text-link dark-link" href="{{ route('locations.index') }}">Explore our locations ↗</a><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2><p>{{ $section['text'] }}</p><small>{{ $section['future'] }}</small></div>@php($presenceImage=$sectionAssets->get($section['media_id']??null))
+        @if($section['artwork_enabled']??true)<figure class="presence-concept"><img src="{{ $presenceImage ? route('media.show',$presenceImage) : asset('assets/architecture/presence.webp') }}" alt="{{ $presenceImage?->alt ?: 'Conceptual illustration of connected urban neighbourhoods' }}" width="1536" height="1024" loading="lazy"><figcaption>{{ $presenceImage?->caption ?: 'Connected places. New possibilities. · Concept illustration, not a geographic map' }}</figcaption></figure>@endif
+
         @break
     @case('careers')
         <div><p class="eyebrow">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2></div><div class="careers-copy"><p>{{ $section['text'] }}</p>@if(\App\Services\CareerContent::openings()->isEmpty())<p class="muted">{{ $section['empty'] }}</p>@endif<a class="button light" href="{{ route('careers.index') }}">Explore careers ↗</a></div>
@@ -73,7 +80,7 @@
     @php($sectionImage=$sectionAssets->get($section['media_id']??null))
     @php($sectionVideo=$sectionAssets->get($section['video_id']??null))
     @php($sectionCta=$ctas->get($section['cta_id']??null))
-    @if($sectionImage && str_starts_with($sectionImage->mime,'image/'))<figure class="section-media"><img src="{{ route('media.show',$sectionImage) }}" alt="{{ $sectionImage->alt }}" loading="lazy" width="1200" height="800">@if($sectionImage->caption)<figcaption>{{ $sectionImage->caption }}</figcaption>@endif</figure>@endif
+    @if(!in_array($section['id'],['capabilities','presence']) && $sectionImage && str_starts_with($sectionImage->mime,'image/'))<figure class="section-media"><img src="{{ route('media.show',$sectionImage) }}" alt="{{ $sectionImage->alt }}" loading="lazy" width="1200" height="800">@if($sectionImage->caption)<figcaption>{{ $sectionImage->caption }}</figcaption>@endif</figure>@endif
     @if($sectionVideo?->mime==='video/mp4')<figure class="section-media"><video controls playsinline preload="none" aria-label="{{ $sectionVideo->title }}"><source src="{{ route('media.show',$sectionVideo) }}" type="video/mp4"></video>@if($sectionVideo->caption)<figcaption>{{ $sectionVideo->caption }}</figcaption>@endif @if($sectionVideo->description)<p>{{ $sectionVideo->description }}</p>@endif</figure>@endif
     @if($sectionCta)<div class="section-action"><a class="button orange" href="{{ $sectionCta['url'] }}">{{ $sectionCta['title'] }} ↗</a></div>@endif
     </div>
