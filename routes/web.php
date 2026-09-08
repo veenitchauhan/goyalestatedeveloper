@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CampaignController;
 use App\Http\Controllers\Admin\CandidateController;
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\CorporateContentController;
@@ -12,10 +13,12 @@ use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CorporateController;
 use App\Http\Controllers\HomepageController;
+use App\Http\Controllers\IntegrationController;
 use App\Http\Controllers\KnowledgeController;
 use App\Http\Controllers\SearchController;
 use App\Http\Middleware\RequireTwoFactor;
@@ -23,6 +26,7 @@ use App\Models\AuditLog;
 use App\Models\ContentEntry;
 use App\Models\Homepage;
 use App\Models\SiteSetting;
+use App\Services\CampaignContent;
 use App\Services\CorporateContent;
 use App\Services\LocationContent;
 use App\Services\ProjectContent;
@@ -30,6 +34,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 
+Route::post('/integrations/lead-events', [IntegrationController::class, 'receive'])->middleware('throttle:60,1')->name('integrations.receive');
+Route::get('/privacy-preferences', [AnalyticsController::class, 'preferences'])->name('privacy.preferences');
+Route::post('/privacy-preferences', [AnalyticsController::class, 'consent'])->name('privacy.consent');
+Route::get('/campaign/{slug}', function (string $slug) {
+    $entry = ContentEntry::where('type', 'campaign')->where('slug', $slug)->whereNotNull('published_revision_id')->with('publishedRevision')->firstOrFail();
+
+    return CampaignContent::detail($entry, $entry->publishedRevision->payload);
+})->name('campaigns.show');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
 Route::get('/search', [SearchController::class, 'index'])->name('search');
@@ -160,6 +172,16 @@ Route::middleware(['auth', 'auth.session'])->prefix('admin')->name('admin.')->gr
         Route::post('/media/{media}/archive', [MediaController::class, 'archive'])->middleware(['can:media.manage', 'can:media.edit'])->name('media.archive');
         Route::put('/media/{media}', [MediaController::class, 'update'])->middleware(['can:media.manage', 'can:media.edit'])->name('media.update');
         Route::get('/media/{media}/original', [MediaController::class, 'original'])->middleware('can:media.manage')->name('media.original');
+        Route::get('/campaigns', [CampaignController::class, 'index'])->middleware('can:campaigns.manage')->name('campaigns.index');
+        Route::get('/campaigns/create', [CampaignController::class, 'create'])->middleware('can:campaigns.manage')->name('campaigns.create');
+        Route::post('/campaigns', [CampaignController::class, 'store'])->middleware('can:campaigns.manage')->name('campaigns.store');
+        Route::get('/campaigns/{entry}/edit', [CampaignController::class, 'edit'])->middleware('can:campaigns.manage')->name('campaigns.edit');
+        Route::put('/campaigns/{entry}', [CampaignController::class, 'update'])->middleware('can:campaigns.manage')->name('campaigns.update');
+        Route::get('/campaigns/{entry}/preview', [CampaignController::class, 'preview'])->middleware('can:campaigns.manage')->name('campaigns.preview');
+        Route::post('/campaigns/{entry}/status', [CampaignController::class, 'transition'])->middleware('can:campaigns.manage')->name('campaigns.transition');
+        Route::get('/analytics', [AnalyticsController::class, 'index'])->middleware('can:campaigns.manage')->name('analytics');
+        Route::get('/integrations', [IntegrationController::class, 'index'])->middleware('can:settings.manage')->name('integrations');
+        Route::get('/integrations/knowledge', [IntegrationController::class, 'knowledge'])->middleware('can:settings.manage')->name('integrations.knowledge');
         Route::get('/enquiry-forms', [EnquiryFormController::class, 'edit'])->middleware('can:settings.manage')->name('enquiry-forms.edit');
         Route::put('/enquiry-forms', [EnquiryFormController::class, 'update'])->middleware('can:settings.manage')->name('enquiry-forms.update');
         Route::get('/enquiries', [EnquiryController::class, 'index'])->name('enquiries');

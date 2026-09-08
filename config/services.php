@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'lead_bridge' => ['enabled' => env('LEAD_BRIDGE_ENABLED', false), 'secret' => env('LEAD_BRIDGE_SECRET', '')],
 
     /*
     |--------------------------------------------------------------------------

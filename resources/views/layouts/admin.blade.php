@@ -25,6 +25,7 @@
 @can('pages.view')<a href="{{ route('admin.knowledge.index') }}" @if(request()->routeIs('admin.knowledge.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▤</span>Insights, Knowledge & FAQs</a>@endcan
 @can('jobs.view')<a href="{{ route('admin.jobs.index') }}" @if(request()->routeIs('admin.jobs.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▣</span>Careers & openings</a>@endcan
 @if(auth()->user()->can('candidates.view') || auth()->user()->can('candidates.view-assigned'))<a href="{{ route('admin.candidates.index') }}" @if(request()->routeIs('admin.candidates.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">♙</span>Candidate pipeline</a>@endif
+@can('campaigns.manage')<a href="{{ route('admin.campaigns.index') }}" @if(request()->routeIs('admin.campaigns.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">◇</span>Campaigns</a><a href="{{ route('admin.analytics') }}" @if(request()->routeIs('admin.analytics')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▥</span>Analytics</a>@endcan
 @can('media.manage')
 <a href="{{ route('admin.media.index') }}" @if(request()->routeIs('admin.media.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▧</span>Media library</a>
 @endcan
@@ -32,6 +33,7 @@
 <a href="{{ route('admin.enquiries') }}" @if(request()->routeIs('admin.enquiries*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">✉</span>Enquiries & CRM</a>
 @endif
 @can('settings.manage')
+<a href="{{ route('admin.integrations') }}" @if(request()->routeIs('admin.integrations*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">◎</span>Integrations</a>
 <a href="{{ route('admin.enquiry-forms.edit') }}" @if(request()->routeIs('admin.enquiry-forms.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▤</span>Forms & routing</a>
 <a href="{{ route('admin.settings.edit') }}" @if(request()->routeIs('admin.settings.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">⚙</span>Website settings</a>
 @endcan

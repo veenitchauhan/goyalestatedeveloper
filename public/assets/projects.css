@@ -8,3 +8,5 @@
 .project-filters a[aria-current="page"]{color:#193d32;font-weight:700;text-decoration:underline;text-underline-offset:8px}
 .corporate-detail .cms-prose{overflow-wrap:anywhere}
 .project-cards article h2{font-size:1.4rem;line-height:1.35}
+
+.corporate-cover video{display:block;width:100%;height:auto}

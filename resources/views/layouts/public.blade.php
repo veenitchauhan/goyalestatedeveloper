@@ -45,7 +45,7 @@
     @if($content['contact']['office_hours']??'')<p>{{ $content['contact']['office_hours'] }}</p>@endif
     @if($content['contact']['map_url']??'')<a href="{{ $content['contact']['map_url'] }}" rel="noopener">View location map ↗</a>@endif
     <nav aria-label="Social profiles">@foreach($siteSettings['social'] as $network=>$url) @if($url)<a href="{{ $url }}" rel="noopener">{{ str($network)->headline() }} ↗</a>@endif @endforeach</nav>
-    <nav aria-label="Legal information">@foreach(['privacy_url'=>'Privacy policy','terms_url'=>'Terms & conditions','cookies_url'=>'Cookie policy','disclaimer_url'=>'Disclaimer'] as $key=>$label) @if($siteSettings['footer'][$key])<a href="{{ $siteSettings['footer'][$key] }}">{{ $label }}</a>@endif @endforeach</nav>
+    <nav aria-label="Legal information"><a href="{{ route('privacy.preferences') }}">Privacy preferences</a>@foreach(['privacy_url'=>'Privacy policy','terms_url'=>'Terms & conditions','cookies_url'=>'Cookie policy','disclaimer_url'=>'Disclaimer'] as $key=>$label) @if($siteSettings['footer'][$key])<a href="{{ $siteSettings['footer'][$key] }}">{{ $label }}</a>@endif @endforeach</nav>
     @if($siteSettings['company']['legal_information'])<p>{{ $siteSettings['company']['legal_information'] }}</p>@endif
     </div>
     <div class="footer-bottom"><span>© {{ date('Y') }} {{ config('app.name') }}</span><a href="#main">Back to top ↑</a></div>
