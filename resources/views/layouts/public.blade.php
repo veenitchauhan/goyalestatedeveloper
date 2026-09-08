@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="{{ asset('assets/projects.css') }}">
 </head>
 <body class="{{ request()->routeIs('home') ? 'public-home' : 'public-page' }}">
+@if(\App\Models\SiteSetting::where('key','demo_content')->exists())<aside class="preview-notice" role="note">Demo review site · Sample records are fictional and must be removed before launch.</aside>@endif
 @php($headerCta=\App\Models\ContentEntry::publishedItems('cta')->firstWhere('id',$content['hero']['primary_cta_id']??null))
 @php($menuItems=\App\Models\ContentEntry::publishedItems('menu'))
 @if($preview??false)<aside class="preview-notice">Private draft preview · This version is not necessarily published. Resize your browser to review mobile layouts.</aside>@endif
