@@ -2,13 +2,23 @@
 
 namespace Tests\Feature;
 
+use Database\Seeders\HomepageSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class CheckpointTest extends TestCase
 {
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(HomepageSeeder::class);
+    }
+
     public function test_checkpoint_is_rendered_by_laravel_with_noindex(): void
     {
-        $this->get('/')->assertOk()->assertViewIs('checkpoint')->assertDontSee('$health')->assertDontSee('Local connection is working')->assertSee('GOYAL ESTATE &amp; DEVELOPERS PVT. LTD.', false)->assertHeader('X-Robots-Tag', 'noindex, nofollow');
+        $this->get('/')->assertOk()->assertViewIs('home')->assertDontSee('$health')->assertDontSee('Local connection is working')->assertSee('GOYAL ESTATE &amp; DEVELOPERS PVT. LTD.', false)->assertHeader('X-Robots-Tag', 'noindex, nofollow');
     }
 
     public function test_health_reports_framework_and_has_browser_view(): void

@@ -6,9 +6,21 @@ Laravel 13.30.1 / PHP 8.4 / MySQL 8.4 / Blade. Composer dependencies are pinned 
 
 ## Delivery status
 
-14 modules total; 1 complete; 13 remaining. Module 2 implementation and automated verification are ready, but first-administrator provisioning and user acceptance remain pending. Do not start Module 3.
+14 modules total; 1 complete; 13 remaining. Module 2 implementation and automated verification are ready, but first-administrator provisioning and user acceptance remain pending. The user explicitly prioritized correcting the visitor homepage. Module 4 now has a reviewable public design, with limited homepage-editing and enquiry-intake dependencies; complete CMS and lead-management modules remain pending.
 
 Module 1 is committed as `62976e6`: architecture, vhost, checkpoint and single-line company branding. Module 2 replaces the PHP checkpoint with Laravel/Blade, adds Fortify login and two-factor authentication, 12 predefined roles, backend gates, assigned-content policies, user access management, private audit logs and identity/content migrations. Role permissions for later modules are predefined; their business interfaces are not implemented yet. No public registration or password-reset email delivery is enabled.
+
+## Visitor homepage correction
+
+The main address now displays the corporate homepage based on the reread 94-page brief: full company name, specified hero tagline, corporate navigation, business categories, an interactive ten-stage construction process, project section, Tricity positioning, careers, FAQs and a working enquiry form. Module counts and development instructions are absent from the visitor homepage. The checkpoint moved to `/admin/development`, protected by authentication, two-factor requirements and settings permission.
+
+Homepage copy and section visibility/order are stored in MySQL and editable at `/admin/homepage` by an authorized settings manager. The enquiry form validates, rate limits, checks consent and stores submissions for authorized review at `/admin/enquiries`. It does not send email or connect to a CRM yet. These are focused dependencies of the homepage correction, not completion of the full CMS or CRM modules.
+
+The architectural SVG is a labelled concept illustration. The supplied PDF contains no real project photographs, project records, verified statistics, contact numbers, credentials or jobs to populate those features. Empty project/job states are honest; phone/WhatsApp actions remain hidden until configured. Legal copy, real media, detailed public pages, project filters and full publishing workflows remain part of subsequent modules. This is a design-review checkpoint, not production completion.
+
+The updated suite passes 33 tests / 150 assertions on both SQLite and isolated MySQL. Responsive width checks passed at 320, 390, 768, 1024, 1280, 1440 and 1920; section navigation, process expansion and contact layout were reviewed in the browser.
+
+Please test the homepage at desktop/mobile sizes, menu anchors, construction-process accordion and enquiry validation. Pause for user feedback before progressing further.
 
 ## Local database
 

@@ -1,6 +1,6 @@
 # Delivery plan: 14 modules
 
-Status: 14 total, 1 complete, 13 remaining. Module 1 accepted. Module 2 code and automated verification ready; first-administrator provisioning and user testing pending. Modules 3–14 not started.
+Status: 14 total, 1 complete, 13 remaining. Module 1 accepted. Module 2 code and automated verification ready; first-administrator provisioning and user testing pending. The user has reprioritized the visitor homepage after rejecting the checkpoint at `/`. Module 4 is now at a design-review checkpoint, with limited homepage-content controls from Module 3 and enquiry intake from Module 10. These partial deliveries do not mark their full modules complete. Other modules remain pending.
 
 Each row is a separate development and testing checkpoint. Completion means implemented and verified; acceptance is recorded separately. Stop after every module and wait for the user to test and authorize the next one. Do not change the total silently if scope changes.
 
@@ -30,4 +30,5 @@ Approved logo and real project/media assets; company facts and leadership; verif
 | Module | Implementation | User acceptance | Next module authorized |
 |---|---|---|---|
 | 1 | Complete; see MODULE-1-VERIFICATION.md | Accepted by user | Yes, Module 2 |
-| 2 | Laravel/MySQL foundation implemented; tests pass | Pending first-administrator provisioning and user testing | No |
+| 2 | Laravel/MySQL foundation implemented; tests pass | Pending first-administrator provisioning and user testing | User explicitly prioritized homepage correction |
+| 4 | Corporate homepage design review ready; real media and complete CMS integration pending | Awaiting review | No further module authorized |
