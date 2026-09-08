@@ -146,4 +146,29 @@ class IdentityAccessTest extends TestCase
             ->assertSessionHasErrors('password');
         $this->assertDatabaseMissing('users', ['email' => 'short@example.test']);
     }
+
+    public function test_password_change_preserves_current_session_and_new_password_can_sign_in(): void
+    {
+        $user = $this->userWithRole('viewer');
+        $this->actingAs($user)->withSession(['password_hash_web' => $user->password]);
+        $this->get('/admin')->assertOk();
+        $this->from('/admin/security')->put('/user/password', ['current_password' => 'password', 'password' => 'Test1234', 'password_confirmation' => 'Test1234'])
+            ->assertSessionHasNoErrors()->assertRedirect('/admin/security');
+        $this->get('/admin')->assertOk();
+        $this->post('/logout');
+        $this->post('/login', ['email' => $user->email, 'password' => 'password'])->assertSessionHasErrors('email');
+        $this->post('/login', ['email' => $user->email, 'password' => 'Test1234'])->assertRedirect('/two-factor-challenge');
+        $this->post('/two-factor-challenge', ['recovery_code' => 'test-only-recovery-code'])->assertRedirect('/admin');
+        $this->get('/admin')->assertOk();
+    }
+
+    public function test_another_session_with_the_old_password_hash_is_still_signed_out(): void
+    {
+        $user = $this->userWithRole('viewer');
+        $oldHash = $user->password;
+        $user->forceFill(['password' => 'Changed123'])->save();
+        $this->actingAs($user)->withSession(['password_hash_web' => $oldHash]);
+        $this->get('/admin')->assertRedirect('/login');
+        $this->assertGuest();
+    }
 }
