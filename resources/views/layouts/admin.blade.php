@@ -28,10 +28,11 @@
 @can('media.manage')
 <a href="{{ route('admin.media.index') }}" @if(request()->routeIs('admin.media.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▧</span>Media library</a>
 @endcan
-@can('leads.view')
-<a href="{{ route('admin.enquiries') }}" @if(request()->routeIs('admin.enquiries')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">✉</span>Enquiries</a>
-@endcan
+@if(auth()->user()->can('leads.view') || auth()->user()->can('leads.view-assigned'))
+<a href="{{ route('admin.enquiries') }}" @if(request()->routeIs('admin.enquiries*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">✉</span>Enquiries & CRM</a>
+@endif
 @can('settings.manage')
+<a href="{{ route('admin.enquiry-forms.edit') }}" @if(request()->routeIs('admin.enquiry-forms.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▤</span>Forms & routing</a>
 <a href="{{ route('admin.settings.edit') }}" @if(request()->routeIs('admin.settings.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">⚙</span>Website settings</a>
 @endcan
 @can('users.manage')

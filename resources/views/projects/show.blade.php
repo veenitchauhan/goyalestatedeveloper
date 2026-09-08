@@ -32,7 +32,7 @@
 @if($payload['document_ids']??[])<section class="corporate-group"><h2>Project documents</h2>@foreach($payload['document_ids'] as $id) @if($document=$media->get($id))<p><a href="{{ route('media.show',$document) }}">{{ $document->title }} (PDF) ↓</a></p>@endif @endforeach</section>@endif
 @if($payload['faqs']??[])<section class="corporate-group"><h2>Project questions</h2>@foreach($payload['faqs'] as $faq)<details><summary>{{ $faq['question'] }}</summary><p class="cms-prose">{{ $faq['answer'] }}</p></details>@endforeach</section>@endif
 @if($related->isNotEmpty())<section class="corporate-group"><h2>Related projects</h2>@foreach($related as $item)<p><a href="{{ $item['url'] }}">{{ $item['title'] }} ↗</a></p>@endforeach</section>@endif
-<aside class="corporate-callout"><h2>Discuss a similar project.</h2><a class="button ink" href="{{ route('home') }}#contact">Start a conversation ↗</a></aside>
+<aside class="corporate-callout"><h2>Discuss a similar project.</h2><a class="button ink" href="{{ route('contact',['type'=>'Project Enquiry','project'=>$entry->id,'cta'=>'project-detail']) }}">Start a conversation ↗</a></aside>
 </div></article>
 <script src="{{ asset('assets/project-viewer.js') }}" defer></script>
 <script src="{{ asset('assets/project-panorama.js') }}" defer></script>

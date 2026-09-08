@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreEnquiryRequest;
-use App\Models\Enquiry;
 use App\Models\Homepage;
 use App\Models\SiteSetting;
+use App\Services\EnquiryCapture;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -21,7 +21,7 @@ class HomepageController extends Controller
 
     public function store(StoreEnquiryRequest $request): RedirectResponse
     {
-        Enquiry::create([...$request->safe()->only(['name', 'email', 'phone', 'type', 'location', 'message']), 'consented_at' => now(), 'consent_version' => 'enquiry-v1', 'status' => 'new']);
+        app(EnquiryCapture::class)->store($request);
 
         return redirect()->to(route('home').'#contact')->with('enquiry_sent', true);
     }

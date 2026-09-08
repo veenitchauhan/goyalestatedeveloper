@@ -64,9 +64,9 @@ class SearchController extends Controller
                     $results->push(['title' => $media->title, 'type' => 'Media', 'status' => $media->publication_status, 'url' => route('admin.media.index')]);
                 }
             }
-            if ($user->can('leads.view')) {
-                foreach (Enquiry::where('name', 'like', '%'.trim($q).'%')->limit(30)->get() as $lead) {
-                    $results->push(['title' => $lead->name, 'type' => 'Enquiry', 'status' => '', 'url' => route('admin.enquiries')]);
+            if ($user->can('leads.view') || $user->can('leads.view-assigned')) {
+                foreach (Enquiry::where('name', 'like', '%'.trim($q).'%')->when(! $user->can('leads.view'), fn ($query) => $query->where('assigned_to', $user->id))->limit(30)->get() as $lead) {
+                    $results->push(['title' => $lead->name, 'type' => 'Enquiry', 'status' => '', 'url' => route('admin.enquiries.show', $lead)]);
                 }
             }
         }

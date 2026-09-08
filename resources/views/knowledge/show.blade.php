@@ -6,5 +6,5 @@
 <section class="corporate-group"><h2>{{ $entry->type==='faq' ? 'Answer' : 'In detail' }}</h2><div class="cms-prose">{{ $payload['body']??'' }}</div></section>@if($payload['explanation']??null)<section class="corporate-group"><h2>Supporting explanation</h2><div class="cms-prose">{{ $payload['explanation'] }}</div></section>@endif
 @foreach($relatedItems->groupBy('type') as $type=>$items)<section class="corporate-group"><h2>Related {{ \App\Services\KnowledgeContent::TYPES[$type]??str($type)->plural()->headline() }}</h2>@foreach($items as $item)<p><a href="{{ $item['url'] }}">{{ $item['title'] }} ↗</a></p>@endforeach</section>@endforeach
 @include('partials.related-knowledge')
-<aside class="corporate-callout"><h2>Talk to our project team.</h2><a class="button ink" href="{{ route('home') }}#contact">Start a conversation ↗</a></aside></div></article>
+<aside class="corporate-callout"><h2>Talk to our project team.</h2><a class="button ink" href="{{ route('contact',['cta'=>'knowledge-show']) }}">Start a conversation ↗</a></aside></div></article>
 @endsection

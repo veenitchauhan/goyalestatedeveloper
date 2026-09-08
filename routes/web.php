@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\CandidateController;
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\CorporateContentController;
+use App\Http\Controllers\Admin\EnquiryController;
+use App\Http\Controllers\Admin\EnquiryFormController;
 use App\Http\Controllers\Admin\JobController;
 use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\MediaController;
@@ -11,6 +13,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\CareerController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CorporateController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\KnowledgeController;
@@ -18,7 +21,6 @@ use App\Http\Controllers\SearchController;
 use App\Http\Middleware\RequireTwoFactor;
 use App\Models\AuditLog;
 use App\Models\ContentEntry;
-use App\Models\Enquiry;
 use App\Models\Homepage;
 use App\Models\SiteSetting;
 use App\Services\CorporateContent;
@@ -28,6 +30,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
 Route::get('/search', [SearchController::class, 'index'])->name('search');
 Route::get('/', [HomepageController::class, 'index'])->name('home');
 foreach (['about' => 'about', 'business' => 'business', 'capabilities' => 'capabilities', 'capabilities/equipment' => 'equipment', 'about/leadership' => 'leadership', 'about/journey' => 'journey', 'about/employee-stories' => 'stories'] as $path => $group) {
@@ -156,7 +160,12 @@ Route::middleware(['auth', 'auth.session'])->prefix('admin')->name('admin.')->gr
         Route::post('/media/{media}/archive', [MediaController::class, 'archive'])->middleware(['can:media.manage', 'can:media.edit'])->name('media.archive');
         Route::put('/media/{media}', [MediaController::class, 'update'])->middleware(['can:media.manage', 'can:media.edit'])->name('media.update');
         Route::get('/media/{media}/original', [MediaController::class, 'original'])->middleware('can:media.manage')->name('media.original');
-        Route::get('/enquiries', fn () => view('admin.enquiries', ['enquiries' => Enquiry::latest()->paginate(20)]))->middleware('can:leads.view')->name('enquiries');
+        Route::get('/enquiry-forms', [EnquiryFormController::class, 'edit'])->middleware('can:settings.manage')->name('enquiry-forms.edit');
+        Route::put('/enquiry-forms', [EnquiryFormController::class, 'update'])->middleware('can:settings.manage')->name('enquiry-forms.update');
+        Route::get('/enquiries', [EnquiryController::class, 'index'])->name('enquiries');
+        Route::get('/enquiries/export', [EnquiryController::class, 'export'])->name('enquiries.export');
+        Route::get('/enquiries/{enquiry}', [EnquiryController::class, 'show'])->name('enquiries.show');
+        Route::put('/enquiries/{enquiry}', [EnquiryController::class, 'update'])->name('enquiries.update');
         Route::get('/users', [UserController::class, 'index'])->middleware('can:users.manage')->name('users.index');
         Route::post('/users', [UserController::class, 'store'])->middleware(['can:users.manage', 'password.confirm', 'throttle:20,1'])->name('users.store');
         Route::patch('/users/{user}', [UserController::class, 'update'])->middleware(['can:users.manage', 'password.confirm', 'throttle:20,1'])->name('users.update');
