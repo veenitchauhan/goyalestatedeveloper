@@ -8,6 +8,7 @@ use App\Models\Homepage;
 use App\Models\SiteSetting;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class ContentPublisher
@@ -77,6 +78,9 @@ class ContentPublisher
 
     public function apply(ContentEntry $entry, ContentRevision $revision): void
     {
+        if ($entry->type === 'project') {
+            Validator::make($revision->payload, ProjectContent::rules($entry, true, $revision->payload))->validate();
+        }
         if (CorporateContent::supports($entry->type)) {
             app(CorporateContent::class)->apply($entry, $revision);
         }

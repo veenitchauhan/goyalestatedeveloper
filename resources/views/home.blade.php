@@ -12,7 +12,7 @@
         <p class="eyebrow"><span class="orange-line"></span>{{ $content['hero']['eyebrow'] }}</p>
         <h1 id="hero-title">{{ $content['hero']['line_one'] }}<br>{{ $content['hero']['line_two'] }}<br><span>{{ $content['hero']['line_three'] }}</span></h1>
         <p class="hero-description">{{ $content['hero']['description'] }}</p>
-        <div class="hero-actions">@if($primaryCta || $hasContact)<a class="button orange" href="{{ $primaryCta['url'] ?? '#contact' }}">{{ $primaryCta['title'] ?? $content['hero']['primary_cta'] }} <span aria-hidden="true">↗</span></a>@endif @if($secondaryCta || $sections->contains('id','projects'))<a class="text-link" href="{{ $secondaryCta['url'] ?? '#projects' }}">{{ $secondaryCta['title'] ?? $content['hero']['secondary_cta'] }} <span aria-hidden="true">↗</span></a>@endif</div>
+        <div class="hero-actions">@if($primaryCta || $hasContact)<a class="button orange" href="{{ $primaryCta['url'] ?? '#contact' }}">{{ $primaryCta['title'] ?? $content['hero']['primary_cta'] }} <span aria-hidden="true">↗</span></a>@endif @if($secondaryCta || $sections->contains('id','projects'))<a class="text-link" href="{{ $secondaryCta['url'] ?? route('projects.index') }}">{{ $secondaryCta['title'] ?? $content['hero']['secondary_cta'] }} <span aria-hidden="true">↗</span></a>@endif</div>
     </div>
     <div class="hero-baseline"><span>{{ $content['hero']['baseline'] }}</span><span class="visual-caption">{{ $heroImage ? $heroImage->caption : 'Architectural concept · not a project photograph' }}</span><a href="#{{ $sections->first()['id'] ?? 'main' }}" aria-label="Explore the company">↓</a></div>
 </section>
@@ -47,7 +47,11 @@
         @break
     @case('projects')
         <div class="section-heading"><div><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2></div><p>{{ $section['text'] }}</p></div>
-        <div class="project-note"><div class="project-outline" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div><div><p>{{ $section['empty'] }}</p>@if($hasContact)<a class="text-link dark-link" href="#contact">{{ $section['cta'] }} ↗</a>@endif</div></div>
+        @php($featuredProjects=\App\Services\ProjectContent::items()->where('featured',true)->take(6))
+        @if($featuredProjects->isNotEmpty())<div class="project-cards">@foreach($featuredProjects as $project)<article><p class="eyebrow dark">{{ $project['city'] }} · {{ $project['status'] }}</p><h3>{{ $project['title'] }}</h3><p>{{ $project['stage'] }} — {{ $project['progress'] }}% complete</p><a class="text-link dark-link" href="{{ $project['url'] }}">Explore project ↗</a></article>@endforeach</div><a class="text-link dark-link" href="{{ route('projects.index') }}">View all projects ↗</a>
+        @else
+        <div class="project-note"><div class="project-outline" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div><div><p>{{ $section['empty'] }}</p>@if($hasContact)<a class="text-link dark-link" href="#contact">{{ $section['cta'] }} ↗</a>@endif</div></div><a class="text-link dark-link" href="{{ route('projects.index') }}">Explore projects ↗</a>
+        @endif
         @break
     @case('presence')
         <div class="presence-copy"><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2><p>{{ $section['text'] }}</p><small>{{ $section['future'] }}</small></div><div class="presence-art" aria-label="Abstract illustration of the Tricity foundation"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div><div class="presence-point"><i></i><span>{{ $section['label'] }}</span></div><span class="compass" aria-hidden="true">N ↑</span></div>

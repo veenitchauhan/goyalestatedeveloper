@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\CorporateContentController;
 use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
@@ -14,8 +15,11 @@ use App\Models\ContentEntry;
 use App\Models\Enquiry;
 use App\Models\Homepage;
 use App\Models\SiteSetting;
+use App\Services\CorporateContent;
+use App\Services\ProjectContent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\Rule;
 
 Route::get('/', [HomepageController::class, 'index'])->name('home');
 foreach (['about' => 'about', 'business' => 'business', 'capabilities' => 'capabilities', 'capabilities/equipment' => 'equipment', 'about/leadership' => 'leadership', 'about/journey' => 'journey', 'about/employee-stories' => 'stories'] as $path => $group) {
@@ -24,6 +28,18 @@ foreach (['about' => 'about', 'business' => 'business', 'capabilities' => 'capab
 foreach (['about/people/{slug}' => 'team_member', 'about/milestones/{slug}' => 'company_milestone', 'about/employee-stories/{slug}' => 'employee_story', 'business/services/{slug}' => 'service', 'capabilities/equipment/{slug}' => 'equipment', 'about/{slug}' => 'company_page', 'business/{slug}' => 'business_unit', 'capabilities/{slug}' => 'capability'] as $path => $type) {
     Route::get('/'.$path, [CorporateController::class, 'show'])->defaults('type', $type)->name(config('corporate.'.$type.'.route'));
 }
+Route::get('/projects', function (Request $request) {
+    $filters = $request->validate(['status' => ['nullable', Rule::in(ProjectContent::STATUSES)], 'sector' => ['nullable', Rule::in(ProjectContent::SECTORS)], 'city' => 'nullable|string|max:255']);
+    $all = ProjectContent::items();
+    $items = $all->filter(fn ($item) => collect($filters)->filter(fn ($value) => $value !== null && $value !== '')->every(fn ($value, $key) => ($item[$key] ?? null) === $value));
+
+    return view('projects.index', CorporateContent::layout('Our work defines us') + compact('items', 'filters') + ['cities' => $all->pluck('city')->unique()->sort(), 'canonical' => route('projects.index')]);
+})->name('projects.index');
+Route::get('/projects/{slug}', function (string $slug) {
+    $entry = ContentEntry::where('type', 'project')->where('slug', $slug)->whereNotNull('published_revision_id')->with('publishedRevision')->firstOrFail();
+
+    return ProjectContent::detail($entry, $entry->publishedRevision->payload);
+})->name('projects.show');
 Route::post('/enquiries', [HomepageController::class, 'store'])->middleware('throttle:5,1')->name('enquiries.store');
 Route::get('/health', function (Request $request) {
     abort_if(app()->isProduction(), 404);
@@ -60,6 +76,14 @@ Route::middleware(['auth', 'auth.session'])->prefix('admin')->name('admin.')->gr
     Route::middleware(['two-factor.required', 'can:admin.view'])->group(function () {
         Route::view('/', 'admin.dashboard')->name('dashboard');
         Route::view('/account', 'admin.account')->name('account');
+        Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
+        Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
+        Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
+        Route::get('/projects/{entry}/edit', [ProjectController::class, 'edit'])->name('projects.edit');
+        Route::put('/projects/{entry}', [ProjectController::class, 'update'])->name('projects.update');
+        Route::post('/projects/{entry}/status', [ProjectController::class, 'transition'])->name('projects.transition');
+        Route::post('/projects/{entry}/assign', [ProjectController::class, 'assign'])->name('projects.assign');
+        Route::get('/projects/{entry}/preview', [ProjectController::class, 'preview'])->name('projects.preview');
         Route::view('/development', 'checkpoint')->middleware('can:settings.manage')->name('development');
         Route::get('/settings', [SettingController::class, 'edit'])->middleware('can:settings.manage')->name('settings.edit');
         Route::put('/settings', [SettingController::class, 'update'])->middleware('can:settings.manage')->name('settings.update');

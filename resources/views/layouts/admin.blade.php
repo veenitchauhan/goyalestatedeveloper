@@ -16,6 +16,9 @@
 @can('pages.view')
 <a href="{{ route('admin.corporate.index') }}" @if(request()->routeIs('admin.corporate.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">◇</span>Company & capabilities</a>
 @endcan
+@if(auth()->user()->can('projects.view') || auth()->user()->can('projects.view-assigned'))
+<a href="{{ route('admin.projects.index') }}" @if(request()->routeIs('admin.projects.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▥</span>Projects & progress</a>
+@endif
 @can('media.manage')
 <a href="{{ route('admin.media.index') }}" @if(request()->routeIs('admin.media.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▧</span>Media library</a>
 @endcan

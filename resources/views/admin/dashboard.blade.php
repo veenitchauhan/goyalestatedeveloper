@@ -4,6 +4,7 @@
 @can('pages.edit')<section><h2>Homepage</h2><p>Edit the homepage copy, section order and contact details. Preview changes before publishing.</p><a href="{{ route('admin.homepage.edit') }}">Edit homepage →</a></section>@endcan
 @can('pages.view')<section><h2>Pages & reusable content</h2><p>Manage pages, shared text, statistics and navigation links.</p><a href="{{ route('admin.content.index') }}">Open content →</a></section>@endcan
 @can('pages.view')<section><h2>Company & capabilities</h2><p>Manage company pages, business areas, people and equipment.</p><a href="{{ route('admin.corporate.index') }}">Open company content →</a></section>@endcan
+@if(auth()->user()->can('projects.view') || auth()->user()->can('projects.view-assigned'))<section><h2>Projects & progress</h2><p>Manage project information, progress stages and site galleries.</p><a href="{{ route('admin.projects.index') }}">Open projects →</a></section>@endif
 @can('media.manage')<section><h2>Media library</h2><p>Manage images and documents, visibility and branded image versions.</p><a href="{{ route('admin.media.index') }}">Open media →</a></section>@endcan
 @can('leads.view')<section><h2>Website enquiries</h2><p>Read enquiries submitted through the website.</p><a href="{{ route('admin.enquiries') }}">View enquiries →</a></section>@endcan
 @can('users.manage')<section><h2>Users</h2><p>Create users, assign roles and manage account access.</p><a href="{{ route('admin.users.index') }}">Manage users →</a></section>@endcan
