@@ -48,12 +48,12 @@ class HomepageControlsTest extends TestCase
         $this->get('/admin/homepage')->assertSee('Hero film (optional)')->assertSee('Selected statistic');
         $this->put('/admin/homepage', ['version' => 1, 'content' => Homepage::main()->content, 'hero_video_id' => $video->id, 'primary_cta_id' => $cta->id, 'statistics_mode' => 'selected', 'statistic_ids' => [$selected->id]])->assertSessionHasNoErrors();
         $entry = ContentEntry::where('type', 'homepage')->firstOrFail();
-        $this->get('/')->assertDontSee('Discuss infrastructure')->assertDontSee('class="hero-film"', false)->assertSee('Unselected statistic');
-        $this->get(route('admin.content.preview', $entry))->assertSee('Discuss infrastructure')->assertSee('class="hero-film"', false)->assertSee('Selected statistic')->assertDontSee('Unselected statistic');
+        $this->get('/')->assertDontSee('Discuss infrastructure')->assertDontSee('class="hero-film"', false)->assertDontSee('Unselected statistic');
+        $this->get(route('admin.content.preview', $entry))->assertSee('Discuss infrastructure')->assertSee('class="hero-film"', false)->assertDontSee('Selected statistic')->assertDontSee('Unselected statistic');
         foreach (['review', 'approve', 'publish'] as $action) {
             $this->post(route('admin.content.transition', $entry), ['version' => 2, 'action' => $action])->assertSessionHasNoErrors();
         }
-        $this->get('/')->assertSee('Discuss infrastructure')->assertSee('preload="none"', false)->assertDontSee('autoplay', false)->assertSee('Selected statistic')->assertDontSee('Unselected statistic');
+        $this->get('/')->assertSee('Discuss infrastructure')->assertSee('preload="none"', false)->assertDontSee('autoplay', false)->assertDontSee('Selected statistic')->assertDontSee('Unselected statistic');
         $video->update(['is_public' => false]);
         $cta->update(['published_revision_id' => null]);
         $selected->update(['published_revision_id' => null]);

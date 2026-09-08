@@ -18,10 +18,7 @@
 </section>
 @php($heroVideo=\App\Models\Media::where('is_public',true)->where('publication_status','published')->whereNull('archived_at')->where('mime','video/mp4')->whereKey($content['hero']['video_id'])->first())
 @if($heroVideo)<details class="hero-film"><summary>{{ $content['hero']['video_label'] ?: $heroVideo->title }}</summary><figure><video controls playsinline preload="none" @if($heroImage) poster="{{ route('media.show',$heroImage) }}" @endif aria-label="{{ $heroVideo->title }}"><source src="{{ route('media.show',$heroVideo) }}" type="video/mp4"></video>@if($heroVideo->caption)<figcaption>{{ $heroVideo->caption }}</figcaption>@endif @if($heroVideo->description)<p>{{ $heroVideo->description }}</p>@endif</figure></details>@endif
-@php($statistics=\App\Models\ContentEntry::publishedItems('statistic'))
-@if($content['statistics']['mode']!=='hidden')
-@include('partials.statistics',['statistics'=>$content['statistics']['mode']==='selected' ? $statistics->whereIn('id',$content['statistics']['ids']) : $statistics])
-@endif
+
 @php($sectionAssets=\App\Models\Media::where('is_public',true)->where('publication_status','published')->whereNull('archived_at')->whereIn('id',$sections->flatMap(fn($section)=>[$section['media_id']??null,$section['video_id']??null,$section['card_1_id']??null,$section['card_2_id']??null,$section['card_3_id']??null])->filter()->unique())->get()->keyBy('id'))
 @foreach($sections as $section)
 <section id="{{ $section['id'] }}" class="section section-{{ $section['id'] }}">
