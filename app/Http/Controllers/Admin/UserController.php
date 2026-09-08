@@ -17,7 +17,7 @@ class UserController extends Controller
 {
     public function index(): View
     {
-        return view('admin.users', ['users' => User::with('roles')->orderBy('name')->paginate(20), 'roles' => Role::orderBy('label')->get()]);
+        return view('admin.users', ['users' => User::with('roles')->orderBy('name')->paginate(20), 'roles' => Role::where('name', '!=', 'super-admin')->orderBy('label')->get()]);
     }
 
     public function store(StoreUserRequest $request, AuditRecorder $audit): RedirectResponse
@@ -38,11 +38,8 @@ class UserController extends Controller
             Role::where('name', 'super-admin')->lockForUpdate()->firstOrFail();
             $user = User::whereKey($user->id)->lockForUpdate()->firstOrFail();
             $role = Role::whereKey($request->integer('role_id'))->lockForUpdate()->firstOrFail();
-            if ($user->is($request->user()) && (! $request->boolean('is_active') || $role->name !== 'super-admin')) {
-                throw ValidationException::withMessages(['role_id' => 'You cannot remove your own administrator access.']);
-            }
-            if ($user->is_active && $user->hasRole('super-admin') && (! $request->boolean('is_active') || $role->name !== 'super-admin') && User::where('is_active', true)->whereHas('roles', fn ($q) => $q->where('name', 'super-admin'))->count() <= 1) {
-                throw ValidationException::withMessages(['role_id' => 'Keep at least one active Super Admin.']);
+            if ($user->hasRole('super-admin')) {
+                throw ValidationException::withMessages(['role_id' => 'The primary Super Admin account cannot be reassigned or deactivated.']);
             }
             $changes = ['before_roles' => $user->roles()->pluck('name')->all(), 'after_roles' => [$role->name], 'before_active' => $user->is_active, 'after_active' => $request->boolean('is_active')];
             $user->is_active = $request->boolean('is_active');

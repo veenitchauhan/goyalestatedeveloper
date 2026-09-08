@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateUserAccessRequest extends FormRequest
 {
@@ -13,6 +14,6 @@ class UpdateUserAccessRequest extends FormRequest
 
     public function rules(): array
     {
-        return ['role_id' => ['required', 'integer', 'exists:roles,id'], 'is_active' => ['required', 'boolean']];
+        return ['role_id' => ['required', 'integer', Rule::exists('roles', 'id')->whereNot('name', 'super-admin')], 'is_active' => ['required', 'boolean']];
     }
 }

@@ -59,6 +59,7 @@ Route::middleware(['auth', 'auth.session'])->prefix('admin')->name('admin.')->gr
     })->middleware('password.confirm')->name('security.continue');
     Route::middleware(['two-factor.required', 'can:admin.view'])->group(function () {
         Route::view('/', 'admin.dashboard')->name('dashboard');
+        Route::view('/account', 'admin.account')->name('account');
         Route::view('/development', 'checkpoint')->middleware('can:settings.manage')->name('development');
         Route::get('/settings', [SettingController::class, 'edit'])->middleware('can:settings.manage')->name('settings.edit');
         Route::put('/settings', [SettingController::class, 'update'])->middleware('can:settings.manage')->name('settings.update');
