@@ -2,9 +2,9 @@
 
 ## Foundation decision
 
-Use the existing local Apache/PHP-FPM environment and a dedicated public document root. Plan a Laravel modular monolith with server-rendered Blade pages, small Alpine interactions and compiled CSS/JS. Use MySQL for the application, independent of other local projects, with database-backed jobs initially and a queue adapter that can later use Redis. Pin and verify dependency versions in Module 2. Module 1 installs no framework and creates no database or accounts.
+Use the existing local Apache/PHP-FPM environment and a dedicated public document root. Use a Laravel modular monolith with server-rendered Blade pages, small Alpine interactions and compiled CSS/JS. Use MySQL for the application, independent of other local projects, with database-backed jobs initially and a queue adapter that can later use Redis. Module 2 pins Laravel 13.30.1 and Fortify 1.39.0. The local project uses an isolated MySQL 8.4 instance on port 3307; the original server remains unchanged. Module 1 installed no framework and created no database or accounts.
 
-The current PHP checkpoint is disposable development tooling, not a custom substitute for framework authentication or the production CMS. Replace it with the framework entry point in Module 2. Keep the checkpoint available in local environments only thereafter.
+The checkpoint is now a Blade view served by the Laravel entry point. It is development tooling, not the production CMS, and is unavailable in production.
 
 ## Information architecture
 

@@ -1,0 +1,3 @@
+@extends('layouts.admin')
+@section('title','Audit log')
+@section('content')<p class="eyebrow">ACCOUNTABILITY</p><h1>Activity history.</h1><p>Access changes and authentication events. Passwords, secrets and recovery codes are excluded.</p>@forelse($logs as $log)<section><h2>{{ $log->action }}</h2><p>{{ $log->created_at->format('d M Y H:i:s') }} UTC · Actor #{{ $log->actor_id ?? 'system' }} · Record #{{ $log->subject_id ?? '—' }}</p>@if($log->changes)<pre>{{ json_encode($log->changes, JSON_PRETTY_PRINT) }}</pre>@endif</section>@empty<section><p>No activity recorded yet.</p></section>@endforelse{{ $logs->links('pagination') }}@endsection

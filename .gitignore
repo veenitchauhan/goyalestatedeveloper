@@ -6,3 +6,16 @@
 /storage/logs/*
 /public/build/
 .DS_Store
+
+/.env.*
+!/.env.example
+/database/*.sqlite*
+/.phpunit.cache/
+/.phpunit.result.cache
+/public/hot
+/public/storage
+/auth.json
+
+/storage/local-mysql/
+
+!/storage/logs/.gitignore

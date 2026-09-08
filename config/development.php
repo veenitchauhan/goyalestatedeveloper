@@ -1,9 +1,10 @@
 <?php
+
 return [
     'company' => 'GOYAL ESTATE & DEVELOPERS PVT. LTD.',
     'host' => 'goyalestatedeveloper.test',
     'completed' => 1,
-    'status' => 'Module 1 complete — awaiting your testing',
+    'status' => 'Module 2 — administrator setup pending',
     'modules' => [
         'Architecture and local foundation',
         'Application, authentication and permissions',

@@ -13,4 +13,4 @@ The vhost source is `infra/apache/goyalestatedeveloper.test.conf`. Install it un
 5. Open `/not-a-page`; expect a branded 404 with a working return link.
 6. Send feedback or explicitly approve Module 2. No further module is authorized automatically.
 
-The checkpoint is intentionally not the finished website, and there is no database/CMS/login yet. The production stack is planned in `ARCHITECTURE.md`.
+The checkpoint is intentionally not the finished website. Laravel and MySQL are now installed, and /login serves the Fortify login page. First-administrator provisioning is pending approval; CMS comes in Module 3. See README.md for MySQL start/stop commands and Module 2 test instructions.
