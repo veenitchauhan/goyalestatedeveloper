@@ -15,7 +15,7 @@
 @php($menuItems=\App\Models\ContentEntry::publishedItems('menu'))
 @if($preview??false)<aside class="preview-notice">Private draft preview · This version is not necessarily published. Resize your browser to review mobile layouts.</aside>@endif
 <a class="skip-link" href="#main">Skip to content</a>
-<header class="site-header">
+<header id="page-top" class="site-header">
     <div class="header-inner">
         <a class="company-name" href="{{ route('home') }}">@include('partials.brand-logo')</a>
         <nav class="desktop-nav" aria-label="Main navigation">

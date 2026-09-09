@@ -1,6 +1,9 @@
 @extends('layouts.public')
 @section('content')
 @include('partials.scroll-crane')
+<a class="back-to-top" href="#page-top" aria-label="Back to top" title="Back to top">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5H19M6 13L12 7L18 13M12 7V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</a>
 @php($content=\App\Models\Homepage::editableContent($content))
 @php($ctas=\App\Models\ContentEntry::publishedItems('cta')->keyBy('id'))
 @php($primaryCta=$ctas->get($content['hero']['primary_cta_id']))

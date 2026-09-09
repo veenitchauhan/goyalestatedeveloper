@@ -134,7 +134,7 @@ body{font-size:16px;line-height:1.65}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.public-home .hero-inner,.public-home .hero-architecture,.public-home .hero-baseline>a,.context-card,.context-answer,.journey-steps details,.journey-steps details>p,.construction-details figure,.blueprint-building i{animation:none!important;transition:none!important}.context-card:hover{transform:none}}
 
 /* A decorative crane in the desktop gutter; the page scroll drives its hoist. */
-.scroll-crane{display:none;pointer-events:none;position:fixed;right:2px;top:26vh;width:4vw;max-width:84px;z-index:8;filter:drop-shadow(0 2px 2px #101c241c)}
+.scroll-crane{display:none;pointer-events:none;position:fixed;right:4px;top:23vh;width:min(6vw,112px,15vh);z-index:8;filter:drop-shadow(0 3px 3px #101c243d)}
 .scroll-crane svg{display:block;width:100%;height:auto;overflow:visible}.crane-cable{transform-origin:34px 85px}
 @media(min-width:1280px){.scroll-crane{display:block}}
 @supports(animation-timeline:scroll()){
@@ -146,3 +146,8 @@ body{font-size:16px;line-height:1.65}
 @keyframes crane-hook-travel{0%{transform:translateY(-129px)}35%{transform:translateY(86px)}70%{transform:translateY(-75.25px)}100%{transform:translateY(32.25px)}}
 @keyframes crane-trolley-travel{0%,100%{transform:translateX(0)}50%{transform:translateX(35px)}}
 @media(prefers-reduced-motion:reduce){.crane-cable,.crane-hook,.crane-trolley{animation:none!important}}
+
+.back-to-top{position:fixed;right:22px;bottom:22px;z-index:12;display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:50%;background:#ffd44d;color:#14232c;border:2px solid #e1ad25;box-shadow:0 5px 20px #101c2426;transition:transform .2s,background .2s}
+.back-to-top:hover{background:#ffe27b;transform:translateY(-3px)}
+@media(max-width:760px){.back-to-top{right:16px;bottom:calc(76px + env(safe-area-inset-bottom));width:46px;height:46px}}
+@media(prefers-reduced-motion:reduce){.back-to-top{transition:none}.back-to-top:hover{transform:none}}
