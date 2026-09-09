@@ -46,7 +46,7 @@
 <div class="workspace-main">
 <header class="topbar"><a class="brand" href="{{ route('home') }}">@include('partials.brand-logo')</a>
 @auth
-<nav aria-label="Account" class="top-menu"><a href="{{ route('admin.search') }}" @if(request()->routeIs('admin.search')) aria-current="page" @endif>Search</a><a href="{{ route('home') }}">View website ↗</a><a href="{{ route('admin.account') }}" @if(request()->routeIs('admin.account')) aria-current="page" @endif>Settings</a><form method="post" action="{{ route('logout') }}">@csrf<button class="quiet">Sign out</button></form></nav>
+<nav aria-label="Account" class="top-menu"><a href="{{ route('admin.search') }}" @if(request()->routeIs('admin.search')) aria-current="page" @endif>Search</a><a href="{{ route('home') }}" target="_blank" rel="noopener noreferrer">View website ↗</a><a href="{{ route('admin.account') }}" @if(request()->routeIs('admin.account')) aria-current="page" @endif>Settings</a><form method="post" action="{{ route('logout') }}">@csrf<button class="quiet">Sign out</button></form></nav>
 @endauth
 </header>
 <main id="main">

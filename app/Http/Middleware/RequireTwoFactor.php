@@ -10,7 +10,7 @@ class RequireTwoFactor
 {
     public static function enforced(): bool
     {
-        return ! app()->environment('local') || (bool) config('fortify.require_admin_two_factor', true);
+        return (bool) config('fortify.require_admin_two_factor', true);
     }
 
     public function handle(Request $request, Closure $next): Response

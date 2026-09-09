@@ -35,7 +35,7 @@ class LocalSignInTest extends TestCase
         $user = $this->admin();
         $this->post('/login', ['_token' => 'local-login-test-token', 'email' => $user->email, 'password' => 'password'])->assertRedirect('/admin');
         $this->assertAuthenticatedAs($user);
-        $this->withSession(['admin.setup_recovery_pending' => true])->get('/admin')->assertOk()->assertSee('Edit homepage')->assertDontSee('Complete account setup')->assertDontSee('Manage security');
+        $this->withSession(['admin.setup_recovery_pending' => true])->get('/admin')->assertOk()->assertSee('Open projects')->assertDontSee('Complete account setup')->assertDontSee('Manage security');
         $this->get('/admin/homepage')->assertOk();
         $this->assertNull($user->fresh()->two_factor_confirmed_at);
     }
@@ -46,11 +46,11 @@ class LocalSignInTest extends TestCase
         $this->actingAs($this->admin())->withSession(['admin.setup_destination' => '/admin/homepage', 'admin.setup_recovery_pending' => true])->get('/admin/security')->assertRedirect('/admin')->assertSessionMissing('admin.setup_recovery_pending')->assertSessionMissing('admin.setup_destination');
     }
 
-    public function test_production_still_requires_setup_even_with_the_local_flag_disabled(): void
+    public function test_production_can_skip_required_setup_when_disabled(): void
     {
         $this->app->instance('env', 'production');
-        $this->actingAs($this->admin())->get('/admin')->assertRedirect('/admin/security');
-        $this->get('/admin/security')->assertOk()->assertSee('Finish setting up your access.');
+        $this->actingAs($this->admin())->get('/admin')->assertOk()->assertSee('target="_blank" rel="noopener noreferrer">View website', false);
+        $this->get('/admin/security')->assertRedirect('/admin');
     }
 
     public function test_local_access_still_requires_authentication_and_valid_credentials(): void
