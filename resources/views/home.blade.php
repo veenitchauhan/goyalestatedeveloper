@@ -52,6 +52,21 @@
         <div><p class="eyebrow">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2></div><div class="careers-copy"><p>{{ $section['text'] }}</p>@if(\App\Services\CareerContent::openings()->isEmpty())<p class="muted">{{ $section['empty'] }}</p>@endif<a class="button light" href="{{ route('careers.index') }}">Explore careers ↗</a></div>
         @break
 
+    @case('homepage-faq')
+        <div class="section-heading"><div><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2></div><p>{{ $section['text'] }}</p></div><div class="faq-list">@foreach($section['items'] as $item)<details><summary>{{ $item['title'] }}<span aria-hidden="true">＋</span></summary><p>{{ $item['text'] }}</p></details>@endforeach
+        </div>
+        @php($featuredInsights=\App\Services\KnowledgeContent::items()->where('featured',true)->take(6))
+        @if($featuredInsights->isNotEmpty())
+        <section class="featured-insights" aria-labelledby="featured-insights-title">
+            <h3 id="featured-insights-title">{{ $section['featured_title'] ?? 'Ideas, insights & answers' }}</h3>
+            <div class="faq-list">
+            @foreach($featuredInsights as $article)
+                <details><summary>{{ $article['title'] }}<span aria-hidden="true">＋</span></summary><p>{{ $article['short_answer'] }}</p><p><a class="text-link" href="{{ $article['url'] }}">Read more ↗</a></p></details>
+            @endforeach
+            </div>
+        </section>
+        @endif
+        @break
     @case('contact')
         <div class="contact-intro"><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2><p>{{ $section['text'] }}</p><div class="contact-details">@if($content['contact']['email'])<a href="mailto:{{ $content['contact']['email'] }}">{{ $content['contact']['email'] }}</a>@endif @if($content['contact']['phone'])<a href="tel:{{ preg_replace('/[^+0-9]/','',$content['contact']['phone']) }}">{{ $content['contact']['phone'] }}</a>@endif @if($content['contact']['address'])<p>{{ $content['contact']['address'] }}</p>@endif</div></div>
         <div class="contact-form">@if(session('enquiry_sent'))<div class="form-success" role="status"><h3>Thank you for getting in touch.</h3><p>Your enquiry has been received.</p></div>@endif

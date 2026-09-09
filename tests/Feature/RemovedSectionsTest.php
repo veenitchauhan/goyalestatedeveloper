@@ -35,6 +35,18 @@ class RemovedSectionsTest extends TestCase
         $this->assertFalse(KnowledgeContent::supports('article'));
     }
 
+    public function test_homepage_restores_faqs_and_featured_cms_answers_without_insights_page(): void
+    {
+        $this->seed(HomepageSeeder::class);
+        $entry = ContentEntry::create(['type' => 'faq', 'slug' => 'featured-answer', 'title' => 'Featured CMS question']);
+        $revision = $entry->revisions()->create(['version' => 1, 'payload' => ['title' => 'Featured CMS question', 'short_answer' => 'Published CMS answer', 'featured' => true, 'order' => 1]]);
+        $entry->update(['published_revision_id' => $revision->id]);
+        $this->get('/')->assertOk()->assertSee('How can I discuss a project?')->assertSee('featured-insights')->assertSee('Featured CMS question')->assertSee('Published CMS answer');
+        $entry->update(['published_revision_id' => null]);
+        $this->get('/')->assertOk()->assertDontSee('Featured CMS question')->assertSee('How can I discuss a project?');
+        $this->get('/insights')->assertNotFound();
+    }
+
     public function test_cleanup_deletes_removed_content_and_revisions_but_preserves_other_content(): void
     {
         $this->seed(HomepageSeeder::class);

@@ -72,6 +72,30 @@ class HomepageSeeder extends Seeder
       "cta": "Make a career enquiry"
     },
     {
+      "id": "homepage-faq",
+      "nav": "",
+      "enabled": true,
+      "order": 70,
+      "eyebrow": "INSIGHTS & KNOWLEDGE",
+      "title": "A closer look\nat construction.",
+      "text": "Project stories, construction knowledge and perspectives on the work behind the built environment.",
+      "items": [
+        {
+          "title": "What is the company’s current focus?",
+          "text": "Construction, infrastructure and project execution, with a current focus on the Tricity region."
+        },
+        {
+          "title": "Is real estate an active business?",
+          "text": "Development and real estate are part of the long-term vision. They are not presented as an active property-sales business."
+        },
+        {
+          "title": "How can I discuss a project?",
+          "text": "Use the enquiry form to share the project type, location and scope of your requirement."
+        }
+      ],
+      "featured_title": "Ideas, insights & answers"
+    },
+    {
       "id": "contact",
       "nav": "Contact",
       "enabled": true,
