@@ -134,7 +134,7 @@ body{font-size:16px;line-height:1.65}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.public-home .hero-inner,.public-home .hero-architecture,.public-home .hero-baseline>a,.context-card,.context-answer,.journey-steps details,.journey-steps details>p,.construction-details figure,.blueprint-building i{animation:none!important;transition:none!important}.context-card:hover{transform:none}}
 
 /* A decorative crane in the desktop gutter; the page scroll drives its hoist. */
-.scroll-crane{display:none;pointer-events:none;position:fixed;right:20px;top:23vh;width:min(6vw,112px,15vh);z-index:8;filter:drop-shadow(0 3px 3px #101c243d)}
+.scroll-crane{display:none;pointer-events:none;position:fixed;right:36px;top:23vh;width:min(6vw,112px,15vh);z-index:8;filter:drop-shadow(0 3px 3px #101c243d)}
 .scroll-crane svg{display:block;width:100%;height:auto;overflow:visible}.crane-cable{transform-origin:34px 85px}
 @media(min-width:1280px){.scroll-crane{display:block}}
 @supports(animation-timeline:scroll()){
