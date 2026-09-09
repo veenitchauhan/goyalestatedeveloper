@@ -45,7 +45,7 @@ class AdminImmediatePublishingTest extends TestCase
         $user->roles()->attach(Role::where('name', 'super-admin')->firstOrFail());
         $entry = ContentEntry::create(['type' => 'faq', 'slug' => 'dummy', 'title' => 'Existing FAQ']);
         $entry->revisions()->create(['version' => 1, 'payload' => ['title' => 'Existing FAQ']]);
-        $this->actingAs($user)->put('/admin/knowledge/'.$entry->id, ['version' => 1, 'type' => 'faq', 'title' => 'Updated FAQ question', 'slug' => 'dummy', 'category' => 'General', 'short_answer' => 'A short answer.', 'body' => 'The full answer.', 'verified' => false, 'author' => '', 'reviewer' => '', 'source_note' => '', 'featured' => true, 'schema_enabled' => false, 'order' => 0])->assertRedirect()->assertSessionHasNoErrors();
+        $this->actingAs($user)->put('/admin/knowledge/'.$entry->id, ['version' => 1, 'type' => 'faq', 'title' => 'Updated FAQ question', 'slug' => 'dummy', 'category' => 'General', 'short_answer' => 'A short answer.', 'body' => 'The full answer.', 'verified' => false, 'author' => '', 'reviewer' => '', 'source_note' => '', 'featured' => false, 'schema_enabled' => false, 'order' => 0])->assertRedirect()->assertSessionHasNoErrors();
         $this->assertSame('published', $entry->fresh()->status);
         $this->get('/faqs/dummy')->assertOk()->assertSee('Updated FAQ question')->assertSee('The full answer.');
         $this->get('/')->assertSee('Updated FAQ question');

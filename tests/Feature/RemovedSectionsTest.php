@@ -35,15 +35,27 @@ class RemovedSectionsTest extends TestCase
         $this->assertFalse(KnowledgeContent::supports('article'));
     }
 
-    public function test_homepage_restores_faqs_and_featured_cms_answers_without_insights_page(): void
+    public function test_homepage_shows_published_faqs_without_featuring_and_keeps_featured_knowledge_separate(): void
     {
         $this->seed(HomepageSeeder::class);
-        $entry = ContentEntry::create(['type' => 'faq', 'slug' => 'featured-answer', 'title' => 'Featured CMS question']);
-        $revision = $entry->revisions()->create(['version' => 1, 'payload' => ['title' => 'Featured CMS question', 'short_answer' => 'Published CMS answer', 'featured' => true, 'order' => 1]]);
+        $entry = ContentEntry::create(['type' => 'faq', 'slug' => 'cms-answer', 'title' => 'CMS question']);
+        $revision = $entry->revisions()->create(['version' => 1, 'payload' => ['title' => 'CMS question', 'short_answer' => 'Published CMS answer', 'featured' => false, 'order' => 1]]);
         $entry->update(['published_revision_id' => $revision->id]);
-        $this->get('/')->assertOk()->assertSee('How can I discuss a project?')->assertSee('featured-insights')->assertSee('Featured CMS question')->assertSee('Published CMS answer');
+        $knowledge = ContentEntry::create(['type' => 'knowledge', 'slug' => 'construction-guide', 'title' => 'Construction guide']);
+        $knowledgeRevision = $knowledge->revisions()->create(['version' => 1, 'payload' => ['title' => 'Construction guide', 'short_answer' => 'Featured guide answer', 'featured' => true, 'order' => 1]]);
+        $knowledge->update(['published_revision_id' => $knowledgeRevision->id]);
+        $entry->revisions()->create(['version' => 2, 'payload' => ['title' => 'Unpublished question', 'short_answer' => 'Unpublished answer']]);
+
+        $response = $this->get('/')->assertOk()
+            ->assertDontSee('How can I discuss a project?')
+            ->assertSee('CMS question')->assertSee('Published CMS answer')
+            ->assertDontSee('Unpublished question')->assertDontSee('Unpublished answer')
+            ->assertSee('featured-insights')->assertSee('Construction guide')->assertSee('Featured guide answer');
+        $this->assertSame(1, substr_count($response->getContent(), 'CMS question'));
+        $response->assertSeeInOrder(['CMS question', 'featured-insights', 'Construction guide']);
+
         $entry->update(['published_revision_id' => null]);
-        $this->get('/')->assertOk()->assertDontSee('Featured CMS question')->assertSee('How can I discuss a project?');
+        $this->get('/')->assertOk()->assertDontSee('CMS question')->assertSee('How can I discuss a project?');
         $this->get('/insights')->assertNotFound();
     }
 
