@@ -7,7 +7,7 @@
     @include('partials.seo-head')
     @if($favicon=\App\Models\SiteSetting::image($siteSettings['branding']['favicon_id']))<link rel="icon" href="{{ route('media.show',$favicon) }}">@endif
     @if($siteSettings['seo']['search_console_verification'])<meta name="google-site-verification" content="{{ $siteSettings['seo']['search_console_verification'] }}">@endif
-    <link rel="stylesheet" href="{{ asset('assets/website.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/website.css') }}?v={{ filemtime(public_path('assets/website.css')) }}">
 <link rel="stylesheet" href="{{ asset('assets/projects.css') }}">
 </head>
 <body class="{{ request()->routeIs('home') ? 'public-home' : 'public-page' }}">

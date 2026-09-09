@@ -30,6 +30,9 @@ class Homepage extends Model
         ];
         $content['statistics'] ??= ['mode' => 'all', 'ids' => []];
         foreach ($content['sections'] as &$section) {
+            if ($section['id'] === 'insights') {
+                $section += ['featured_title' => 'Ideas, insights & answers'];
+            }
             $section += ['artwork_enabled' => true, 'card_1_id' => null, 'card_2_id' => null, 'card_3_id' => null, 'media_id' => null, 'video_id' => null, 'cta_id' => null];
         }
         unset($section);

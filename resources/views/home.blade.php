@@ -70,9 +70,19 @@
         @break
     @case('insights')
         <div class="section-heading"><div><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2></div><p>{{ $section['text'] }}</p></div><div class="faq-list">@foreach($section['items'] as $item)<details><summary>{{ $item['title'] }}<span aria-hidden="true">＋</span></summary><p>{{ $item['text'] }}</p></details>@endforeach
-        @foreach(\App\Services\KnowledgeContent::items()->where('featured',true)->take(6) as $article)
-        <details><summary>{{ $article['title'] }}<span aria-hidden="true">＋</span></summary><p>{{ $article['short_answer'] }}</p><p><a class="text-link dark-link" href="{{ $article['url'] }}">Read more ↗</a></p></details>
-        @endforeach</div><p><a class="text-link dark-link" href="{{ route('knowledge.article.index') }}">Explore insights ↗</a> · <a href="{{ route('knowledge.knowledge.index') }}">Knowledge Bank</a> · <a href="{{ route('knowledge.faq.index') }}">FAQs</a></p>
+        </div>
+        @php($featuredInsights=\App\Services\KnowledgeContent::items()->where('featured',true)->take(6))
+        @if($featuredInsights->isNotEmpty())
+        <section class="featured-insights" aria-labelledby="featured-insights-title">
+            <h3 id="featured-insights-title">{{ $section['featured_title'] ?? 'Ideas, insights & answers' }}</h3>
+            <div class="faq-list">
+            @foreach($featuredInsights as $article)
+                <details><summary>{{ $article['title'] }}<span aria-hidden="true">＋</span></summary><p>{{ $article['short_answer'] }}</p><p><a class="text-link" href="{{ $article['url'] }}">Read more ↗</a></p></details>
+            @endforeach
+            </div>
+            <nav class="featured-insights-links" aria-label="Explore knowledge"><a href="{{ route('knowledge.article.index') }}">Explore insights ↗</a><a href="{{ route('knowledge.knowledge.index') }}">Knowledge Bank ↗</a><a href="{{ route('knowledge.faq.index') }}">FAQs ↗</a></nav>
+        </section>
+        @endif
         @break
     @case('contact')
         <div class="contact-intro"><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2><p>{{ $section['text'] }}</p><div class="contact-details">@if($content['contact']['email'])<a href="mailto:{{ $content['contact']['email'] }}">{{ $content['contact']['email'] }}</a>@endif @if($content['contact']['phone'])<a href="tel:{{ preg_replace('/[^+0-9]/','',$content['contact']['phone']) }}">{{ $content['contact']['phone'] }}</a>@endif @if($content['contact']['address'])<p>{{ $content['contact']['address'] }}</p>@endif</div></div>
