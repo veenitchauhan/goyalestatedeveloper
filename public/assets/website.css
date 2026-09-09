@@ -132,3 +132,17 @@ body{font-size:16px;line-height:1.65}
 @media(max-width:1000px){.journey-layout{gap:6%}.context-card summary{padding:24px}.context-answer{padding:0 24px 24px}.context-card h3{font-size:25px}.details-layout{gap:5%}.construction-ribbon{gap:12px 18px;font-size:11px}}
 @media(max-width:760px){.context-cards,.journey-layout,.details-layout{grid-template-columns:1fr;gap:24px}.context-card h3{max-width:none;min-height:0}.context-symbol{margin:20px 0;width:50px;height:50px;font-size:30px}.context-card summary{padding:24px}.construction-ribbon{display:grid;grid-template-columns:1fr 1fr;text-align:center;padding:20px 5%;font-size:10px}.construction-ribbon i{display:none}.construction-details figure img{height:320px}.journey-steps h3{font-size:21px}.blueprint-building{height:140px;max-width:260px}.construction-context .section-heading>p{font-size:15px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.public-home .hero-inner,.public-home .hero-architecture,.public-home .hero-baseline>a,.context-card,.context-answer,.journey-steps details,.journey-steps details>p,.construction-details figure,.blueprint-building i{animation:none!important;transition:none!important}.context-card:hover{transform:none}}
+
+/* A decorative crane in the desktop gutter; the page scroll drives its hoist. */
+.scroll-crane{display:none;pointer-events:none;position:fixed;right:2px;top:26vh;width:4vw;max-width:84px;z-index:8;filter:drop-shadow(0 2px 2px #101c241c)}
+.scroll-crane svg{display:block;width:100%;height:auto;overflow:visible}.crane-cable{transform-origin:34px 85px}
+@media(min-width:1280px){.scroll-crane{display:block}}
+@supports(animation-timeline:scroll()){
+    .crane-cable{animation:crane-cable-travel linear both;animation-timeline:scroll(root block)}
+    .crane-hook{animation:crane-hook-travel linear both;animation-timeline:scroll(root block)}
+    .crane-trolley{animation:crane-trolley-travel linear both;animation-timeline:scroll(root block)}
+}
+@keyframes crane-cable-travel{0%{transform:scaleY(.4)}35%{transform:scaleY(1.4)}70%{transform:scaleY(.65)}100%{transform:scaleY(1.15)}}
+@keyframes crane-hook-travel{0%{transform:translateY(-129px)}35%{transform:translateY(86px)}70%{transform:translateY(-75.25px)}100%{transform:translateY(32.25px)}}
+@keyframes crane-trolley-travel{0%,100%{transform:translateX(0)}50%{transform:translateX(35px)}}
+@media(prefers-reduced-motion:reduce){.crane-cable,.crane-hook,.crane-trolley{animation:none!important}}

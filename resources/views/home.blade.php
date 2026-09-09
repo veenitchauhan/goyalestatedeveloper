@@ -1,5 +1,6 @@
 @extends('layouts.public')
 @section('content')
+@include('partials.scroll-crane')
 @php($content=\App\Models\Homepage::editableContent($content))
 @php($ctas=\App\Models\ContentEntry::publishedItems('cta')->keyBy('id'))
 @php($primaryCta=$ctas->get($content['hero']['primary_cta_id']))
