@@ -102,3 +102,20 @@ body{font-size:16px;line-height:1.65}
 .desktop-nav>a{white-space:nowrap}
 .mobile-nav{font-size:16px}
 @media(min-width:1151px) and (max-width:1400px){.desktop-nav{font-size:17px;gap:18px}.header-inner{gap:20px}.header-cta{display:none}}
+
+/* Shared navigation and readable editorial pages. */
+.site-header .header-inner{max-width:1390px;padding:14px 5%;gap:28px;min-height:96px}
+.site-header .branding-logo{width:220px;height:auto;padding:6px 10px;border-radius:8px}
+.site-header .desktop-nav{margin-left:auto;gap:24px;font-size:17px}
+.site-header .header-cta{background:var(--orange);color:var(--night);border:0;border-radius:6px;padding:12px 18px;font-size:14px;font-weight:600}
+.page-breadcrumb{max-width:1390px;margin:auto;padding:18px 5%;display:flex;align-items:center;flex-wrap:wrap;gap:10px;font-size:13px;color:var(--muted);line-height:1.5}
+.page-breadcrumb a:hover{text-decoration:underline}.page-breadcrumb [aria-current]{overflow-wrap:anywhere}
+.knowledge-article .corporate-hero{padding:42px 0 48px;background:linear-gradient(120deg,var(--night),#1d343b)}
+.knowledge-article .corporate-container{max-width:1020px}
+.knowledge-article .corporate-hero h1{font-size:clamp(30px,3.5vw,50px);line-height:1.18;letter-spacing:-.03em;margin:16px 0 20px}
+.knowledge-article .corporate-hero .lead{font-size:18px;line-height:1.7;max-width:760px}
+.knowledge-article .corporate-detail{padding-top:28px}
+.article-meta{display:flex;flex-wrap:wrap;gap:8px 22px;color:var(--muted);font-size:13px;margin:14px 0 28px}
+.knowledge-article .corporate-detail>.corporate-group{margin-top:30px}.knowledge-article .corporate-group>h2{font-size:28px;margin-bottom:18px}.knowledge-article .cms-prose{font-size:18px;line-height:1.85;overflow-wrap:anywhere}
+@media(max-width:1150px){.site-header .header-inner{gap:12px}.site-header .desktop-nav{margin:0;justify-content:space-between}.site-header .branding-logo{width:200px}}
+@media(max-width:760px){.site-header .header-inner{min-height:0;padding-top:12px;padding-bottom:8px}.site-header .branding-logo{width:180px}.knowledge-article .corporate-hero{padding:28px 0 32px}.knowledge-article .corporate-hero .lead,.knowledge-article .cms-prose{font-size:16px}.page-breadcrumb{font-size:12px}}

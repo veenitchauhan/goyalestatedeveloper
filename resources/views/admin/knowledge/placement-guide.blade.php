@@ -1,5 +1,5 @@
-<section>
-    <h2>Where will my content appear?</h2>
+<details class="placement-guide">
+    <summary>Where will my content appear?</summary>
     <p>The homepage keeps its three original company FAQs. Your content appears separately in the dark “Ideas, insights & answers” section below them.</p>
     <ul>
         <li><strong>FAQs:</strong> every published question appears automatically in the dark homepage section and on the FAQs page.</li>
@@ -10,4 +10,4 @@
     @if(\App\Services\ContentPublisher::immediate())
         <p>Click Save to publish your changes immediately. Use Hide in the publication controls to remove an item from the website.</p>
     @endif
-</section>
+</details>

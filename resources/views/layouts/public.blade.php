@@ -27,7 +27,7 @@
         <details class="mobile-nav"><summary>Menu <span aria-hidden="true">＋</span></summary><nav aria-label="Mobile navigation"><a href="{{ route('home') }}">Home</a>@include('partials.public-navigation') @foreach($menuItems->whereIn('placement',['header','both']) as $item)<a href="{{ $item['url'] }}">{{ $item['title'] }}</a>@endforeach</nav></details>
     </div>
 </header>
-<main id="main">@if(isset($entry,$payload['title']))<nav class="corporate-subnav" aria-label="Breadcrumb"><a href="{{ route('home') }}">Home</a><span aria-current="page">{{ $payload['title'] }}</span></nav>@endif
+<main id="main">@if(isset($entry,$payload['title']))<nav class="page-breadcrumb" aria-label="Breadcrumb"><a href="{{ route('home') }}">Home</a><span aria-hidden="true">/</span>@if(\App\Services\KnowledgeContent::supports($entry->type))<a href="{{ route('knowledge.'.$entry->type.'.index') }}">{{ \App\Services\KnowledgeContent::TYPES[$entry->type] }}</a><span aria-hidden="true">/</span>@endif<span aria-current="page">{{ $payload['title'] }}</span></nav>@endif
 @yield('content')</main>
 <footer class="site-footer">
     <div class="footer-top"><a class="company-name" href="{{ route('home') }}">@include('partials.brand-logo')</a><p>{{ $content['hero']['eyebrow'] }}</p></div>
