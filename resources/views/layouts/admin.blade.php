@@ -7,15 +7,6 @@
 <a class="workspace-brand" href="{{ route('admin.dashboard') }}">@include('partials.brand-logo')</a>
 <details class="sidebar-menu" open><summary>Workspace menu</summary><nav aria-label="Administration">
 <a href="{{ route('admin.dashboard') }}" @if(request()->routeIs('admin.dashboard')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▦</span>Overview</a>
-@can('pages.edit')
-<a href="{{ route('admin.homepage.edit') }}" @if(request()->routeIs('admin.homepage.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">⌂</span>Homepage</a>
-@endcan
-@can('pages.view')
-<a href="{{ route('admin.content.index') }}" @if(request()->routeIs('admin.content.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▤</span>Pages & reusable content</a>
-@endcan
-@can('pages.view')
-<a href="{{ route('admin.corporate.index') }}" @if(request()->routeIs('admin.corporate.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">◇</span>Company</a>
-@endcan
 @if(auth()->user()->can('projects.view') || auth()->user()->can('projects.view-assigned'))
 <a href="{{ route('admin.projects.index') }}" @if(request()->routeIs('admin.projects.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▥</span>Projects & progress</a>
 @endif

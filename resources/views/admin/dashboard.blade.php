@@ -1,9 +1,6 @@
 @extends('layouts.admin')
 @section('title','Overview')
 @section('content')<p class="eyebrow">YOUR WORKSPACE</p><h1>Welcome, {{ auth()->user()->name }}.</h1><p>Manage your website content, media and enquiries from one place.</p><div class="cards">
-@can('pages.edit')<section><h2>Homepage</h2><p>Edit the homepage copy, section order and contact details. Preview changes before publishing.</p><a href="{{ route('admin.homepage.edit') }}">Edit homepage →</a></section>@endcan
-@can('pages.view')<section><h2>Pages & reusable content</h2><p>Manage pages, shared text, statistics and navigation links.</p><a href="{{ route('admin.content.index') }}">Open content →</a></section>@endcan
-@can('pages.view')<section><h2>Company</h2><p>Manage company pages, people and company history.</p><a href="{{ route('admin.corporate.index') }}">Open company content →</a></section>@endcan
 @if(auth()->user()->can('projects.view') || auth()->user()->can('projects.view-assigned'))<section><h2>Projects & progress</h2><p>Manage project information, progress stages and site galleries.</p><a href="{{ route('admin.projects.index') }}">Open projects →</a></section>@endif
 @can('pages.view')<section><h2>Locations & expansion</h2><p>Manage verified operating areas and planned expansion.</p><a href="{{ route('admin.locations.index') }}">Open locations →</a></section>@endcan
 @can('jobs.view')<section><h2>Careers & openings</h2><p>Create roles, internships and graduate opportunities.</p><a href="{{ route('admin.jobs.index') }}">Manage openings →</a></section>@endcan
