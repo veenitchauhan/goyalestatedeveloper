@@ -49,7 +49,7 @@ class ProjectController extends Controller
 
         return view('admin.projects.edit', compact('entry', 'revision', 'payload') + [
             'media' => Media::where('is_public', true)->where('publication_status', 'published')->whereNull('archived_at')->orderBy('title')->get(),
-            'equipment' => ContentEntry::publishedItems('equipment'), 'related' => ProjectContent::items()->where('id', '!=', $entry->id),
+            'equipment' => ContentEntry::publishedItems('equipment'),
             'users' => auth()->user()->can('projects.publish') ? User::where('is_active', true)->orderBy('name')->get() : collect(),
         ]);
     }
@@ -70,7 +70,14 @@ class ProjectController extends Controller
     {
         abort_unless($entry->type === 'project' && $entry->slug === $request->validated('slug'), 422);
         DB::transaction(function () use ($request, $entry, $publisher) {
-            $publisher->save($entry, $request->validated(), $request->integer('version'));
+            $payload = $request->validated();
+            $previous = $entry->revisions()->latest('version')->firstOrFail()->payload;
+            foreach (['manager', 'location_entry_id', 'expected_completion', 'cover_media_id', 'panorama_media_id', 'panorama_caption', 'before_media_id', 'after_media_id', 'equipment_ids', 'related_ids', 'document_ids', 'timeline'] as $field) {
+                if (! $request->has($field) && array_key_exists($field, $previous)) {
+                    $payload[$field] = $previous[$field];
+                }
+            }
+            $publisher->save($entry, $payload, $request->integer('version'));
             $entry->update(['title' => $request->validated('title')]);
         });
 

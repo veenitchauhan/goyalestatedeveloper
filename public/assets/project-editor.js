@@ -55,7 +55,7 @@
                 });
                 addOption(document);
                 document.querySelectorAll('[data-repeater] template').forEach(template => addOption(template.content));
-                status.textContent = 'Uploaded. Select this file in the gallery, cover or documents above, then save your project draft.';
+                status.textContent = data.mime === 'application/pdf' ? 'Document uploaded. It is available in the Media library.' : 'Uploaded. Select this file in the gallery above, then save your project draft.';
             } else {
                 status.textContent = 'Uploaded privately. Review and publish it in Media library before adding it to the public project.';
             }

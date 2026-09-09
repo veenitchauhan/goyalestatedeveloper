@@ -57,7 +57,7 @@ class ProjectContentTest extends TestCase
         $this->login();
         $entry = $this->createProject();
         $this->get('/projects/'.$entry->slug)->assertNotFound();
-        $this->get('/admin/projects/'.$entry->id.'/edit')->assertOk()->assertSee('Construction stages');
+        $this->get('/admin/projects/'.$entry->id.'/edit')->assertOk()->assertDontSee('Media & relationships')->assertDontSee('Construction stages')->assertDontSee('Progress last updated')->assertDontSee('Expected completion')->assertSee('Project gallery');
         $this->get('/admin/projects/'.$entry->id.'/preview')->assertOk()->assertSee('Foundation complete')->assertSee('noindex');
         $this->publish($entry);
         $this->get('/projects/'.$entry->slug)->assertOk()->assertSee('72% complete')->assertSee('Civil works.')->assertDontSee('Confidential client')->assertDontSee('Confidential value')->assertDontSee('Test-only approved specification');
@@ -155,6 +155,32 @@ class ProjectContentTest extends TestCase
         $audit = AuditLog::where('action', 'project.assignment_updated')->latest('id')->firstOrFail();
         $this->assertSame([$editor->id], $audit->changes['before_assignees']);
         $this->assertSame([], $audit->changes['after_assignees']);
+    }
+
+    public function test_simplified_editor_generates_stable_urls_and_preserves_removed_fields(): void
+    {
+        $this->login();
+        $data = $this->payload();
+        unset($data['slug'], $data['project_type'], $data['progress_date'], $data['timeline']);
+        $this->post('/admin/projects', $data)->assertSessionHasNoErrors();
+        $entry = ContentEntry::where('slug', 'verified-test-project')->firstOrFail();
+        $this->assertSame('Buildings', $entry->revisions()->firstOrFail()->payload['project_type']);
+        $this->post('/admin/projects', $data)->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('content_entries', ['slug' => 'verified-test-project-2']);
+        $media = Media::factory()->create(['is_public' => true, 'publication_status' => 'published']);
+        $legacy = $this->createProject(['slug' => 'legacy-project', 'manager' => 'Existing manager', 'expected_completion' => '2027-01-01', 'cover_media_id' => $media->id]);
+        $old = $legacy->revisions()->firstOrFail()->payload;
+        $this->travel(1)->days();
+        $this->put('/admin/projects/'.$legacy->id, array_replace($data, ['version' => 1, 'title' => 'Renamed project']))->assertSessionHasNoErrors();
+        $saved = $legacy->revisions()->latest('version')->firstOrFail()->payload;
+        foreach (['timeline', 'manager', 'expected_completion', 'project_type', 'progress_date', 'cover_media_id'] as $field) {
+            $this->assertSame($old[$field], $saved[$field]);
+        }
+        $this->assertSame('legacy-project', $legacy->fresh()->slug);
+        $this->put('/admin/projects/'.$legacy->id, array_replace($data, ['version' => 2, 'progress' => 85]))->assertSessionHasNoErrors();
+        $this->assertSame(now()->toDateString(), $legacy->revisions()->latest('version')->firstOrFail()->payload['progress_date']);
+        $this->publish($legacy, 3);
+        $this->get('/projects/legacy-project')->assertOk()->assertSee('85% complete');
     }
 
     public function test_dates_and_completed_progress_must_be_consistent(): void
