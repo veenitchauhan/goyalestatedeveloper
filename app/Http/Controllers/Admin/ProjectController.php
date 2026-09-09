@@ -10,10 +10,13 @@ use App\Models\User;
 use App\Services\AuditRecorder;
 use App\Services\ContentPublisher;
 use App\Services\ProjectContent;
+use App\Services\ProjectImages;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -50,18 +53,27 @@ class ProjectController extends Controller
         return view('admin.projects.edit', compact('entry', 'revision', 'payload') + [
             'media' => Media::where('is_public', true)->where('publication_status', 'published')->whereNull('archived_at')->orderBy('title')->get(),
             'equipment' => ContentEntry::publishedItems('equipment'),
+            'projectImages' => Media::whereIn('id', ProjectImages::selectedIds($payload))->get()->sortBy(fn ($media) => array_search($media->id, ProjectImages::selectedIds($payload))),
             'users' => auth()->user()->can('projects.publish') ? User::where('is_active', true)->orderBy('name')->get() : collect(),
         ]);
     }
 
     public function store(SaveProjectRequest $request, ContentPublisher $publisher): RedirectResponse
     {
-        $entry = DB::transaction(function () use ($request, $publisher) {
-            $entry = ContentEntry::create(['type' => 'project', 'slug' => $request->validated('slug'), 'title' => $request->validated('title'), 'author_id' => auth()->id()]);
-            $publisher->save($entry, $request->validated(), 0);
+        $createdPaths = [];
+        try {
+            $entry = DB::transaction(function () use ($request, $publisher, &$createdPaths) {
+                $entry = ContentEntry::create(['type' => 'project', 'slug' => $request->validated('slug'), 'title' => $request->validated('title'), 'author_id' => auth()->id()]);
+                $payload = app(ProjectImages::class)->apply($request, $entry, Arr::except($request->validated(), ['images', 'keep_images', 'image_selection']), [], $createdPaths);
+                $publisher->save($entry, $payload, 0);
 
-            return $entry;
-        });
+                return $entry;
+            });
+
+        } catch (\Throwable $error) {
+            Storage::disk('local')->delete(array_filter($createdPaths));
+            throw $error;
+        }
 
         return redirect()->route('admin.projects.edit', $entry)->with('status', 'Project draft created. Add approved facts and media before publication.');
     }
@@ -69,17 +81,25 @@ class ProjectController extends Controller
     public function update(SaveProjectRequest $request, ContentEntry $entry, ContentPublisher $publisher): RedirectResponse
     {
         abort_unless($entry->type === 'project' && $entry->slug === $request->validated('slug'), 422);
-        DB::transaction(function () use ($request, $entry, $publisher) {
-            $payload = $request->validated();
-            $previous = $entry->revisions()->latest('version')->firstOrFail()->payload;
-            foreach (['manager', 'location_entry_id', 'expected_completion', 'cover_media_id', 'panorama_media_id', 'panorama_caption', 'before_media_id', 'after_media_id', 'equipment_ids', 'related_ids', 'document_ids', 'timeline'] as $field) {
-                if (! $request->has($field) && array_key_exists($field, $previous)) {
-                    $payload[$field] = $previous[$field];
+        $createdPaths = [];
+        try {
+            DB::transaction(function () use ($request, $entry, $publisher, &$createdPaths) {
+                $payload = Arr::except($request->validated(), ['images', 'keep_images', 'image_selection']);
+                $previous = $entry->revisions()->latest('version')->firstOrFail()->payload;
+                foreach (['manager', 'location_entry_id', 'expected_completion', 'cover_media_id', 'panorama_media_id', 'panorama_caption', 'before_media_id', 'after_media_id', 'equipment_ids', 'related_ids', 'document_ids', 'timeline'] as $field) {
+                    if (! $request->has($field) && array_key_exists($field, $previous)) {
+                        $payload[$field] = $previous[$field];
+                    }
                 }
-            }
-            $publisher->save($entry, $payload, $request->integer('version'));
-            $entry->update(['title' => $request->validated('title')]);
-        });
+                $payload = app(ProjectImages::class)->apply($request, $entry, $payload, $previous, $createdPaths);
+                $publisher->save($entry, $payload, $request->integer('version'));
+                $entry->update(['title' => $request->validated('title')]);
+            });
+
+        } catch (\Throwable $error) {
+            Storage::disk('local')->delete(array_filter($createdPaths));
+            throw $error;
+        }
 
         return back()->with('status', 'Project draft saved. The published project is unchanged.');
     }

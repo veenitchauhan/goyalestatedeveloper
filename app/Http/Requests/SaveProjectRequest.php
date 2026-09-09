@@ -5,13 +5,20 @@ namespace App\Http\Requests;
 use App\Models\ContentEntry;
 use App\Services\LocationContent;
 use App\Services\ProjectContent;
+use App\Services\ProjectImages;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class SaveProjectRequest extends FormRequest
 {
     public function authorize(): bool
     {
+        if ($this->hasFile('images') && (! $this->user()->can('media.upload') || ! $this->user()->can('media.manage'))) {
+            return false;
+        }
+
         return $this->route('entry') ? $this->user()->can('update', $this->route('entry')) : $this->user()->can('projects.edit');
     }
 
@@ -51,8 +58,23 @@ class SaveProjectRequest extends FormRequest
         }
     }
 
+    public function after(): array
+    {
+        return [function (Validator $validator): void {
+            if ($validator->errors()->isNotEmpty()) {
+                return;
+            }
+            if ($this->boolean('image_selection') && count($this->input('keep_images', [])) + count($this->file('images', [])) > 5) {
+                $validator->errors()->add('images', 'A project can have up to 5 images. Remove an existing image before adding another.');
+            }
+            if (! $this->boolean('image_selection') && count(ProjectImages::selectedIds($this->all())) > 5) {
+                $validator->errors()->add('gallery', 'A project can have up to 5 images.');
+            }
+        }];
+    }
+
     public function rules(): array
     {
-        return ProjectContent::rules($this->route('entry'), false, $this->all()) + ['version' => ['required', 'integer', 'min:0']];
+        return ProjectContent::rules($this->route('entry'), false, $this->all()) + ['version' => ['required', 'integer', 'min:0'], 'image_selection' => 'sometimes|boolean', 'keep_images' => ['sometimes', 'array', 'max:5'], 'keep_images.*' => ['integer', 'distinct', Rule::in(ProjectImages::selectedIds($this->route('entry')?->revisions()->latest('version')->first()?->payload ?? []))], 'images' => ['sometimes', 'array', 'max:5'], 'images.*' => ['file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:20480']];
     }
 }

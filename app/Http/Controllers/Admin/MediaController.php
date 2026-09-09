@@ -8,12 +8,12 @@ use App\Models\ContentEntry;
 use App\Models\Media;
 use App\Models\SiteSetting;
 use App\Services\AuditRecorder;
+use App\Services\MediaImages;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -66,12 +66,12 @@ class MediaController extends Controller
             throw ValidationException::withMessages(['file' => 'Unsupported file contents.']);
         }
         if (str_starts_with($mime, 'image/')) {
-            $this->checkImage($file->getPathname(), $data['alt'] ?? '');
+            app(MediaImages::class)->checkImage($file->getPathname(), $data['alt'] ?? '');
         }
         $path = $file->store('media/originals', 'local');
         $media = new Media([...$data, 'original_name' => $file->getClientOriginalName(), 'original_path' => $path, 'mime' => $mime, 'uploaded_by' => auth()->id()]);
         try {
-            $this->derive($media);
+            app(MediaImages::class)->derive($media);
             $media->save();
         } catch (\Throwable $e) {
             Storage::disk('local')->delete(array_filter([$path, $media->web_path]));
@@ -94,13 +94,13 @@ class MediaController extends Controller
         abort_if($media->archived_at, 422, 'Restore archived media before editing.');
         $data = $request->safe()->except(['file', 'project_entry_id']);
         if (str_starts_with($media->mime, 'image/')) {
-            $this->checkImage(Storage::disk('local')->path($media->original_path), $data['alt'] ?? '');
+            app(MediaImages::class)->checkImage(Storage::disk('local')->path($media->original_path), $data['alt'] ?? '');
         }
         abort_if(($request->boolean('is_public') !== $media->is_public || $request->input('publication_status') !== $media->publication_status) && ! $request->user()->can('media.publish'), 403);
         $changes = ['before_title' => $media->title, 'before_public' => $media->is_public, 'before_order' => $media->sort_order, 'before_alt' => $media->alt, 'before_watermark' => $media->watermark];
         $oldPath = $media->web_path;
         $media->fill($data);
-        $this->derive($media);
+        app(MediaImages::class)->derive($media);
         $media->save();
         if ($oldPath && $oldPath !== $media->web_path) {
             Storage::disk('local')->delete($oldPath);
@@ -119,69 +119,6 @@ class MediaController extends Controller
         $audit->record('media.'.$request->input('action'), $media, ['before_status' => $before, 'after_status' => $media->archived_at ? 'archived' : 'draft']);
 
         return back()->with('status', 'Media status updated. Restored files remain drafts until published.');
-    }
-
-    private function checkImage(string $path, string $alt): void
-    {
-        $size = @getimagesize($path);
-        if (! $size || $size[0] * $size[1] > 24000000 || max($size[0], $size[1]) > 10000) {
-            throw ValidationException::withMessages(['file' => 'Use an image below 24 megapixels and 10,000 pixels per side.']);
-        }
-        if (trim($alt) === '') {
-            throw ValidationException::withMessages(['alt' => 'Describe the image for visitors who cannot see it.']);
-        }
-    }
-
-    private function derive(Media $media): void
-    {
-        if (! str_starts_with($media->mime, 'image/')) {
-            return;
-        }
-        $source = @imagecreatefromstring(Storage::disk('local')->get($media->original_path));
-        if (! $source) {
-            throw ValidationException::withMessages(['file' => 'This image could not be decoded.']);
-        }
-        $ratio = min(1, 1920 / max(imagesx($source), imagesy($source)));
-        $width = max(1, (int) (imagesx($source) * $ratio));
-        $height = max(1, (int) (imagesy($source) * $ratio));
-        $image = imagecreatetruecolor($width, $height);
-        imagealphablending($image, false);
-        imagesavealpha($image, true);
-        imagecopyresampled($image, $source, 0, 0, 0, 0, $width, $height, imagesx($source), imagesy($source));
-        imagedestroy($source);
-        imagealphablending($image, true);
-        $settings = $media->watermark;
-        if ($settings['enabled'] ?? false) {
-            $font = (int) $settings['size'];
-            $text = config('app.name');
-            $textWidth = imagefontwidth($font) * strlen($text);
-            $textHeight = imagefontheight($font);
-            $stamp = imagecreatetruecolor($textWidth + 8, $textHeight + 8);
-            imagealphablending($stamp, false);
-            imagesavealpha($stamp, true);
-            imagefill($stamp, 0, 0, imagecolorallocatealpha($stamp, 0, 0, 0, 65));
-            imagestring($stamp, $font, 4, 4, $text, imagecolorallocatealpha($stamp, 255, 255, 255, (int) (127 * (1 - $settings['opacity'] / 100))));
-            $padding = min((int) $settings['padding'], (int) (min($width, $height) / 8));
-            $scale = min(1, ($width - 2 * $padding) / imagesx($stamp), ($height - 2 * $padding) / imagesy($stamp));
-            $sw = max(1, (int) (imagesx($stamp) * $scale));
-            $sh = max(1, (int) (imagesy($stamp) * $scale));
-            $position = $settings['position'];
-            $x = str_contains($position, 'right') ? $width - $sw - $padding : $padding;
-            $y = str_contains($position, 'bottom') ? $height - $sh - $padding : $padding;
-            if ($position === 'center') {
-                $x = (int) (($width - $sw) / 2);
-                $y = (int) (($height - $sh) / 2);
-            }
-            imagecopyresampled($image, $stamp, $x, $y, 0, 0, $sw, $sh, imagesx($stamp), imagesy($stamp));
-            imagedestroy($stamp);
-        }
-        ob_start();
-        imagewebp($image, null, 85);
-        $bytes = ob_get_clean();
-        imagedestroy($image);
-        $path = 'media/web/'.Str::uuid().'.webp';
-        Storage::disk('local')->put($path, $bytes);
-        $media->web_path = $path;
     }
 
     public function original(Media $media): StreamedResponse

@@ -57,7 +57,7 @@ class ProjectContentTest extends TestCase
         $this->login();
         $entry = $this->createProject();
         $this->get('/projects/'.$entry->slug)->assertNotFound();
-        $this->get('/admin/projects/'.$entry->id.'/edit')->assertOk()->assertDontSee('Media & relationships')->assertDontSee('Construction stages')->assertDontSee('Progress last updated')->assertDontSee('Expected completion')->assertSee('Project gallery');
+        $this->get('/admin/projects/'.$entry->id.'/edit')->assertOk()->assertDontSee('Media & relationships')->assertDontSee('Construction stages')->assertDontSee('Progress last updated')->assertDontSee('Expected completion')->assertSee('Project images');
         $this->get('/admin/projects/'.$entry->id.'/preview')->assertOk()->assertSee('Foundation complete')->assertSee('noindex');
         $this->publish($entry);
         $this->get('/projects/'.$entry->slug)->assertOk()->assertSee('72% complete')->assertSee('Civil works.')->assertDontSee('Confidential client')->assertDontSee('Confidential value')->assertDontSee('Test-only approved specification');
