@@ -35,7 +35,7 @@ class RemovedSectionsTest extends TestCase
         $this->assertFalse(KnowledgeContent::supports('article'));
     }
 
-    public function test_homepage_shows_published_faqs_without_featuring_and_keeps_featured_knowledge_separate(): void
+    public function test_homepage_keeps_original_faqs_and_shows_cms_content_in_dark_section(): void
     {
         $this->seed(HomepageSeeder::class);
         $entry = ContentEntry::create(['type' => 'faq', 'slug' => 'cms-answer', 'title' => 'CMS question']);
@@ -47,12 +47,12 @@ class RemovedSectionsTest extends TestCase
         $entry->revisions()->create(['version' => 2, 'payload' => ['title' => 'Unpublished question', 'short_answer' => 'Unpublished answer']]);
 
         $response = $this->get('/')->assertOk()
-            ->assertDontSee('How can I discuss a project?')
+            ->assertSee('How can I discuss a project?')
             ->assertSee('CMS question')->assertSee('Published CMS answer')
             ->assertDontSee('Unpublished question')->assertDontSee('Unpublished answer')
             ->assertSee('featured-insights')->assertSee('Construction guide')->assertSee('Featured guide answer');
         $this->assertSame(1, substr_count($response->getContent(), 'CMS question'));
-        $response->assertSeeInOrder(['CMS question', 'featured-insights', 'Construction guide']);
+        $response->assertSeeInOrder(['What is the company', 'Is real estate an active business?', 'How can I discuss a project?', 'featured-insights', 'CMS question', 'Construction guide']);
 
         $entry->update(['published_revision_id' => null]);
         $this->get('/')->assertOk()->assertDontSee('CMS question')->assertSee('How can I discuss a project?');

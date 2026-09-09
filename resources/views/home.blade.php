@@ -54,11 +54,9 @@
 
     @case('homepage-faq')
         @php($publishedKnowledge=\App\Services\KnowledgeContent::items())
-        @php($publishedFaqs=$publishedKnowledge->where('type','faq'))
-        @php($homepageFaqs=$publishedFaqs->isNotEmpty() ? $publishedFaqs->map(fn ($faq) => ['title'=>$faq['title'],'text'=>$faq['short_answer']]) : collect($section['items']))
-        <div class="section-heading"><div><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2></div><p>{{ $section['text'] }}</p></div><div class="faq-list">@foreach($homepageFaqs as $item)<details><summary>{{ $item['title'] }}<span aria-hidden="true">＋</span></summary><p>{{ $item['text'] }}</p></details>@endforeach
+        <div class="section-heading"><div><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2></div><p>{{ $section['text'] }}</p></div><div class="faq-list">@foreach($section['items'] as $item)<details><summary>{{ $item['title'] }}<span aria-hidden="true">＋</span></summary><p>{{ $item['text'] }}</p></details>@endforeach
         </div>
-        @php($featuredInsights=$publishedKnowledge->where('type','!=','faq')->where('featured',true)->take(6))
+        @php($featuredInsights=$publishedKnowledge->filter(fn ($item) => $item['type']==='faq' || ($item['featured'] ?? false)))
         @if($featuredInsights->isNotEmpty())
         <section class="featured-insights" aria-labelledby="featured-insights-title">
             <h3 id="featured-insights-title">{{ $section['featured_title'] ?? 'Ideas, insights & answers' }}</h3>
