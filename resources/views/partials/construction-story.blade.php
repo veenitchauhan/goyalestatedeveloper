@@ -1,0 +1,28 @@
+<section class="construction-context" aria-labelledby="construction-context-title">
+    <div class="section-wrap">
+        <div class="section-heading"><div><p class="eyebrow dark">INDIAN CONTEXT. THOUGHTFUL CONSTRUCTION.</p><h2 id="construction-context-title">Built around the way<br>India lives and works.</h2></div><p>Every site has a different story. Explore the decisions behind spaces for families, businesses and growing communities.</p></div>
+        <div class="context-cards">
+            <details class="context-card" open><summary><span class="context-number">01 / LIVING</span><span class="context-symbol" aria-hidden="true">⌂</span><h3>Room for everyday life.</h3><span class="context-prompt">Explore residential spaces <b aria-hidden="true">+</b></span></summary><div class="context-answer"><p>From a family home to a shared residential building, the brief starts with how people use a space: daylight, privacy, movement, storage and room to grow.</p><p class="context-tags">Homes · Shared spaces · Everyday comfort</p></div></details>
+            <details class="context-card"><summary><span class="context-number">02 / WORKING</span><span class="context-symbol" aria-hidden="true">▥</span><h3>Space to move forward.</h3><span class="context-prompt">Explore commercial spaces <b aria-hidden="true">+</b></span></summary><div class="context-answer"><p>Commercial spaces bring people, services and operations together. A useful project brief considers access, flexible layouts, building services and how the space will be maintained.</p><p class="context-tags">Workplaces · Retail · Flexible layouts</p></div></details>
+            <details class="context-card"><summary><span class="context-number">03 / CONNECTING</span><span class="context-symbol" aria-hidden="true">↗</span><h3>A bigger picture.</h3><span class="context-prompt">Explore site connections <b aria-hidden="true">+</b></span></summary><div class="context-answer"><p>A building is part of its surroundings. Site access, drainage, utilities and movement between spaces deserve attention alongside the structure itself.</p><p class="context-tags">Site planning · Access · Utilities</p></div></details>
+        </div>
+    </div>
+</section>
+<section class="construction-journey" aria-labelledby="construction-journey-title">
+    <div class="section-wrap journey-layout">
+        <div class="journey-intro"><p class="eyebrow">FROM THE FIRST LINE TO THE FINAL DETAIL</p><h2 id="construction-journey-title">Great spaces<br>start with<br><em>a clear plan.</em></h2><p>Understand the stages of a construction project. Select a step to see what it brings into focus.</p><a class="text-link" href="{{ route('contact') }}">Discuss your project <span aria-hidden="true">↗</span></a><div class="blueprint-building" aria-hidden="true"><i></i><i></i><i></i><span>CONCEPT → COORDINATION → CONSTRUCTION</span></div></div>
+        <div class="journey-steps">
+            <details open><summary><span>01</span><h3>Define the ambition</h3><b aria-hidden="true">+</b></summary><p>Start with the location, intended use, available drawings and priorities. A clear brief gives everyone a shared starting point.</p></details>
+            <details><summary><span>02</span><h3>Understand the site</h3><b aria-hidden="true">+</b></summary><p>Bring site conditions, access and project constraints into the conversation. Identify the surveys and specialist inputs needed for the next stage.</p></details>
+            <details><summary><span>03</span><h3>Coordinate the details</h3><b aria-hidden="true">+</b></summary><p>Connect architectural intent with structural and building-service requirements. Clarify scope, responsibilities, materials and the construction sequence.</p></details>
+            <details><summary><span>04</span><h3>Build, check, communicate</h3><b aria-hidden="true">+</b></summary><p>Follow the agreed drawings and programme, document progress and address questions as they arise. Keep quality checks and site safety part of the conversation.</p></details>
+            <details><summary><span>05</span><h3>Prepare for everyday use</h3><b aria-hidden="true">+</b></summary><p>Review finishing details, outstanding work and handover information so the move from construction to occupation is well understood.</p></details>
+        </div>
+    </div>
+</section>
+<section class="construction-details" aria-labelledby="construction-details-title">
+    <div class="section-wrap details-layout">
+        <figure><img src="{{ asset('assets/architecture/delivery.webp') }}" alt="Architectural concept model alongside drawings and material samples" width="1536" height="1024" loading="lazy"><figcaption>Architectural concept illustration</figcaption></figure>
+        <div><p class="eyebrow dark">THE DETAILS THAT MAKE A DIFFERENCE</p><h2 id="construction-details-title">A building should<br>work beautifully.</h2><p class="details-intro">For a project in India, good questions start with the local setting and continue through every stage of planning.</p><ul class="detail-principles"><li><span>01</span><div><h3>Climate & comfort</h3><p>Discuss orientation, shade, ventilation and how the design responds to the local seasons.</p></div></li><li><span>02</span><div><h3>Materials & maintenance</h3><p>Balance the desired finish with sourcing, durability and practical upkeep.</p></div></li><li><span>03</span><div><h3>People & place</h3><p>Consider daily movement, neighbouring spaces and the people who will use the building.</p></div></li></ul><a class="button ink" href="{{ route('contact') }}">Tell us what you want to build <span aria-hidden="true">↗</span></a></div>
+    </div>
+</section>

@@ -20,6 +20,7 @@
 @if($heroVideo)<details class="hero-film"><summary>{{ $content['hero']['video_label'] ?: $heroVideo->title }}</summary><figure><video controls playsinline preload="none" @if($heroImage) poster="{{ route('media.show',$heroImage) }}" @endif aria-label="{{ $heroVideo->title }}"><source src="{{ route('media.show',$heroVideo) }}" type="video/mp4"></video>@if($heroVideo->caption)<figcaption>{{ $heroVideo->caption }}</figcaption>@endif @if($heroVideo->description)<p>{{ $heroVideo->description }}</p>@endif</figure></details>@endif
 
 @php($sectionAssets=\App\Models\Media::where('is_public',true)->where('publication_status','published')->whereNull('archived_at')->whereIn('id',$sections->flatMap(fn($section)=>[$section['media_id']??null,$section['video_id']??null,$section['card_1_id']??null,$section['card_2_id']??null,$section['card_3_id']??null])->filter()->unique())->get()->keyBy('id'))
+<div class="construction-ribbon" aria-label="Construction from concept to completion"><span>Considered design</span><i aria-hidden="true">✳</i><span>Coordinated planning</span><i aria-hidden="true">✳</i><span>Purposeful construction</span><i aria-hidden="true">✳</i><span>Lasting spaces</span></div>
 @foreach($sections as $section)
 <section id="{{ $section['id'] }}" class="section section-{{ $section['id'] }}">
     <div class="section-wrap">
@@ -83,5 +84,8 @@
     @if($sectionCta)<div class="section-action"><a class="button orange" href="{{ $sectionCta['url'] }}">{{ $sectionCta['title'] }} ↗</a></div>@endif
     </div>
 </section>
+@if($section['id']==='about')
+@include('partials.construction-story')
+@endif
 @endforeach
 @endsection
