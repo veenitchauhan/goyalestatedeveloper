@@ -2,6 +2,11 @@
 @section('title', $entry->exists ? 'Edit project' : 'Add project')
 @section('content')
 <p class="eyebrow">PROJECTS & PROGRESS</p><h1>{{ $entry->exists ? $entry->title : 'Add a project' }}</h1><p><a href="{{ route('admin.projects.index') }}">← All projects</a></p>
+@if($entry->exists && $entry->status!=='published')
+<section role="status"><h2>These changes are not live yet</h2>
+@if($entry->publishedRevision)<p>Visitors currently see: <strong>{{ $entry->publishedRevision->payload['title'] }}</strong>. Saving this form updates your draft only.</p>@else<p>This project has not been published. Saving this form creates a private draft.</p>@endif
+<p>Save your changes, then use <a href="#project-publication">Review & publication</a>: Submit for review → Approve project → Publish project. Publication updates the website automatically.</p></section>
+@endif
 <form method="post" action="{{ $entry->exists ? route('admin.projects.update',$entry) : route('admin.projects.store') }}">@csrf @if($entry->exists) @method('PUT') @endif
 <input type="hidden" name="version" value="{{ $revision?->version ?? 0 }}">
 <section><h2>Project overview</h2><div class="form-grid">
@@ -76,7 +81,7 @@
 </form></section>
 @endcan
 @endcan
-<section><h2>Review & publication</h2><p>{{ str($entry->status)->headline() }} · Version {{ $revision->version }}</p><a href="{{ route('admin.projects.preview',$entry) }}" target="_blank" rel="noopener">Preview saved draft ↗</a>
+<section id="project-publication"><h2>Review & publication</h2><p>{{ str($entry->status)->headline() }} · Version {{ $revision->version }}</p><a href="{{ route('admin.projects.preview',$entry) }}" target="_blank" rel="noopener">Preview saved draft ↗</a>
 <form method="post" action="{{ route('admin.projects.transition',$entry) }}">@csrf<input type="hidden" name="version" value="{{ $revision->version }}"><label for="note">Review note</label><textarea id="note" name="note" rows="2"></textarea>
 @if(in_array($entry->status,['draft','unpublished']))<button name="action" value="review">Submit for review</button>@endif
 @can('publish',$entry)
