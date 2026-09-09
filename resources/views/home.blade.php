@@ -80,7 +80,6 @@
                 <details><summary>{{ $article['title'] }}<span aria-hidden="true">＋</span></summary><p>{{ $article['short_answer'] }}</p><p><a class="text-link" href="{{ $article['url'] }}">Read more ↗</a></p></details>
             @endforeach
             </div>
-            <nav class="featured-insights-links" aria-label="Explore knowledge"><a href="{{ route('knowledge.article.index') }}">Explore insights ↗</a><a href="{{ route('knowledge.knowledge.index') }}">Knowledge Bank ↗</a><a href="{{ route('knowledge.faq.index') }}">FAQs ↗</a></nav>
         </section>
         @endif
         @break

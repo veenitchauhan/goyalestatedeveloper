@@ -90,7 +90,6 @@ body{font-size:16px;line-height:1.65}
 .featured-insights .faq-list summary>span{color:var(--orange);flex-shrink:0}
 .featured-insights .faq-list details>p{color:#cbd4d8}
 .featured-insights .text-link{color:var(--orange);border-color:#ed895480}
-.featured-insights-links{display:flex;flex-wrap:wrap;gap:14px 28px;margin-top:28px;font-size:14px;color:var(--orange)}
 .featured-insights a:hover{text-decoration:underline}
 .featured-insights :is(summary,a):focus-visible{outline:2px solid var(--orange);outline-offset:5px}
 @media(max-width:600px){.featured-insights{margin-top:32px}.featured-insights .faq-list summary{font-size:16px;padding:20px 0}}
