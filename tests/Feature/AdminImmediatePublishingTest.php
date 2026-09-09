@@ -38,6 +38,20 @@ class AdminImmediatePublishingTest extends TestCase
         $this->assertDatabaseCount('approval_events', 0);
     }
 
+    public function test_admin_can_update_an_existing_faq_without_verification_or_author(): void
+    {
+        $this->seed([HomepageSeeder::class, RolePermissionSeeder::class]);
+        $user = User::factory()->create(['two_factor_confirmed_at' => now()]);
+        $user->roles()->attach(Role::where('name', 'super-admin')->firstOrFail());
+        $entry = ContentEntry::create(['type' => 'faq', 'slug' => 'dummy', 'title' => 'Existing FAQ']);
+        $entry->revisions()->create(['version' => 1, 'payload' => ['title' => 'Existing FAQ']]);
+        $this->actingAs($user)->put('/admin/knowledge/'.$entry->id, ['version' => 1, 'type' => 'faq', 'title' => 'Updated FAQ question', 'slug' => 'dummy', 'category' => 'General', 'short_answer' => 'A short answer.', 'body' => 'The full answer.', 'verified' => false, 'author' => '', 'reviewer' => '', 'source_note' => '', 'featured' => true, 'schema_enabled' => false, 'order' => 0])->assertRedirect()->assertSessionHasNoErrors();
+        $this->assertSame('published', $entry->fresh()->status);
+        $this->get('/faqs/dummy')->assertOk()->assertSee('Updated FAQ question')->assertSee('The full answer.');
+        $this->get('/')->assertSee('Updated FAQ question');
+        $this->assertDatabaseCount('approval_events', 0);
+    }
+
     public function test_project_upload_is_live_on_save_and_failed_save_rolls_back_files(): void
     {
         $this->seed([HomepageSeeder::class, RolePermissionSeeder::class]);

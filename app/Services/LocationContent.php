@@ -29,7 +29,7 @@ class LocationContent
             'body' => [$publishing ? 'required' : 'nullable', 'string', ...($publishing ? ['min:80'] : []), 'max:15000'],
             'industries' => ['nullable', 'string', 'max:3000'], 'areas_served' => ['nullable', 'string', 'max:3000'],
             'latitude' => ['nullable', 'required_with:longitude', 'numeric', 'between:-90,90'], 'longitude' => ['nullable', 'required_with:latitude', 'numeric', 'between:-180,180'],
-            'source_note' => [$publishing ? 'required' : 'nullable', 'string', 'max:2000'], 'verified' => [$publishing ? 'accepted' : 'nullable', 'boolean'],
+            'source_note' => [$publishing && ! ContentPublisher::immediate() ? 'required' : 'nullable', 'string', 'max:2000'], 'verified' => [$publishing && ! ContentPublisher::immediate() ? 'accepted' : 'nullable', 'boolean'],
             'seo_title' => ['nullable', 'string', 'max:180'], 'seo_description' => ['nullable', 'string', 'max:500'],
             'service_ids' => ['sometimes', 'array', 'max:30'], 'service_ids.*' => ['integer', 'distinct', Rule::exists('content_entries', 'id')->where('type', 'service')->whereNotNull('published_revision_id')],
         ];

@@ -27,13 +27,13 @@ class ProjectContent
             'status' => ['required', Rule::in(self::STATUSES)], 'sector' => ['required', Rule::in(self::SECTORS)],
             'stage' => ['required', Rule::in(self::STAGES)], 'progress' => ['required', 'integer', 'between:0,100'],
             'featured' => ['required', 'boolean'], 'client_approved' => ['required', 'boolean'], 'value_approved' => ['required', 'boolean'],
-            'verified' => [$publishing ? 'accepted' : 'nullable', 'boolean'],
+            'verified' => [$publishing && ! ContentPublisher::immediate() ? 'accepted' : 'nullable', 'boolean'],
         ];
         foreach (['project_type', 'location', 'city', 'state', 'country', 'client', 'project_area', 'built_up_area', 'project_value', 'manager', 'seo_title'] as $field) {
             $rules[$field] = [in_array($field, ['city', 'project_type']) ? 'required' : 'nullable', 'string', 'max:255'];
         }
         foreach (['description', 'scope', 'engineering', 'construction', 'management', 'technical_highlights', 'quality_safety', 'outcome', 'source_note', 'seo_description'] as $field) {
-            $rules[$field] = [$publishing && in_array($field, ['description', 'scope', 'source_note']) ? 'required' : 'nullable', 'string', 'max:15000'];
+            $rules[$field] = [$publishing && in_array($field, ContentPublisher::immediate() ? ['description', 'scope'] : ['description', 'scope', 'source_note']) ? 'required' : 'nullable', 'string', 'max:15000'];
         }
         foreach (['start_date', 'expected_completion', 'actual_completion', 'progress_date'] as $field) {
             $rules[$field] = [$field === 'progress_date' ? 'required' : 'nullable', 'date_format:Y-m-d'];

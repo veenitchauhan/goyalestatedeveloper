@@ -15,12 +15,12 @@ class CareerContent
 
     public static function rules(?ContentEntry $entry, bool $publishing = false): array
     {
-        $rules = ['title' => ['required', 'string', 'max:180'], 'slug' => ['required', 'alpha_dash:ascii', 'max:150', Rule::notIn(['apply']), Rule::unique('content_entries')->where('type', 'job')->ignore($entry)], 'job_type' => ['required', Rule::in(self::TYPES)], 'employment_type' => ['required', Rule::in(self::EMPLOYMENT)], 'deadline' => ['nullable', 'date_format:Y-m-d'], 'salary_public' => ['required', 'boolean'], 'verified' => [$publishing ? 'accepted' : 'nullable', 'boolean']];
+        $rules = ['title' => ['required', 'string', 'max:180'], 'slug' => ['required', 'alpha_dash:ascii', 'max:150', Rule::notIn(['apply']), Rule::unique('content_entries')->where('type', 'job')->ignore($entry)], 'job_type' => ['required', Rule::in(self::TYPES)], 'employment_type' => ['required', Rule::in(self::EMPLOYMENT)], 'deadline' => ['nullable', 'date_format:Y-m-d'], 'salary_public' => ['required', 'boolean'], 'verified' => [$publishing && ! ContentPublisher::immediate() ? 'accepted' : 'nullable', 'boolean']];
         foreach (['department', 'location', 'experience', 'salary'] as $key) {
             $rules[$key] = [in_array($key, ['department', 'location']) ? 'required' : 'nullable', 'string', 'max:255'];
         }
         foreach (['description', 'responsibilities', 'requirements', 'skills', 'education', 'source_note'] as $key) {
-            $rules[$key] = [$publishing && in_array($key, ['description', 'responsibilities', 'requirements', 'source_note']) ? 'required' : 'nullable', 'string', 'max:15000'];
+            $rules[$key] = [$publishing && in_array($key, ContentPublisher::immediate() ? ['description', 'responsibilities', 'requirements'] : ['description', 'responsibilities', 'requirements', 'source_note']) ? 'required' : 'nullable', 'string', 'max:15000'];
         }
 
         $rules['address_country'] = ['nullable', 'string', 'regex:/^[A-Z]{2}$/'];
