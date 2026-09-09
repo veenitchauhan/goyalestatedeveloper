@@ -100,3 +100,9 @@ input,select,textarea{font-size:16px}
 
 .project-photo-picker:hover{background:#eaf0f2;color:#31565c}
 .project-photo-card[hidden]{display:none!important}
+
+.branding-logo{display:block;width:240px;max-width:100%;height:auto;object-fit:contain;background:#fff;border-radius:6px;padding:6px 8px}
+.workspace-brand{display:block;padding:0 0 26px}
+.workspace-brand .branding-logo{width:100%}
+.topbar .brand{flex-shrink:0;max-width:100%}
+@media(max-width:700px){.topbar .branding-logo{width:210px}}

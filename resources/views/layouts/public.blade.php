@@ -17,7 +17,7 @@
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
     <div class="header-inner">
-        <a class="company-name" href="{{ route('home') }}">@if($logo=\App\Models\SiteSetting::image($siteSettings['branding']['logo_id']))<img class="company-logo" src="{{ route('media.show',$logo) }}" alt="">@endif{{ $siteSettings['company']['name'] }}</a>
+        <a class="company-name" href="{{ route('home') }}">@include('partials.brand-logo')</a>
         <nav class="desktop-nav" aria-label="Main navigation">
             <a href="{{ route('home') }}" @if(request()->routeIs('home')) aria-current="page" @endif>Home</a>
             @include('partials.public-navigation')
@@ -30,7 +30,7 @@
 <main id="main">@if(isset($entry,$payload['title']))<nav class="corporate-subnav" aria-label="Breadcrumb"><a href="{{ route('home') }}">Home</a><span aria-current="page">{{ $payload['title'] }}</span></nav>@endif
 @yield('content')</main>
 <footer class="site-footer">
-    <div class="footer-top"><a class="company-name" href="{{ route('home') }}">@if($logo=\App\Models\SiteSetting::image($siteSettings['branding']['logo_id']))<img class="company-logo" src="{{ route('media.show',$logo) }}" alt="">@endif{{ $siteSettings['company']['name'] }}</a><p>{{ $content['hero']['eyebrow'] }}</p></div>
+    <div class="footer-top"><a class="company-name" href="{{ route('home') }}">@include('partials.brand-logo')</a><p>{{ $content['hero']['eyebrow'] }}</p></div>
     <nav class="footer-nav" aria-label="Footer navigation">@if(\App\Services\DevelopmentContent::enabled())<a href="{{ route('developments.index') }}">Developments</a>@endif<a href="{{ route('knowledge.knowledge.index') }}">Knowledge Bank</a><a href="{{ route('knowledge.faq.index') }}">FAQs</a>@include('partials.public-navigation') @foreach($menuItems->whereIn('placement',['footer','both']) as $item)<a href="{{ $item['url'] }}">{{ $item['title'] }}</a>@endforeach</nav>
     <div class="footer-settings">
     @if($content['contact']['address'])<p>{{ $content['contact']['address'] }}</p>@endif

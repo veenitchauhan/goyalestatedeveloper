@@ -93,3 +93,7 @@ body{font-size:16px;line-height:1.65}
 .featured-insights a:hover{text-decoration:underline}
 .featured-insights :is(summary,a):focus-visible{outline:2px solid var(--orange);outline-offset:5px}
 @media(max-width:600px){.featured-insights{margin-top:32px}.featured-insights .faq-list summary{font-size:16px;padding:20px 0}}
+
+.company-name{display:inline-flex;flex-shrink:0;max-width:100%}
+.branding-logo{display:block;width:270px;max-width:100%;height:auto;object-fit:contain;background:#fff;border-radius:6px;padding:6px 10px}
+@media(max-width:760px){.branding-logo{width:230px}}

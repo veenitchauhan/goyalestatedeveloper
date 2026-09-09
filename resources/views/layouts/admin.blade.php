@@ -4,7 +4,7 @@
 <a class="skip" href="#main">Skip to content</a>
 @auth
 <aside class="sidebar">
-<a class="workspace-brand" href="{{ route('admin.dashboard') }}"><span class="brand-mark">G</span><span>Website workspace<small>CONTENT MANAGEMENT</small></span></a>
+<a class="workspace-brand" href="{{ route('admin.dashboard') }}">@include('partials.brand-logo')</a>
 <details class="sidebar-menu" open><summary>Workspace menu</summary><nav aria-label="Administration">
 <a href="{{ route('admin.dashboard') }}" @if(request()->routeIs('admin.dashboard')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▦</span>Overview</a>
 @can('pages.edit')
@@ -53,7 +53,7 @@
 </aside>
 @endauth
 <div class="workspace-main">
-<header class="topbar"><a class="brand" href="{{ route('home') }}">{{ config('app.name') }}</a>
+<header class="topbar"><a class="brand" href="{{ route('home') }}">@include('partials.brand-logo')</a>
 @auth
 <nav aria-label="Account" class="top-menu"><a href="{{ route('admin.search') }}" @if(request()->routeIs('admin.search')) aria-current="page" @endif>Search</a><a href="{{ route('home') }}">View website ↗</a><a href="{{ route('admin.account') }}" @if(request()->routeIs('admin.account')) aria-current="page" @endif>Settings</a><form method="post" action="{{ route('logout') }}">@csrf<button class="quiet">Sign out</button></form></nav>
 @endauth
