@@ -32,7 +32,22 @@
 
 (() => {
     const status = document.querySelector('[data-photo-status]');
-    document.querySelectorAll('[data-photo-card]').forEach((card, index) => {
+    const grid = document.querySelector('.project-photo-grid');
+    if (!grid) return;
+    const refreshCards = () => {
+        const cards = Array.from(grid.querySelectorAll('[data-photo-card]'));
+        const occupied = cards.filter(card => !card.querySelector('[data-photo-preview]').hidden);
+        const emptyCards = cards.filter(card => card.querySelector('[data-photo-preview]').hidden);
+        [...occupied, ...emptyCards].forEach((card, index) => {
+            grid.append(card);
+            card.hidden = index > occupied.length;
+            card.querySelector('[data-photo-input]').name = `images[${index}]`;
+            card.querySelector('[data-keep-photo]').name = `keep_images[${index}]`;
+            card.querySelector('[data-photo-picker]').setAttribute('aria-label', index < occupied.length ? `Replace project image ${index + 1}` : 'Add project image');
+            card.querySelector('[data-photo-delete]').setAttribute('aria-label', `Remove project image ${index + 1}`);
+        });
+    };
+    grid.querySelectorAll('[data-photo-card]').forEach((card) => {
         const input = card.querySelector('[data-photo-input]');
         const keep = card.querySelector('[data-keep-photo]');
         const picker = card.querySelector('[data-photo-picker]');
@@ -69,8 +84,8 @@
             remove.hidden = false;
             keep.disabled = true;
             caption.textContent = file.name;
-            picker.setAttribute('aria-label', `Replace project image ${index + 1}`);
-            status.textContent = `Image ${index + 1} selected. Save the project to apply changes.`;
+            refreshCards();
+            status.textContent = 'Image selected. Save the project to apply changes.';
         });
         remove.addEventListener('click', () => {
             release();
@@ -83,10 +98,11 @@
             hint.hidden = true;
             remove.hidden = true;
             caption.textContent = 'JPEG, PNG or WebP';
-            picker.setAttribute('aria-label', `Add project image ${index + 1}`);
-            status.textContent = `Image ${index + 1} removed from this draft. Save the project to apply changes.`;
-            picker.focus();
+            refreshCards();
+            status.textContent = 'Image removed from this draft. Save the project to apply changes.';
+            grid.querySelector('[data-photo-card]:not([hidden]) [data-photo-empty]:not([hidden])').closest('button').focus();
         });
         window.addEventListener('pagehide', release, {once: true});
     });
+    refreshCards();
 })();

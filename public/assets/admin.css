@@ -89,7 +89,7 @@ input,select,textarea{font-size:16px}
 .project-photo-picker img{display:block;width:100%;height:100%;object-fit:cover}
 .project-photo-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;height:100%;font-weight:600}
 .project-photo-empty>span{font-size:36px;font-weight:400}
-.project-photo-replace{position:absolute;bottom:0;left:0;right:0;padding:9px;background:#14232cba;color:white;font-size:13px}
+.project-photo-replace{position:absolute;bottom:0;left:0;right:0;padding:9px;background:#f4f7f8eb;color:#31565c;font-size:13px}
 .project-photo-delete{position:absolute;top:10px;right:10px;display:grid;place-items:center;width:36px;height:36px;min-height:0;padding:0;border:1px solid #d9e0e2;border-radius:50%;background:white;color:#ad3131;box-shadow:0 2px 8px #0002}
 .project-photo-delete:hover{background:#ffeded;color:#861b1b}
 .project-photo-card [hidden]{display:none!important}
@@ -97,3 +97,6 @@ input,select,textarea{font-size:16px}
 .project-photo-picker:focus-visible,.project-photo-delete:focus-visible{outline:3px solid #ed8954;outline-offset:3px}
 @media(max-width:900px){.project-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:480px){.project-photo-grid{grid-template-columns:1fr}}
+
+.project-photo-picker:hover{background:#eaf0f2;color:#31565c}
+.project-photo-card[hidden]{display:none!important}
