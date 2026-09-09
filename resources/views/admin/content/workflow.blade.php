@@ -1,3 +1,6 @@
+@if(\App\Services\ContentPublisher::immediate())
+@include('admin.content.immediate')
+@else
 <section class="cms-workflow"><h2>Review & publication</h2><p>Status: <strong>{{ str($entry->status)->headline() }}</strong> · Draft version {{ $revision->version }}@if($entry->scheduled_at) · Scheduled: {{ $entry->scheduled_at->timezone(config('app.timezone'))->format('d M Y H:i') }} {{ config('app.timezone') }}@endif</p>
 <p><a href="{{ route('admin.content.preview',$entry) }}" target="_blank" rel="noopener">Preview saved draft ↗</a> · Save your changes before previewing or publishing.</p>
 <form method="post" action="{{ route('admin.content.transition',$entry) }}">@csrf<input type="hidden" name="version" value="{{ $revision->version }}">
@@ -19,3 +22,5 @@
 </form>
 <details><summary>Revision history</summary><ul>@foreach($entry->revisions()->latest('version')->get() as $item)<li>Version {{ $item->version }} · {{ $item->created_at }} @if($entry->published_revision_id===$item->id) · Published @endif<form method="post" action="{{ route('admin.content.restore',$entry) }}">@csrf<input type="hidden" name="version" value="{{ $revision->version }}"><input type="hidden" name="revision_id" value="{{ $item->id }}"><button class="quiet">Restore version {{ $item->version }} as draft</button></form></li>@endforeach</ul>
 <ul>@foreach(\Illuminate\Support\Facades\DB::table('approval_events')->whereIn('content_revision_id',$entry->revisions()->select('id'))->latest('id')->get() as $event)<li>{{ str($event->action)->headline() }} · {{ $event->created_at }}@if($event->note) — {{ $event->note }}@endif</li>@endforeach</ul></details></section>
+
+@endif

@@ -72,7 +72,7 @@ class CorporateContentController extends Controller
             return $entry;
         });
 
-        return redirect()->route('admin.corporate.edit', $entry)->with('status', 'Draft created. Add verified company information before submitting for approval.');
+        return redirect()->route('admin.corporate.edit', $entry)->with('status', ContentPublisher::immediate() ? 'Saved. Changes are live immediately.' : 'Draft created. Add verified company information before submitting for approval.');
     }
 
     public function update(SaveCorporateContentRequest $request, ContentEntry $entry, ContentPublisher $publisher): RedirectResponse
@@ -85,6 +85,6 @@ class CorporateContentController extends Controller
             $entry->update(['title' => $data['title']]);
         });
 
-        return back()->with('status', 'Draft saved. The live page stays unchanged until the new version is approved and published.');
+        return back()->with('status', ContentPublisher::immediate() ? 'Saved. Changes are live immediately.' : 'Draft saved. The live page stays unchanged until the new version is approved and published.');
     }
 }

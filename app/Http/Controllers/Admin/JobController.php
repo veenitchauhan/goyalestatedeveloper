@@ -47,7 +47,7 @@ class JobController extends Controller
             return $entry;
         });
 
-        return redirect()->route('admin.jobs.edit', $entry)->with('status', 'Job draft created. Add verified information before publication.');
+        return redirect()->route('admin.jobs.edit', $entry)->with('status', ContentPublisher::immediate() ? 'Saved. Changes are live immediately.' : 'Job draft created. Add verified information before publication.');
     }
 
     public function update(SaveJobRequest $request, ContentEntry $entry, ContentPublisher $publisher): RedirectResponse
@@ -58,7 +58,7 @@ class JobController extends Controller
             $entry->update(['title' => $request->validated('title')]);
         });
 
-        return back()->with('status', 'Job draft saved. Public information changes only after publication.');
+        return back()->with('status', ContentPublisher::immediate() ? 'Saved. Changes are live immediately.' : 'Job draft saved. Public information changes only after publication.');
     }
 
     public function transition(Request $request, ContentEntry $entry, ContentPublisher $publisher): RedirectResponse

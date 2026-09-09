@@ -32,7 +32,7 @@ class KnowledgeContent
             'related_ids.*' => ['integer', 'distinct', Rule::in(self::relatedOptions()->pluck('id')->reject(fn ($id) => $id === $entry?->id)->all())],
         ];
         foreach (['short_answer' => 1500, 'body' => 40000, 'explanation' => 20000, 'author' => 150, 'reviewer' => 150, 'source_note' => 5000, 'seo_title' => 180, 'seo_description' => 300] as $field => $limit) {
-            $rules[$field] = [$publishing && in_array($field, ['short_answer', 'body', 'author', 'reviewer', 'source_note']) ? 'required' : 'nullable', 'string', 'max:'.$limit];
+            $rules[$field] = [$publishing && in_array($field, ContentPublisher::immediate() ? ['short_answer', 'body', 'author'] : ['short_answer', 'body', 'author', 'reviewer', 'source_note']) ? 'required' : 'nullable', 'string', 'max:'.$limit];
         }
 
         return $rules;

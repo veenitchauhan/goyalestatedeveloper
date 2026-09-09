@@ -8,6 +8,7 @@ use App\Models\ContentEntry;
 use App\Models\Media;
 use App\Models\SiteSetting;
 use App\Services\AuditRecorder;
+use App\Services\ContentPublisher;
 use App\Services\MediaImages;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -55,6 +56,9 @@ class MediaController extends Controller
     {
         $file = $request->file('file');
         $data = $request->safe()->except(['file', 'project_entry_id']);
+        if (ContentPublisher::immediate() && $request->boolean('is_public')) {
+            $data['publication_status'] = 'published';
+        }
         abort_if(($request->boolean('is_public') || $request->input('publication_status') === 'published') && ! $request->user()->can('media.publish'), 403);
         $project = $request->filled('project_entry_id') ? ContentEntry::where('type', 'project')->findOrFail($request->integer('project_entry_id')) : null;
         if ($project) {
@@ -83,7 +87,7 @@ class MediaController extends Controller
             return response()->json(['id' => $media->id, 'title' => $media->title, 'mime' => $media->mime, 'selectable' => $media->is_public && $media->publication_status === 'published'], 201);
         }
         if ($project) {
-            return redirect()->route('admin.projects.edit', $project)->with('status', 'Media uploaded. Select the approved file in the project gallery and save your draft.');
+            return redirect()->route('admin.projects.edit', $project)->with('status', ContentPublisher::immediate() ? 'Saved. Changes are live immediately.' : 'Media uploaded. Select the approved file in the project gallery and save your draft.');
         }
 
         return redirect()->route('admin.media.edit', $media)->with('status', 'Media uploaded. The original is preserved privately.');
@@ -93,6 +97,9 @@ class MediaController extends Controller
     {
         abort_if($media->archived_at, 422, 'Restore archived media before editing.');
         $data = $request->safe()->except(['file', 'project_entry_id']);
+        if (ContentPublisher::immediate() && $request->boolean('is_public')) {
+            $data['publication_status'] = 'published';
+        }
         if (str_starts_with($media->mime, 'image/')) {
             app(MediaImages::class)->checkImage(Storage::disk('local')->path($media->original_path), $data['alt'] ?? '');
         }
@@ -118,7 +125,7 @@ class MediaController extends Controller
         $media->update(['archived_at' => $request->input('action') === 'archive' ? now() : null, 'publication_status' => 'draft']);
         $audit->record('media.'.$request->input('action'), $media, ['before_status' => $before, 'after_status' => $media->archived_at ? 'archived' : 'draft']);
 
-        return back()->with('status', 'Media status updated. Restored files remain drafts until published.');
+        return back()->with('status', ContentPublisher::immediate() ? 'Saved. Changes are live immediately.' : 'Media status updated. Restored files remain drafts until published.');
     }
 
     public function original(Media $media): StreamedResponse

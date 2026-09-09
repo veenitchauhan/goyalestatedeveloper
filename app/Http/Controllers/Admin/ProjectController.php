@@ -75,7 +75,7 @@ class ProjectController extends Controller
             throw $error;
         }
 
-        return redirect()->route('admin.projects.edit', $entry)->with('status', 'Project draft created. Add approved facts and media before publication.');
+        return redirect()->route('admin.projects.edit', $entry)->with('status', ContentPublisher::immediate() ? 'Saved. Changes are live immediately.' : 'Project draft created. Add approved facts and media before publication.');
     }
 
     public function update(SaveProjectRequest $request, ContentEntry $entry, ContentPublisher $publisher): RedirectResponse
@@ -101,7 +101,7 @@ class ProjectController extends Controller
             throw $error;
         }
 
-        return back()->with('status', 'Project draft saved. The published project is unchanged.');
+        return back()->with('status', ContentPublisher::immediate() ? 'Saved. Changes are live immediately.' : 'Project draft saved. The published project is unchanged.');
     }
 
     public function transition(Request $request, ContentEntry $entry, ContentPublisher $publisher): RedirectResponse

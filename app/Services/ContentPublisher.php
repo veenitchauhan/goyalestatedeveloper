@@ -13,6 +13,13 @@ use Illuminate\Validation\ValidationException;
 
 class ContentPublisher
 {
+    public static function immediate(): bool
+    {
+        $user = auth()->user();
+
+        return $user && $user->is_active && ($user->hasRole('super-admin') || $user->hasRole('admin'));
+    }
+
     public function save(ContentEntry $entry, array $payload, int $expectedVersion): ContentRevision
     {
         return DB::transaction(function () use ($entry, $payload, $expectedVersion) {
@@ -28,6 +35,11 @@ class ContentPublisher
             $revision = $entry->revisions()->create(['version' => $version + 1, 'payload' => $payload, 'author_id' => auth()->id()]);
             $entry->update(['status' => 'draft', 'approver_id' => null, 'scheduled_at' => null, 'scheduled_revision_id' => null]);
             app(AuditRecorder::class)->record('content.draft_saved', $entry, ['before_revision' => $version, 'after_revision' => $revision->version, 'content_diff' => $this->difference($beforePayload, $payload)]);
+
+            if (static::immediate()) {
+                $this->apply($entry, $revision);
+                app(AuditRecorder::class)->record('content.published_on_save', $entry, ['revision' => $revision->version]);
+            }
 
             return $revision;
         });
@@ -49,6 +61,9 @@ class ContentPublisher
                 'unpublish' => ['published', 'draft', 'review', 'approved', 'scheduled'],
                 'archive' => ['draft', 'review', 'approved', 'scheduled', 'published', 'unpublished'], 'restore' => ['archived'],
             ];
+            if (static::immediate()) {
+                $allowed['publish'] = ['draft', 'review', 'approved', 'scheduled', 'unpublished', 'published'];
+            }
             if (! in_array($entry->status, $allowed[$action] ?? [])) {
                 throw ValidationException::withMessages(['action' => 'This action is not available for the current status. Reload and follow draft → review → approval → publication.']);
             }

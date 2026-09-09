@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('title','Website settings')
 @section('content')
-<h1>Website settings.</h1><p>Manage shared company details, contact information and branding. Saving creates a private draft; review, approve and publish to update the website.</p>
+<h1>Website settings.</h1><p>Manage shared company details, contact information and branding. {{ \App\Services\ContentPublisher::immediate() ? 'Saving updates the website immediately.' : 'Saving creates a private draft for review and publication.' }}</p>
 <form method="post" action="{{ route('admin.settings.update') }}">@csrf @method('PUT')
 <input type="hidden" name="version" value="{{ $revision->version }}">
 @foreach($settings as $group=>$fields)
@@ -24,6 +24,6 @@
 @endif
 @endforeach</fieldset>
 @endforeach
-<button>Save settings draft</button></form>
+<button>{{ \App\Services\ContentPublisher::immediate() ? 'Save settings' : 'Save settings draft' }}</button></form>
 @include('admin.content.workflow')
 @endsection

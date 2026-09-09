@@ -47,7 +47,7 @@ class LocationController extends Controller
             return $entry;
         });
 
-        return redirect()->route('admin.locations.edit', $entry)->with('status', 'Location draft created. Add verified information before publication.');
+        return redirect()->route('admin.locations.edit', $entry)->with('status', ContentPublisher::immediate() ? 'Saved. Changes are live immediately.' : 'Location draft created. Add verified information before publication.');
     }
 
     public function update(SaveLocationRequest $request, ContentEntry $entry, ContentPublisher $publisher): RedirectResponse
@@ -60,6 +60,6 @@ class LocationController extends Controller
             $entry->update(['title' => $request->validated('title')]);
         });
 
-        return back()->with('status', 'Location draft saved. Public information changes only after publication.');
+        return back()->with('status', ContentPublisher::immediate() ? 'Saved. Changes are live immediately.' : 'Location draft saved. Public information changes only after publication.');
     }
 }

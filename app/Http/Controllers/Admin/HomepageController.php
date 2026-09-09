@@ -55,6 +55,6 @@ class HomepageController extends Controller
         }
         $publisher->save($entry, $updated, $request->integer('version'));
 
-        return back()->with('status', 'Homepage draft saved. Preview it, then submit for review and approval before publishing.');
+        return back()->with('status', ContentPublisher::immediate() ? 'Saved. Changes are live immediately.' : 'Homepage draft saved. Preview it, then submit for review and approval before publishing.');
     }
 }

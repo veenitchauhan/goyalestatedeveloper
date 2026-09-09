@@ -25,5 +25,5 @@
 <div><label for="field-{{ str_replace('.','-',$key) }}">{{ str(substr($key,strlen($group)+1))->replace('items.','Item ')->replace('.',' / ')->replace('_',' ')->title() }}</label>
 @if(is_bool($value))<select id="field-{{ str_replace('.','-',$key) }}" name="{{ $fieldName }}"><option value="1" @selected(old('content.'.$key,$value))>Enabled</option><option value="0" @selected(!old('content.'.$key,$value))>Hidden</option></select>
 @elseif(is_int($value))<input type="number" min="0" max="1000" id="field-{{ str_replace('.','-',$key) }}" name="{{ $fieldName }}" value="{{ old('content.'.$key,$value) }}">
-@else<textarea rows="2" id="field-{{ str_replace('.','-',$key) }}" name="{{ $fieldName }}">{{ old('content.'.$key,$value) }}</textarea>@endif</div>@endif @endforeach</details>@endforeach<button>Save draft</button></form>
+@else<textarea rows="2" id="field-{{ str_replace('.','-',$key) }}" name="{{ $fieldName }}">{{ old('content.'.$key,$value) }}</textarea>@endif</div>@endif @endforeach</details>@endforeach<button>{{ \App\Services\ContentPublisher::immediate() ? 'Save' : 'Save draft' }}</button></form>
 @include('admin.content.workflow')@endsection

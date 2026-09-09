@@ -61,7 +61,7 @@ class ContentController extends Controller
             return $entry;
         });
 
-        return redirect()->route('admin.content.edit', $entry)->with('status', 'Draft created. It is not visible to visitors.');
+        return redirect()->route('admin.content.edit', $entry)->with('status', ContentPublisher::immediate() ? 'Saved. Changes are live immediately.' : 'Draft created. It is not visible to visitors.');
     }
 
     public function update(SaveContentRequest $request, ContentEntry $entry, ContentPublisher $publisher): RedirectResponse
@@ -74,7 +74,7 @@ class ContentController extends Controller
             $entry->update(['title' => $data['title']]);
         });
 
-        return back()->with('status', 'Draft saved. The published version is unchanged.');
+        return back()->with('status', ContentPublisher::immediate() ? 'Saved. Changes are live immediately.' : 'Draft saved. The published version is unchanged.');
     }
 
     public function transition(Request $request, ContentEntry $entry, ContentPublisher $publisher): RedirectResponse
@@ -102,7 +102,7 @@ class ContentController extends Controller
         $revision = $entry->revisions()->findOrFail($data['revision_id']);
         $publisher->save($entry, $revision->payload, (int) $data['version']);
 
-        return back()->with('status', 'Previous revision restored as a new draft. Review before publishing.');
+        return back()->with('status', ContentPublisher::immediate() ? 'Saved. Changes are live immediately.' : 'Previous revision restored as a new draft. Review before publishing.');
     }
 
     public function preview(ContentEntry $entry): View

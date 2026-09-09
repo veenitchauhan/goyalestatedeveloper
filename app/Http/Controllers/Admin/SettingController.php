@@ -32,6 +32,6 @@ class SettingController extends Controller
         $data['watermark']['enabled'] = $request->boolean('settings.watermark.enabled');
         $publisher->save($entry, $data, $request->integer('version'));
 
-        return back()->with('status','Settings draft saved. Submit for review, approve and publish to update the website.');
+        return back()->with('status', ContentPublisher::immediate() ? 'Saved. Changes are live immediately.' : 'Settings draft saved. Submit for review, approve and publish to update the website.');
     }
 }

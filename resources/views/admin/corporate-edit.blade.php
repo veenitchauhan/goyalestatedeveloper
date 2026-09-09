@@ -35,7 +35,7 @@
 <label for="seo_description">Meta description</label><textarea id="seo_description" name="seo_description" rows="3" maxlength="500">{{ old('seo_description',$payload['seo_description']??'') }}</textarea>
 <label for="order">Display order</label><input id="order" name="order" type="number" min="0" max="1000" value="{{ old('order',$payload['order']??0) }}" required>
 <label for="featured">Feature this record</label><select id="featured" name="featured"><option value="0" @selected(!old('featured',$payload['featured']??false))>No</option><option value="1" @selected(old('featured',$payload['featured']??false))>Yes</option></select></details>
-<label for="source_note">Internal source / approval reference</label><textarea id="source_note" name="source_note" rows="3" maxlength="2000">{{ old('source_note',$payload['source_note']??'') }}</textarea><p>This note is private and never appears on the public page.</p><input type="hidden" name="_form_submitted" value="1"><button>Save draft</button>
+<label for="source_note">Internal source / approval reference</label><textarea id="source_note" name="source_note" rows="3" maxlength="2000">{{ old('source_note',$payload['source_note']??'') }}</textarea><p>This note is private and never appears on the public page.</p><input type="hidden" name="_form_submitted" value="1"><button>{{ \App\Services\ContentPublisher::immediate() ? 'Save' : 'Save draft' }}</button>
 </form>
 @if($entry->exists) @include('admin.content.workflow') @endif
 @endsection

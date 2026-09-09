@@ -55,7 +55,7 @@ class DevelopmentController extends Controller
             return $entry;
         });
 
-        return redirect()->route('admin.developments.edit', $entry)->with('status', 'Draft created. Add verified content before publication.');
+        return redirect()->route('admin.developments.edit', $entry)->with('status', ContentPublisher::immediate() ? 'Saved. Changes are live immediately.' : 'Draft created. Add verified content before publication.');
     }
 
     public function update(SaveDevelopmentRequest $request, ContentEntry $entry, ContentPublisher $publisher): RedirectResponse
@@ -66,7 +66,7 @@ class DevelopmentController extends Controller
             $entry->update(['title' => $request->validated('title')]);
         });
 
-        return back()->with('status', 'Draft saved. The published version is unchanged.');
+        return back()->with('status', ContentPublisher::immediate() ? 'Saved. Changes are live immediately.' : 'Draft saved. The published version is unchanged.');
     }
 
     public function preview(ContentEntry $entry): View
