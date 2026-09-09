@@ -19,7 +19,7 @@ class SeoContent
     {
         $items = collect();
         $home = Homepage::main()->content;
-        foreach (['/' => $home['seo']['title'], '/about' => 'About us', '/business' => 'Business', '/capabilities' => 'Capabilities', '/capabilities/equipment' => 'Equipment', '/about/leadership' => 'Leadership', '/about/journey' => 'Our journey', '/about/employee-stories' => 'Employee stories', '/projects' => 'Projects', '/locations' => 'Locations', '/careers' => 'Careers', '/insights' => 'Insights', '/knowledge-bank' => 'Knowledge Bank', '/faqs' => 'FAQs', '/contact' => 'Contact'] as $path => $title) {
+        foreach (['/' => $home['seo']['title'], '/about' => 'About us', '/about/leadership' => 'Leadership', '/about/journey' => 'Our journey', '/about/employee-stories' => 'Employee stories', '/projects' => 'Projects', '/locations' => 'Locations', '/careers' => 'Careers', '/knowledge-bank' => 'Knowledge Bank', '/faqs' => 'FAQs', '/contact' => 'Contact'] as $path => $title) {
             $items->put($path, ['path' => $path, 'title' => $title, 'description' => $path === '/' ? $home['seo']['description'] : '', 'type' => 'hub']);
         }
         if (DevelopmentContent::enabled()) {

@@ -1,10 +1,9 @@
 @foreach($sections as $section)
-    @if($section['nav'])
+    @if($section['nav'] && !in_array($section['id'],['business','capabilities','insights']))
         @php
             $destination = match ($section['id']) {
-                'about', 'business', 'capabilities' => route('corporate.'.$section['id'].'.index'),
+                'about' => route('corporate.'.$section['id'].'.index'),
                 'careers' => route('careers.index'),
-                'insights' => route('knowledge.article.index'),
                 'contact' => route('contact'),
                 'projects' => route('projects.index'),
                 default => route('home').'#'.$section['id'],

@@ -55,6 +55,10 @@ class CorporateContent
 
     public static function items(string $type): Collection
     {
+        if (! static::supports($type)) {
+            return collect();
+        }
+
         return static::query($type)->get()->map(fn (CorporateRecord $record) => static::item($record))->sortBy('order')->sortByDesc('featured');
     }
 

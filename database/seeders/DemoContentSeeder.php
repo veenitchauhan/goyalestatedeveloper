@@ -70,7 +70,7 @@ class DemoContentSeeder extends Seeder
             foreach (['Site engineer', 'Planning coordinator', 'Graduate trainee'] as $index => $name) {
                 $this->entry('job', $name, ['job_type' => $index === 2 ? 'Graduate opportunity' : 'Permanent', 'employment_type' => 'Full-time', 'department' => 'Demo Engineering', 'location' => 'Demo review location', 'experience' => 'Demo: 0–3 years', 'deadline' => now()->addMonths(3)->toDateString(), 'salary_public' => false, 'description' => self::COPY, 'responsibilities' => "Demo responsibilities:\nReview drawings and coordinate sample project activities.", 'requirements' => 'Demo requirements for reviewing this template. Not an actual vacancy.', 'skills' => 'Planning, communication, drawing review', 'education' => 'Demo qualification']);
             }
-            foreach (['article' => ['From drawings to delivery', 'A sample construction story'], 'knowledge' => ['Understanding construction stages', 'Preparing a project brief'], 'faq' => ['How do I send an enquiry?', 'Are these actual company projects?']] as $type => $titles) {
+            foreach (['knowledge' => ['Understanding construction stages', 'Preparing a project brief'], 'faq' => ['How do I send an enquiry?', 'Are these actual company projects?']] as $type => $titles) {
                 foreach ($titles as $title) {
                     $this->entry($type, $title, ['category' => 'Demo construction guide', 'topic' => 'Demo project planning', 'short_answer' => self::COPY, 'explanation' => 'Sample supporting explanation for layout review.', 'author' => 'Demo editorial team', 'reviewer' => 'Demo reviewer', 'schema_enabled' => false, 'related_ids' => []]);
                 }

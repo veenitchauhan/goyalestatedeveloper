@@ -39,83 +39,6 @@ class HomepageSeeder extends Seeder
       "label": "Construction today. Possibilities tomorrow."
     },
     {
-      "id": "business",
-      "nav": "Business",
-      "enabled": true,
-      "order": 20,
-      "eyebrow": "WHAT WE DO",
-      "title": "Built for\ncomplex projects.",
-      "text": "Engineering thinking. On-site execution. A clear focus on the work that brings a project to life.",
-      "items": [
-        {
-          "title": "Construction",
-          "text": "Civil and structural works for buildings, from foundations through to finishing.",
-          "detail": "Buildings · Civil works · Structures"
-        },
-        {
-          "title": "Infrastructure",
-          "text": "Civil infrastructure and the structural works that connect places and support growing communities.",
-          "detail": "Civil infrastructure · Urban works"
-        },
-        {
-          "title": "Project delivery",
-          "text": "Planning, coordination and site management across the construction journey, through to handover.",
-          "detail": "Planning · Execution · Handover"
-        }
-      ]
-    },
-    {
-      "id": "capabilities",
-      "nav": "Capabilities",
-      "enabled": true,
-      "order": 30,
-      "eyebrow": "HOW WE BUILD",
-      "title": "From plan\nto project.",
-      "text": "Every stage has a purpose. Explore the construction journey, from the first plan to the final handover.",
-      "items": [
-        {
-          "title": "Planning",
-          "text": "Define the scope, sequence and requirements that guide the project."
-        },
-        {
-          "title": "Engineering",
-          "text": "Translate the project brief into coordinated technical requirements."
-        },
-        {
-          "title": "Procurement",
-          "text": "Coordinate materials and resources against the programme of work."
-        },
-        {
-          "title": "Site mobilisation",
-          "text": "Prepare the site and organise the people and resources required for execution."
-        },
-        {
-          "title": "Foundation",
-          "text": "Establish the base for the structure in accordance with the project design."
-        },
-        {
-          "title": "Structure",
-          "text": "Bring the structural framework to life, stage by stage."
-        },
-        {
-          "title": "Construction",
-          "text": "Coordinate civil works and the activities that turn a structure into a building."
-        },
-        {
-          "title": "Quality & safety",
-          "text": "Integrate quality requirements and safety considerations into the programme of work."
-        },
-        {
-          "title": "Finishing",
-          "text": "Coordinate the finishes and details required by the project specification."
-        },
-        {
-          "title": "Handover",
-          "text": "Bring together completion checks and documentation for project handover."
-        }
-      ]
-    },
-    {
       "id": "projects",
       "nav": "Projects",
       "enabled": true,
@@ -147,29 +70,6 @@ class HomepageSeeder extends Seeder
       "text": "Explore opportunities in engineering, project management and construction operations.",
       "empty": "There are no published openings to display at present.",
       "cta": "Make a career enquiry"
-    },
-    {
-      "id": "insights",
-      "nav": "Insights",
-      "enabled": true,
-      "order": 70,
-      "eyebrow": "INSIGHTS & KNOWLEDGE",
-      "title": "A closer look\nat construction.",
-      "text": "Project stories, construction knowledge and perspectives on the work behind the built environment.",
-      "items": [
-        {
-          "title": "What is the company’s current focus?",
-          "text": "Construction, infrastructure and project execution, with a current focus on the Tricity region."
-        },
-        {
-          "title": "Is real estate an active business?",
-          "text": "Development and real estate are part of the long-term vision. They are not presented as an active property-sales business."
-        },
-        {
-          "title": "How can I discuss a project?",
-          "text": "Use the enquiry form to share the project type, location and scope of your requirement."
-        }
-      ]
     },
     {
       "id": "contact",

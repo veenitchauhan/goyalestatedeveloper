@@ -29,25 +29,8 @@
         @if($section['artwork_enabled']??true)<figure class="company-visual"><img src="{{ $aboutImage ? route('media.show',$aboutImage) : asset('assets/architecture/delivery.webp') }}" alt="{{ $aboutImage?->alt ?: 'Architectural concept model with drawings and material samples' }}" width="1536" height="1024" loading="lazy">@if($aboutImage?->caption)<figcaption>{{ $aboutImage->caption }}</figcaption>@elseif(!$aboutImage)<figcaption>Design thinking. Built into every detail. <span>Concept illustration</span></figcaption>@endif</figure>@endif
         <div class="company-story"><div class="about-heading"><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2></div><div class="about-copy"><p class="lead">{{ $section['text'] }}</p><div class="signature">{{ $section['label'] }}</div><a class="text-link dark-link" href="{{ route('corporate.about.index') }}">Explore our company ↗</a></div></div>
         @break
-    @case('business')
-        <div class="section-heading"><div><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2></div><p>{{ $section['text'] }}</p></div>
-        @php($publishedBusiness=\App\Services\CorporateContent::items('business_unit'))
-        @php($businessCards=$publishedBusiness->isNotEmpty() ? $publishedBusiness->map(fn($item)=>['title'=>$item['title'],'text'=>$item['summary'],'detail'=>'','url'=>$item['url']]) : collect($section['items']))
-        <div class="business-grid">@foreach($businessCards as $item)
-            <article class="business-card"><div class="card-top"><span>{{ sprintf('%02d',$loop->iteration) }}</span></div>
-            @if($section['artwork_enabled']??true)
-            @php($cardImage=$sectionAssets->get($section['card_'.($loop->index%3+1).'_id']??null))
-            <figure class="business-art"><img src="{{ $cardImage ? route('media.show',$cardImage) : asset('assets/architecture/'.['construction','infrastructure','delivery'][$loop->index%3].'.webp') }}" alt="{{ $cardImage?->alt ?: 'Concept illustration: '.$item['title'] }}" loading="lazy" width="1536" height="1024">@unless($cardImage)<figcaption>Concept illustration</figcaption>@endunless</figure>
-            @endif
 
-            <h3><a class="business-card-link" href="{{ $item['url'] ?? route('corporate.business.index') }}">{{ $item['title'] }}</a></h3><p>{{ $item['text'] }}</p>@if($item['detail'])<div class="card-detail">{{ $item['detail'] }}</div>@endif</article>
-        @endforeach</div>
-        @break
-    @case('capabilities')
-        <div class="process-intro"><p class="eyebrow">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2><p>{{ $section['text'] }}</p>@php($processImage=$sectionAssets->get($section['media_id']??null))
-        @if($section['artwork_enabled']??true)<figure class="process-art"><img src="{{ $processImage ? route('media.show',$processImage) : asset('assets/architecture/construction-journey.webp') }}" alt="{{ $processImage?->alt ?: 'Concept illustration showing architectural plans, a concrete structure and a completed building in copper and teal' }}" width="1024" height="1024" loading="lazy"><figcaption>{{ $processImage?->caption ?: 'From first drawings to final details' }} @unless($processImage)<span>AI-generated concept illustration</span>@endunless</figcaption></figure>@endif<div class="process-visual" aria-hidden="true"><span>PLAN</span><i></i><span>STRUCTURE</span><i></i><span>DELIVERY</span></div></div>
-        <div class="process-list">@foreach($section['items'] as $item)<details name="construction-process" @if($loop->first) open @endif><summary><span class="step-number">{{ sprintf('%02d',$loop->iteration) }}</span><h3>{{ $item['title'] }}</h3><span class="expand" aria-hidden="true">＋</span></summary><p>{{ $item['text'] }}</p></details>@endforeach</div>
-        @break
+
     @case('projects')
         <div class="section-heading"><div><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2></div><p>{{ $section['text'] }}</p></div>
         @php($featuredProjects=\App\Services\ProjectContent::items()->where('featured',true)->take(6))
@@ -68,21 +51,7 @@
     @case('careers')
         <div><p class="eyebrow">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2></div><div class="careers-copy"><p>{{ $section['text'] }}</p>@if(\App\Services\CareerContent::openings()->isEmpty())<p class="muted">{{ $section['empty'] }}</p>@endif<a class="button light" href="{{ route('careers.index') }}">Explore careers ↗</a></div>
         @break
-    @case('insights')
-        <div class="section-heading"><div><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2></div><p>{{ $section['text'] }}</p></div><div class="faq-list">@foreach($section['items'] as $item)<details><summary>{{ $item['title'] }}<span aria-hidden="true">＋</span></summary><p>{{ $item['text'] }}</p></details>@endforeach
-        </div>
-        @php($featuredInsights=\App\Services\KnowledgeContent::items()->where('featured',true)->take(6))
-        @if($featuredInsights->isNotEmpty())
-        <section class="featured-insights" aria-labelledby="featured-insights-title">
-            <h3 id="featured-insights-title">{{ $section['featured_title'] ?? 'Ideas, insights & answers' }}</h3>
-            <div class="faq-list">
-            @foreach($featuredInsights as $article)
-                <details><summary>{{ $article['title'] }}<span aria-hidden="true">＋</span></summary><p>{{ $article['short_answer'] }}</p><p><a class="text-link" href="{{ $article['url'] }}">Read more ↗</a></p></details>
-            @endforeach
-            </div>
-        </section>
-        @endif
-        @break
+
     @case('contact')
         <div class="contact-intro"><p class="eyebrow dark">{{ $section['eyebrow'] }}</p><h2>{{ $section['title'] }}</h2><p>{{ $section['text'] }}</p><div class="contact-details">@if($content['contact']['email'])<a href="mailto:{{ $content['contact']['email'] }}">{{ $content['contact']['email'] }}</a>@endif @if($content['contact']['phone'])<a href="tel:{{ preg_replace('/[^+0-9]/','',$content['contact']['phone']) }}">{{ $content['contact']['phone'] }}</a>@endif @if($content['contact']['address'])<p>{{ $content['contact']['address'] }}</p>@endif</div></div>
         <div class="contact-form">@if(session('enquiry_sent'))<div class="form-success" role="status"><h3>Thank you for getting in touch.</h3><p>Your enquiry has been received.</p></div>@endif

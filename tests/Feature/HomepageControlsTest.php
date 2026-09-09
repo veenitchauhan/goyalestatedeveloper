@@ -136,25 +136,29 @@ class HomepageControlsTest extends TestCase
         $this->get('/missing-page')->assertNotFound()->assertSee(config('app.name'))->assertSee('Explore projects')->assertSee('Contact us')->assertSee('noindex,follow');
         $page = Homepage::main();
         $content = $page->content;
-        $content['sections'][3]['enabled'] = false;
-        $content['sections'][7]['enabled'] = false;
+        foreach ($content['sections'] as &$section) {
+            if (in_array($section['id'], ['projects', 'contact'])) {
+                $section['enabled'] = false;
+            }
+        }
+        unset($section);
         $page->update(['content' => $content]);
         $this->get('/missing-page')->assertNotFound()->assertSee('Back home')->assertDontSee('Explore projects')->assertDontSee('Contact us');
     }
 
-    public function test_card_artwork_uses_approved_media_and_can_be_hidden_in_draft(): void
+    public function test_about_artwork_uses_approved_media_and_can_be_hidden_in_draft(): void
     {
         $this->signInEditor();
         $image = Media::factory()->create(['is_public' => true, 'publication_status' => 'published', 'alt' => 'Custom construction artwork']);
         $payload = Homepage::main()->content;
-        $this->put('/admin/homepage', ['version' => 1, 'content' => $payload, 'section_assets' => [1 => ['card_1_id' => $image->id]]])->assertSessionHasNoErrors();
+        $this->put('/admin/homepage', ['version' => 1, 'content' => $payload, 'section_assets' => [0 => ['media_id' => $image->id]]])->assertSessionHasNoErrors();
         $entry = ContentEntry::where('type', 'homepage')->firstOrFail();
         $this->get(route('admin.content.preview', $entry))->assertSee('Custom construction artwork');
         $this->get('/')->assertDontSee('Custom construction artwork');
-        $payload['sections'][1]['artwork_enabled'] = false;
+        $payload['sections'][0]['artwork_enabled'] = false;
         $this->put('/admin/homepage', ['version' => 2, 'content' => $payload])->assertSessionHasNoErrors();
         $this->get(route('admin.content.preview', $entry))->assertDontSee('Custom construction artwork');
         $image->update(['is_public' => false]);
-        $this->put('/admin/homepage', ['version' => 3, 'content' => $payload, 'section_assets' => [1 => ['card_1_id' => $image->id]]])->assertSessionHasErrors('section_assets.1.card_1_id');
+        $this->put('/admin/homepage', ['version' => 3, 'content' => $payload, 'section_assets' => [0 => ['media_id' => $image->id]]])->assertSessionHasErrors('section_assets.0.media_id');
     }
 }

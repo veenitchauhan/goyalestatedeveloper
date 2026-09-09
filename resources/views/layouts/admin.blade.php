@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>@yield('title', 'Administration') | {{ config('app.name') }}</title><link rel="stylesheet" href="{{ asset('assets/admin.css') }}?v={{ filemtime(public_path('assets/admin.css')) }}"><script src="{{ asset('assets/password-toggle.js') }}" defer></script><script src="{{ asset('assets/admin-shell.js') }}" defer></script></head>
+<html lang="en"><head>@include('partials.favicon')<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>@yield('title', 'Administration') | {{ config('app.name') }}</title><link rel="stylesheet" href="{{ asset('assets/admin.css') }}?v={{ filemtime(public_path('assets/admin.css')) }}"><script src="{{ asset('assets/password-toggle.js') }}" defer></script><script src="{{ asset('assets/admin-shell.js') }}" defer></script></head>
 <body class="@auth cms-shell @else auth-shell @endauth">
 <a class="skip" href="#main">Skip to content</a>
 @auth
@@ -14,7 +14,7 @@
 <a href="{{ route('admin.content.index') }}" @if(request()->routeIs('admin.content.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▤</span>Pages & reusable content</a>
 @endcan
 @can('pages.view')
-<a href="{{ route('admin.corporate.index') }}" @if(request()->routeIs('admin.corporate.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">◇</span>Company & capabilities</a>
+<a href="{{ route('admin.corporate.index') }}" @if(request()->routeIs('admin.corporate.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">◇</span>Company</a>
 @endcan
 @if(auth()->user()->can('projects.view') || auth()->user()->can('projects.view-assigned'))
 <a href="{{ route('admin.projects.index') }}" @if(request()->routeIs('admin.projects.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▥</span>Projects & progress</a>
@@ -22,7 +22,7 @@
 @can('pages.view')
 <a href="{{ route('admin.locations.index') }}" @if(request()->routeIs('admin.locations.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">◎</span>Locations & expansion</a>
 @endcan
-@can('pages.view')<a href="{{ route('admin.knowledge.index') }}" @if(request()->routeIs('admin.knowledge.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▤</span>Insights, Knowledge & FAQs</a>@endcan
+@can('pages.view')<a href="{{ route('admin.knowledge.index') }}" @if(request()->routeIs('admin.knowledge.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▤</span>Knowledge & FAQs</a>@endcan
 @can('jobs.view')<a href="{{ route('admin.jobs.index') }}" @if(request()->routeIs('admin.jobs.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">▣</span>Careers & openings</a>@endcan
 @if(auth()->user()->can('candidates.view') || auth()->user()->can('candidates.view-assigned'))<a href="{{ route('admin.candidates.index') }}" @if(request()->routeIs('admin.candidates.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">♙</span>Candidate pipeline</a>@endif
 @can('seo.manage')<a href="{{ route('admin.seo.index') }}" @if(request()->routeIs('admin.seo.*')) aria-current="page" @endif><span class="nav-icon" aria-hidden="true">◎</span>SEO & discovery</a>@endcan

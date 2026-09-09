@@ -1,7 +1,7 @@
 @extends('layouts.admin')
-@section('title','Company & capabilities')
+@section('title','Company')
 @section('content')
-<h1>Company & capabilities.</h1>
+<h1>Company.</h1>
 <p>Manage company pages, business areas, services, equipment and people. Drafts remain private until approved and published.</p>
 @can('pages.create')<div class="corporate-admin-actions">@foreach(config('corporate') as $type=>$definition)<a class="button" href="{{ route('admin.corporate.create',['type'=>$type]) }}">Add {{ strtolower($definition['singular']) }} →</a>@endforeach</div>@endcan
 <form method="get" action="{{ route('admin.corporate.index') }}" class="corporate-filter">

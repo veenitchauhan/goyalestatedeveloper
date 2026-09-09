@@ -3,7 +3,7 @@
 @section('content')<p class="eyebrow">YOUR WORKSPACE</p><h1>Welcome, {{ auth()->user()->name }}.</h1><p>Manage your website content, media and enquiries from one place.</p><div class="cards">
 @can('pages.edit')<section><h2>Homepage</h2><p>Edit the homepage copy, section order and contact details. Preview changes before publishing.</p><a href="{{ route('admin.homepage.edit') }}">Edit homepage →</a></section>@endcan
 @can('pages.view')<section><h2>Pages & reusable content</h2><p>Manage pages, shared text, statistics and navigation links.</p><a href="{{ route('admin.content.index') }}">Open content →</a></section>@endcan
-@can('pages.view')<section><h2>Company & capabilities</h2><p>Manage company pages, business areas, people and equipment.</p><a href="{{ route('admin.corporate.index') }}">Open company content →</a></section>@endcan
+@can('pages.view')<section><h2>Company</h2><p>Manage company pages, people and company history.</p><a href="{{ route('admin.corporate.index') }}">Open company content →</a></section>@endcan
 @if(auth()->user()->can('projects.view') || auth()->user()->can('projects.view-assigned'))<section><h2>Projects & progress</h2><p>Manage project information, progress stages and site galleries.</p><a href="{{ route('admin.projects.index') }}">Open projects →</a></section>@endif
 @can('pages.view')<section><h2>Locations & expansion</h2><p>Manage verified operating areas and planned expansion.</p><a href="{{ route('admin.locations.index') }}">Open locations →</a></section>@endcan
 @can('jobs.view')<section><h2>Careers & openings</h2><p>Create roles, internships and graduate opportunities.</p><a href="{{ route('admin.jobs.index') }}">Manage openings →</a></section>@endcan
@@ -13,7 +13,7 @@
 @can('users.manage')<section><h2>Users</h2><p>Create users, assign roles and manage account access.</p><a href="{{ route('admin.users.index') }}">Manage users →</a></section>@endcan
 @can('roles.view')<section><h2>Roles & permissions</h2><p>Review access boundaries and manage permitted actions.</p><a href="{{ route('admin.roles') }}">View roles →</a></section>@endcan
 @can('audit.view')<section><h2>Activity history</h2><p>Review who changed access, content and publication settings.</p><a href="{{ route('admin.audit') }}">View activity →</a></section>@endcan
-@can('pages.view')<section><h2>Insights & knowledge</h2><p>Publish articles, practical guides and answers to common questions.</p><a href="{{ route('admin.knowledge.index') }}">Manage knowledge →</a></section>@endcan
+@can('pages.view')<section><h2>Knowledge & FAQs</h2><p>Publish practical guides and answers to common questions.</p><a href="{{ route('admin.knowledge.index') }}">Manage knowledge →</a></section>@endcan
 @can('seo.manage')<section><h2>Search visibility</h2><p>Review page metadata, indexing and redirects.</p><a href="{{ route('admin.seo.index') }}">Review SEO →</a></section>@endcan
 @can('campaigns.manage')<section><h2>Campaigns & analytics</h2><p>Manage landing pages and review consented website activity.</p><a href="{{ route('admin.campaigns.index') }}">Manage campaigns →</a><a href="{{ route('admin.analytics') }}">View analytics →</a></section>@endcan
 @can('settings.manage')<section><h2>Future developments</h2><p>Prepare development pages, inventory and site-visit enquiries.</p><a href="{{ route('admin.developments.index') }}">Manage developments →</a></section>@endcan

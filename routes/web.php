@@ -54,13 +54,13 @@ Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
 Route::get('/search', [SearchController::class, 'index'])->name('search');
 Route::get('/', [HomepageController::class, 'index'])->name('home');
-foreach (['about' => 'about', 'business' => 'business', 'capabilities' => 'capabilities', 'capabilities/equipment' => 'equipment', 'about/leadership' => 'leadership', 'about/journey' => 'journey', 'about/employee-stories' => 'stories'] as $path => $group) {
+foreach (['about' => 'about', 'about/leadership' => 'leadership', 'about/journey' => 'journey', 'about/employee-stories' => 'stories'] as $path => $group) {
     Route::get('/'.$path, [CorporateController::class, 'index'])->defaults('group', $group)->name('corporate.'.$group.'.index');
 }
-foreach (['about/people/{slug}' => 'team_member', 'about/milestones/{slug}' => 'company_milestone', 'about/employee-stories/{slug}' => 'employee_story', 'business/services/{slug}' => 'service', 'capabilities/equipment/{slug}' => 'equipment', 'about/{slug}' => 'company_page', 'business/{slug}' => 'business_unit', 'capabilities/{slug}' => 'capability'] as $path => $type) {
+foreach (['about/people/{slug}' => 'team_member', 'about/milestones/{slug}' => 'company_milestone', 'about/employee-stories/{slug}' => 'employee_story', 'about/{slug}' => 'company_page'] as $path => $type) {
     Route::get('/'.$path, [CorporateController::class, 'show'])->defaults('type', $type)->name(config('corporate.'.$type.'.route'));
 }
-foreach (['insights' => 'article', 'knowledge-bank' => 'knowledge', 'faqs' => 'faq'] as $path => $type) {
+foreach (['knowledge-bank' => 'knowledge', 'faqs' => 'faq'] as $path => $type) {
     Route::get('/'.$path, [KnowledgeController::class, 'index'])->defaults('type', $type)->name('knowledge.'.$type.'.index');
     Route::get('/'.$path.'/{slug}', [KnowledgeController::class, 'show'])->defaults('type', $type)->name('knowledge.'.$type.'.show');
 }
