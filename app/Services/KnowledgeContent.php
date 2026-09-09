@@ -9,7 +9,7 @@ use Illuminate\View\View;
 
 class KnowledgeContent
 {
-    public const TYPES = ['knowledge' => 'Knowledge Bank', 'faq' => 'FAQs'];
+    public const TYPES = ['blog' => 'Blog', 'knowledge' => 'Knowledge Bank', 'faq' => 'FAQs'];
 
     public static function supports(string $type): bool
     {

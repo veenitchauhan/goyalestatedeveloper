@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('title','Editorial content')
 @section('content')
-<p class="eyebrow">INSIGHTS / KNOWLEDGE / FAQS</p><h1>{{ $entry->exists ? $entry->title : 'Create editorial content' }}</h1><p><a href="{{ route('admin.knowledge.index') }}">← Editorial library</a></p>
+<p class="eyebrow">BLOG / KNOWLEDGE / FAQS</p><h1>{{ $entry->exists ? $entry->title : 'Create editorial content' }}</h1><p><a href="{{ route('admin.knowledge.index') }}">← Editorial library</a></p>
 <form method="post" action="{{ $entry->exists ? route('admin.knowledge.update',$entry) : route('admin.knowledge.store') }}">@csrf @if($entry->exists) @method('PUT') @endif<input type="hidden" name="version" value="{{ $revision?->version??0 }}">
 <section><h2>Content & topic</h2><div class="form-grid"><div><label for="type">Content type</label><select id="type" name="type">@foreach(\App\Services\KnowledgeContent::TYPES as $key=>$label)<option value="{{ $key }}" @selected(old('type',$entry->type)===$key) @disabled($entry->exists && $entry->type!==$key)>{{ $label }}</option>@endforeach</select></div>
 @foreach(['title'=>'Title / question','slug'=>'URL slug','category'=>'Category','topic'=>'Topic cluster'] as $key=>$label)<div><label for="{{ $key }}">{{ $label }}</label><input id="{{ $key }}" name="{{ $key }}" value="{{ old($key,$payload[$key]??'') }}" @readonly($key==='slug' && $entry->exists)></div>@endforeach</div>

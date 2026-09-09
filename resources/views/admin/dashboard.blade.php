@@ -10,7 +10,7 @@
 @can('users.manage')<section><h2>Users</h2><p>Create users, assign roles and manage account access.</p><a href="{{ route('admin.users.index') }}">Manage users →</a></section>@endcan
 @can('roles.view')<section><h2>Roles & permissions</h2><p>Review access boundaries and manage permitted actions.</p><a href="{{ route('admin.roles') }}">View roles →</a></section>@endcan
 @can('audit.view')<section><h2>Activity history</h2><p>Review who changed access, content and publication settings.</p><a href="{{ route('admin.audit') }}">View activity →</a></section>@endcan
-@can('pages.view')<section><h2>Knowledge & FAQs</h2><p>Publish practical guides and answers to common questions.</p><a href="{{ route('admin.knowledge.index') }}">Manage knowledge →</a></section>@endcan
+@can('pages.view')<section><h2>Blog, Knowledge & FAQs</h2><p>Publish practical guides and answers to common questions.</p><a href="{{ route('admin.knowledge.index') }}">Manage knowledge →</a></section>@endcan
 @can('seo.manage')<section><h2>Search visibility</h2><p>Review page metadata, indexing and redirects.</p><a href="{{ route('admin.seo.index') }}">Review SEO →</a></section>@endcan
 @can('campaigns.manage')<section><h2>Campaigns & analytics</h2><p>Manage landing pages and review consented website activity.</p><a href="{{ route('admin.campaigns.index') }}">Manage campaigns →</a><a href="{{ route('admin.analytics') }}">View analytics →</a></section>@endcan
 @can('settings.manage')<section><h2>Future developments</h2><p>Prepare development pages, inventory and site-visit enquiries.</p><a href="{{ route('admin.developments.index') }}">Manage developments →</a></section>@endcan

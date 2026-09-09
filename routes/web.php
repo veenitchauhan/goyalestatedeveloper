@@ -60,7 +60,7 @@ foreach (['about' => 'about', 'about/leadership' => 'leadership', 'about/journey
 foreach (['about/people/{slug}' => 'team_member', 'about/milestones/{slug}' => 'company_milestone', 'about/employee-stories/{slug}' => 'employee_story', 'about/{slug}' => 'company_page'] as $path => $type) {
     Route::get('/'.$path, [CorporateController::class, 'show'])->defaults('type', $type)->name(config('corporate.'.$type.'.route'));
 }
-foreach (['knowledge-bank' => 'knowledge', 'faqs' => 'faq'] as $path => $type) {
+foreach (['blog' => 'blog', 'knowledge-bank' => 'knowledge', 'faqs' => 'faq'] as $path => $type) {
     Route::get('/'.$path, [KnowledgeController::class, 'index'])->defaults('type', $type)->name('knowledge.'.$type.'.index');
     Route::get('/'.$path.'/{slug}', [KnowledgeController::class, 'show'])->defaults('type', $type)->name('knowledge.'.$type.'.show');
 }

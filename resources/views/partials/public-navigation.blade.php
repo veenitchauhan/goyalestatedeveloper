@@ -14,3 +14,5 @@
         <a href="{{ $destination }}" @if($active) aria-current="page" @endif>{{ $section['nav'] }}</a>
     @endif
 @endforeach
+
+<a href="{{ route('knowledge.blog.index') }}" @if(request()->routeIs('knowledge.blog.*')) aria-current="page" @endif>Blog</a>

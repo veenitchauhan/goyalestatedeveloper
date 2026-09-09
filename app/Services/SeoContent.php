@@ -19,7 +19,7 @@ class SeoContent
     {
         $items = collect();
         $home = Homepage::main()->content;
-        foreach (['/' => $home['seo']['title'], '/about' => 'About us', '/about/leadership' => 'Leadership', '/about/journey' => 'Our journey', '/about/employee-stories' => 'Employee stories', '/projects' => 'Projects', '/locations' => 'Locations', '/careers' => 'Careers', '/knowledge-bank' => 'Knowledge Bank', '/faqs' => 'FAQs', '/contact' => 'Contact'] as $path => $title) {
+        foreach (['/' => $home['seo']['title'], '/about' => 'About us', '/about/leadership' => 'Leadership', '/about/journey' => 'Our journey', '/about/employee-stories' => 'Employee stories', '/projects' => 'Projects', '/locations' => 'Locations', '/careers' => 'Careers', '/blog' => 'Blog', '/knowledge-bank' => 'Knowledge Bank', '/faqs' => 'FAQs', '/contact' => 'Contact'] as $path => $title) {
             $items->put($path, ['path' => $path, 'title' => $title, 'description' => $path === '/' ? $home['seo']['description'] : '', 'type' => 'hub']);
         }
         if (DevelopmentContent::enabled()) {
@@ -84,7 +84,7 @@ class SeoContent
         if ($entry && ! empty($payload['title'])) {
             $graph[] = ['@type' => 'BreadcrumbList', 'itemListElement' => [['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => self::absolute('/')], ['@type' => 'ListItem', 'position' => 2, 'name' => $payload['title'], 'item' => $meta['canonical']]]];
         }
-        if ($entry && in_array($entry->type, ['article', 'knowledge']) && ! empty($payload['author'])) {
+        if ($entry && in_array($entry->type, ['blog', 'knowledge']) && ! empty($payload['author'])) {
             $article = ['@type' => 'Article', 'headline' => $payload['title'], 'description' => $payload['short_answer'] ?? '', 'author' => ['@type' => 'Person', 'name' => $payload['author']], 'publisher' => ['@id' => $organization['@id']], 'mainEntityOfPage' => $meta['canonical'], 'datePublished' => $entry->published_at?->toIso8601String(), 'dateModified' => $entry->publishedRevision?->created_at->toIso8601String()];
             if ($meta['image']) {
                 $article['image'] = $meta['image'];

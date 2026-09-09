@@ -97,3 +97,8 @@ body{font-size:16px;line-height:1.65}
 .company-name{display:inline-flex;flex-shrink:0;max-width:100%}
 .branding-logo{display:block;width:270px;max-width:100%;height:auto;object-fit:contain;background:#fff;border-radius:6px;padding:6px 10px}
 @media(max-width:760px){.branding-logo{width:230px}}
+
+.desktop-nav{font-size:18px;gap:24px;flex-wrap:nowrap}
+.desktop-nav>a{white-space:nowrap}
+.mobile-nav{font-size:16px}
+@media(min-width:1151px) and (max-width:1400px){.desktop-nav{font-size:17px;gap:18px}.header-inner{gap:20px}.header-cta{display:none}}
