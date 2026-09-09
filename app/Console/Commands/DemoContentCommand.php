@@ -14,19 +14,24 @@ use Illuminate\Support\Facades\DB;
 
 class DemoContentCommand extends Command
 {
-    protected $signature = 'demo:content {--remove : Archive demo pages and media and delete only registered synthetic enquiries/candidates}';
+    protected $signature = 'demo:content {--force : Allow demo data on a hosted review site} {--remove : Archive demo pages and media and delete only registered synthetic enquiries/candidates}';
 
-    protected $description = 'Create or remove the explicitly labelled local CMS demo dataset';
+    protected $description = 'Create or remove the explicitly labelled CMS demo dataset';
 
     public function handle(): int
     {
-        if (! app()->environment(['local', 'testing'])) {
-            $this->error('Demo content commands run only in local development.');
+        if (! app()->environment(['local', 'testing']) && ! $this->option('force')) {
+            $this->error('Use --force to explicitly allow demo content on this hosted review site.');
 
             return self::FAILURE;
         }
         if (! $this->option('remove')) {
-            return $this->call('db:seed', ['--class' => DemoContentSeeder::class, '--force' => true]);
+            $seeder = app(DemoContentSeeder::class);
+            $seeder->allowHosted = (bool) $this->option('force');
+            $seeder->setCommand($this);
+            $seeder->run();
+
+            return self::SUCCESS;
         }
         $setting = SiteSetting::where('key', 'demo_content')->first();
         if (! $setting) {

@@ -16,16 +16,24 @@ use Illuminate\Support\Str;
 
 class DemoContentSeeder extends Seeder
 {
+    public bool $allowHosted = false;
+
     private array $entries = [];
 
     private const COPY = 'DEMO CONTENT — fictional example for layout review only. This is not a company project, credential, employee, vacancy or business claim. Replace it with approved information before launch.';
 
     public function run(): void
     {
-        if (! app()->environment(['local', 'testing'])) {
+        if (! app()->environment(['local', 'testing']) && ! $this->allowHosted) {
             throw new \RuntimeException('Demo content is restricted to local development.');
         }
-        if (SiteSetting::where('key', 'demo_content')->exists()) {
+        if ($registry = SiteSetting::where('key', 'demo_content')->first()) {
+            DB::transaction(function () use ($registry): void {
+                $this->addBlogs();
+                $data = $registry->data;
+                $data['entry_ids'] = array_values(array_unique([...$data['entry_ids'], ...$this->entries]));
+                $registry->update(['data' => $data]);
+            });
             $this->command?->info('Demo content already exists; existing records were preserved.');
 
             return;
@@ -70,6 +78,7 @@ class DemoContentSeeder extends Seeder
             foreach (['Site engineer', 'Planning coordinator', 'Graduate trainee'] as $index => $name) {
                 $this->entry('job', $name, ['job_type' => $index === 2 ? 'Graduate opportunity' : 'Permanent', 'employment_type' => 'Full-time', 'department' => 'Demo Engineering', 'location' => 'Demo review location', 'experience' => 'Demo: 0–3 years', 'deadline' => now()->addMonths(3)->toDateString(), 'salary_public' => false, 'description' => self::COPY, 'responsibilities' => "Demo responsibilities:\nReview drawings and coordinate sample project activities.", 'requirements' => 'Demo requirements for reviewing this template. Not an actual vacancy.', 'skills' => 'Planning, communication, drawing review', 'education' => 'Demo qualification']);
             }
+            $this->addBlogs();
             foreach (['knowledge' => ['Understanding construction stages', 'Preparing a project brief'], 'faq' => ['How do I send an enquiry?', 'Are these actual company projects?']] as $type => $titles) {
                 foreach ($titles as $title) {
                     $this->entry($type, $title, ['category' => 'Demo construction guide', 'topic' => 'Demo project planning', 'short_answer' => self::COPY, 'explanation' => 'Sample supporting explanation for layout review.', 'author' => 'Demo editorial team', 'reviewer' => 'Demo reviewer', 'schema_enabled' => false, 'related_ids' => []]);
@@ -102,6 +111,22 @@ class DemoContentSeeder extends Seeder
         });
     }
 
+    private function addBlogs(): void
+    {
+        foreach (['Planning a home in the Tricity', 'From drawings to site coordination', 'Materials and the details that matter'] as $name) {
+            if (ContentEntry::where('type', 'blog')->where('slug', 'demo-'.Str::slug($name))->exists()) {
+                continue;
+            }
+            $this->entry('blog', $name, [
+                'category' => 'Demo construction journal', 'topic' => 'Project planning',
+                'short_answer' => 'Demo article: explore the questions, drawings and decisions behind a construction project. Fictional content for website review.',
+                'author' => 'Demo editorial team', 'reviewer' => 'Demo reviewer',
+                'explanation' => 'Use this sample to review the blog layout and edit it from the CMS.',
+                'schema_enabled' => false, 'related_ids' => [],
+            ]);
+        }
+    }
+
     private function sampleResume(): string
     {
         $stream = 'BT /F1 18 Tf 50 740 Td (DEMO RESUME - FICTIONAL CANDIDATE) Tj 0 -35 Td /F1 11 Tf (Sample document for CMS review. Not an actual applicant.) Tj ET';
@@ -124,8 +149,8 @@ class DemoContentSeeder extends Seeder
     private function entry(string $type, string $name, array $extra = []): ContentEntry
     {
         $slug = 'demo-'.Str::slug($name);
-        if (ContentEntry::where('type', $type)->where('slug', $slug)->exists()) {
-            throw new \RuntimeException('A demo slug already exists; existing content was preserved.');
+        if ($existing = ContentEntry::where('type', $type)->where('slug', $slug)->first()) {
+            return $existing;
         }
         $entry = ContentEntry::create(['type' => $type, 'slug' => $slug, 'title' => 'Demo — '.$name]);
         $payload = array_replace(['type' => $type, 'slug' => $slug, 'title' => $entry->title, 'summary' => self::COPY, 'body' => self::COPY."\n\nThis example demonstrates the page structure, supporting imagery and related enquiry journey. Use the CMS to edit this material during review.", 'order' => 0, 'featured' => true, 'verified' => true, 'source_note' => 'User-authorized synthetic demo data, verified as fictional only.', 'seo_title' => $entry->title, 'seo_description' => self::COPY], $extra);
