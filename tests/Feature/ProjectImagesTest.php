@@ -46,7 +46,11 @@ class ProjectImagesTest extends TestCase
         $this->assertCount(5, $ids);
         $this->assertSame($ids[0], $payload['cover_media_id']);
         $this->assertDatabaseCount('media', 5);
-        $this->get('/admin/projects/create')->assertOk()->assertSee('Project images');
+        $create = $this->get('/admin/projects/create')->assertOk()->assertSee('Project images');
+        $this->assertStringContainsString("img-src 'self' data: blob:;", $create->headers->get('Content-Security-Policy'));
+        $edit = $this->get('/admin/projects/'.$entry->id.'/edit')->assertOk();
+        $this->assertStringContainsString("img-src 'self' data: blob:;", $edit->headers->get('Content-Security-Policy'));
+        $this->assertStringNotContainsString('blob:', $this->get('/')->headers->get('Content-Security-Policy'));
         $this->get('/admin/projects/'.$entry->id.'/edit')->assertOk()->assertSee('site-1.jpg')->assertSee('Project images');
         $this->put('/admin/projects/'.$entry->id, $this->data(['version' => 1, 'title' => 'Updated project', 'keep_images' => $ids]))->assertSessionHasNoErrors();
         $updated = $entry->revisions()->latest('version')->firstOrFail()->payload;
