@@ -22,9 +22,9 @@ class ProjectImages
         }
         $existing = collect($previous['gallery'] ?? [])->keyBy('media_id');
         $gallery = [];
-        foreach ($request->validated('keep_images', []) as $id) {
+        foreach ($request->validated('keep_images', []) as $slot => $id) {
             $media = Media::findOrFail($id);
-            $gallery[] = $existing->get($id) ?? ['media_id' => (int) $id, 'category' => 'Site Progress', 'caption' => '', 'alt' => $media->alt, 'visible' => true];
+            $gallery[$request->boolean('image_slots') ? $slot : count($gallery)] = $existing->get($id) ?? ['media_id' => (int) $id, 'category' => 'Site Progress', 'caption' => '', 'alt' => $media->alt, 'visible' => true];
         }
         foreach ($request->file('images', []) as $index => $file) {
             $alt = $payload['title'].' — project image '.(count($gallery) + 1);
@@ -36,11 +36,13 @@ class ProjectImages
             $createdPaths[] = $media->web_path;
             $media->save();
             app(AuditRecorder::class)->record('media.uploaded', $media);
-            $gallery[] = ['media_id' => $media->id, 'category' => 'Site Progress', 'caption' => '', 'alt' => $alt, 'visible' => true];
+            $gallery[$request->boolean('image_slots') ? $index : count($gallery)] = ['media_id' => $media->id, 'category' => 'Site Progress', 'caption' => '', 'alt' => $alt, 'visible' => true];
         }
+        ksort($gallery);
+        $gallery = array_values($gallery);
         $payload['gallery'] = $gallery;
         $payload['cover_media_id'] = $gallery[0]['media_id'] ?? null;
 
-        return Arr::except($payload, ['images', 'keep_images', 'image_selection']);
+        return Arr::except($payload, ['images', 'keep_images', 'image_selection', 'image_slots']);
     }
 }

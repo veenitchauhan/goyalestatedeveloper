@@ -64,7 +64,7 @@ class ProjectController extends Controller
         try {
             $entry = DB::transaction(function () use ($request, $publisher, &$createdPaths) {
                 $entry = ContentEntry::create(['type' => 'project', 'slug' => $request->validated('slug'), 'title' => $request->validated('title'), 'author_id' => auth()->id()]);
-                $payload = app(ProjectImages::class)->apply($request, $entry, Arr::except($request->validated(), ['images', 'keep_images', 'image_selection']), [], $createdPaths);
+                $payload = app(ProjectImages::class)->apply($request, $entry, Arr::except($request->validated(), ['images', 'keep_images', 'image_selection', 'image_slots']), [], $createdPaths);
                 $publisher->save($entry, $payload, 0);
 
                 return $entry;
@@ -84,7 +84,7 @@ class ProjectController extends Controller
         $createdPaths = [];
         try {
             DB::transaction(function () use ($request, $entry, $publisher, &$createdPaths) {
-                $payload = Arr::except($request->validated(), ['images', 'keep_images', 'image_selection']);
+                $payload = Arr::except($request->validated(), ['images', 'keep_images', 'image_selection', 'image_slots']);
                 $previous = $entry->revisions()->latest('version')->firstOrFail()->payload;
                 foreach (['manager', 'location_entry_id', 'expected_completion', 'cover_media_id', 'panorama_media_id', 'panorama_caption', 'before_media_id', 'after_media_id', 'equipment_ids', 'related_ids', 'document_ids', 'timeline'] as $field) {
                     if (! $request->has($field) && array_key_exists($field, $previous)) {

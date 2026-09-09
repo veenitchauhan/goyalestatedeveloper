@@ -31,13 +31,62 @@
 })();
 
 (() => {
-    const input = document.querySelector('#project-images');
-    if (!input) return;
-    const form = input.form;
-    const checkLimit = () => {
-        const kept = form.querySelectorAll('input[name="keep_images[]"]:checked').length;
-        input.setCustomValidity(kept + input.files.length > 5 ? 'Keep up to 5 images total. Uncheck an existing image before adding another.' : '');
-    };
-    form.addEventListener('change', checkLimit);
-    checkLimit();
+    const status = document.querySelector('[data-photo-status]');
+    document.querySelectorAll('[data-photo-card]').forEach((card, index) => {
+        const input = card.querySelector('[data-photo-input]');
+        const keep = card.querySelector('[data-keep-photo]');
+        const picker = card.querySelector('[data-photo-picker]');
+        const preview = card.querySelector('[data-photo-preview]');
+        const empty = card.querySelector('[data-photo-empty]');
+        const hint = card.querySelector('[data-photo-replace]');
+        const remove = card.querySelector('[data-photo-delete]');
+        const caption = card.querySelector('[data-photo-caption]');
+        let objectUrl;
+        let selectedFile;
+        const release = () => { if (objectUrl) URL.revokeObjectURL(objectUrl); objectUrl = null; };
+        picker.addEventListener('click', () => input.click());
+        input.addEventListener('change', () => {
+            const file = input.files[0];
+            if (!file) return;
+            if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 20 * 1024 * 1024) {
+                input.value = '';
+                if (selectedFile) {
+                    const files = new DataTransfer();
+                    files.items.add(selectedFile);
+                    input.files = files.files;
+                }
+                status.textContent = 'Choose a JPEG, PNG or WebP image no larger than 20 MB.';
+                return;
+            }
+            release();
+            selectedFile = file;
+            objectUrl = URL.createObjectURL(file);
+            preview.src = objectUrl;
+            preview.alt = file.name;
+            preview.hidden = false;
+            empty.hidden = true;
+            hint.hidden = false;
+            remove.hidden = false;
+            keep.disabled = true;
+            caption.textContent = file.name;
+            picker.setAttribute('aria-label', `Replace project image ${index + 1}`);
+            status.textContent = `Image ${index + 1} selected. Save the project to apply changes.`;
+        });
+        remove.addEventListener('click', () => {
+            release();
+            selectedFile = null;
+            input.value = '';
+            keep.disabled = true;
+            preview.removeAttribute('src');
+            preview.hidden = true;
+            empty.hidden = false;
+            hint.hidden = true;
+            remove.hidden = true;
+            caption.textContent = 'JPEG, PNG or WebP';
+            picker.setAttribute('aria-label', `Add project image ${index + 1}`);
+            status.textContent = `Image ${index + 1} removed from this draft. Save the project to apply changes.`;
+            picker.focus();
+        });
+        window.addEventListener('pagehide', release, {once: true});
+    });
 })();

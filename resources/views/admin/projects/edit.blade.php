@@ -35,11 +35,27 @@
 <label for="technical_highlights">Technical highlights</label><textarea id="technical_highlights" name="technical_highlights" rows="4" maxlength="15000">{{ old('technical_highlights',$payload['technical_highlights']??'') }}</textarea>
 <label for="quality_safety">Quality & safety</label><textarea id="quality_safety" name="quality_safety" rows="4" maxlength="15000">{{ old('quality_safety',$payload['quality_safety']??'') }}</textarea>
 <label for="outcome">Project outcome</label><textarea id="outcome" name="outcome" rows="4" maxlength="15000">{{ old('outcome',$payload['outcome']??'') }}</textarea>
-</details><section><h2>Project images</h2><p>Upload up to 5 images per project. The first retained or uploaded image is the cover. Images are saved with the project draft.</p>
-<input type="hidden" name="image_selection" value="1">
-<div class="cards">@foreach($projectImages as $photo)<div><img src="{{ route('media.show',$photo) }}" alt="{{ $photo->alt }}" style="width:100%;max-width:240px;height:160px;object-fit:cover;border-radius:8px"><label><input type="checkbox" name="keep_images[]" value="{{ $photo->id }}" @checked(in_array($photo->id,old('image_selection')!==null?old('keep_images',[]):$projectImages->modelKeys()))> Keep {{ $photo->original_name }}</label></div>@endforeach</div>
-<p>Uncheck an image to remove it from this project. The original remains in the media library.</p>
-@can('media.manage') @can('media.upload')<label for="project-images">Add images (JPEG, PNG or WebP; up to 20 MB each)</label><input type="file" id="project-images" name="images[]" multiple accept=".jpg,.jpeg,.png,.webp"><p>If a save fails validation, select your new files again. Existing images remain saved.</p>@endcan @endcan
+</details><section><h2>Project images</h2><p>Click a card to add or replace a photo. Up to 5 images; the first image is the cover. Save the project to apply changes.</p>
+<input type="hidden" name="image_selection" value="1"><input type="hidden" name="image_slots" value="1">
+@php($canUpload=auth()->user()->can('media.manage') && auth()->user()->can('media.upload'))
+<div class="project-photo-grid">
+@for($slot=0;$slot<5;$slot++)
+@php($photo=old('image_selection')!==null ? $projectImages->firstWhere('id',old('keep_images.'.$slot)) : $projectImages->values()->get($slot))
+<div class="project-photo-card" data-photo-card>
+<input type="hidden" name="keep_images[{{ $slot }}]" value="{{ $photo?->id }}" data-keep-photo @disabled(!$photo)>
+<input class="project-photo-input" type="file" id="project-photo-{{ $slot }}" name="images[{{ $slot }}]" accept=".jpg,.jpeg,.png,.webp" data-photo-input @disabled(!$canUpload)>
+<button type="button" class="project-photo-picker" data-photo-picker aria-label="{{ $photo?'Replace':'Add' }} project image {{ $slot+1 }}" @disabled(!$canUpload)>
+<img data-photo-preview src="{{ $photo ? route('media.show',$photo) : '' }}" alt="{{ $photo?->alt ?? '' }}" @if(!$photo) hidden @endif>
+<span class="project-photo-empty" data-photo-empty @if($photo) hidden @endif><span aria-hidden="true">＋</span>Add image {{ $slot+1 }}</span>
+<span class="project-photo-replace" data-photo-replace @if(!$photo) hidden @endif>Click to replace</span>
+</button>
+<button type="button" class="project-photo-delete" data-photo-delete aria-label="Remove project image {{ $slot+1 }}" @if(!$photo) hidden @endif><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg></button>
+<p class="project-photo-caption" data-photo-caption>{{ $photo?->original_name ?? 'JPEG, PNG or WebP' }}</p>
+</div>
+@endfor
+</div>
+<p class="muted">Up to 20 MB per image. Removing a photo here keeps its original in the media library. After a validation error, select new files again.</p>
+<p data-photo-status role="status" aria-live="polite"></p>
 </section>
 <details class="editor-group" open data-repeater="faqs"><summary>Project FAQs</summary><p class="muted">Add, remove or reorder items. Changes take effect after publication.</p><div data-rows>
 @foreach(old('faqs',$payload['faqs']??[]) as $index=>$row)

@@ -64,6 +64,13 @@ class SaveProjectRequest extends FormRequest
             if ($validator->errors()->isNotEmpty()) {
                 return;
             }
+            if ($this->boolean('image_slots')) {
+                $keptKeys = array_keys($this->input('keep_images', []));
+                $uploadKeys = array_keys($this->file('images', []));
+                if (array_diff([...$keptKeys, ...$uploadKeys], range(0, 4)) || array_intersect($keptKeys, $uploadKeys)) {
+                    $validator->errors()->add('images', 'Use one image per card, up to five cards.');
+                }
+            }
             if ($this->boolean('image_selection') && count($this->input('keep_images', [])) + count($this->file('images', [])) > 5) {
                 $validator->errors()->add('images', 'A project can have up to 5 images. Remove an existing image before adding another.');
             }
@@ -75,6 +82,6 @@ class SaveProjectRequest extends FormRequest
 
     public function rules(): array
     {
-        return ProjectContent::rules($this->route('entry'), false, $this->all()) + ['version' => ['required', 'integer', 'min:0'], 'image_selection' => 'sometimes|boolean', 'keep_images' => ['sometimes', 'array', 'max:5'], 'keep_images.*' => ['integer', 'distinct', Rule::in(ProjectImages::selectedIds($this->route('entry')?->revisions()->latest('version')->first()?->payload ?? []))], 'images' => ['sometimes', 'array', 'max:5'], 'images.*' => ['file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:20480']];
+        return ProjectContent::rules($this->route('entry'), false, $this->all()) + ['version' => ['required', 'integer', 'min:0'], 'image_selection' => 'sometimes|boolean', 'image_slots' => 'sometimes|boolean', 'keep_images' => ['sometimes', 'array', 'max:5'], 'keep_images.*' => ['integer', 'distinct', Rule::in(ProjectImages::selectedIds($this->route('entry')?->revisions()->latest('version')->first()?->payload ?? []))], 'images' => ['sometimes', 'array', 'max:5'], 'images.*' => ['file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:20480']];
     }
 }

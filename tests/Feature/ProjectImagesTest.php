@@ -65,6 +65,37 @@ class ProjectImagesTest extends TestCase
         $this->get('/projects/'.$entry->slug)->assertSee(route('media.show', $ids[0]));
     }
 
+    public function test_card_replacements_preserve_order_and_deletions_keep_original_media(): void
+    {
+        $this->post('/admin/projects', $this->data(['image_slots' => 1, 'images' => [0 => $this->images(1)[0], 4 => $this->images(1)[0]]]))->assertSessionHasNoErrors();
+        $entry = ContentEntry::where('type', 'project')->firstOrFail();
+        $ids = array_column($entry->revisions()->firstOrFail()->payload['gallery'], 'media_id');
+        $this->put('/admin/projects/'.$entry->id, $this->data(['version' => 1, 'image_slots' => 1, 'keep_images' => [1 => $ids[1]], 'images' => [0 => $this->images(1)[0]]]))->assertSessionHasNoErrors();
+        $payload = $entry->revisions()->latest('version')->firstOrFail()->payload;
+        $this->assertCount(2, $payload['gallery']);
+        $this->assertNotContains($payload['cover_media_id'], $ids);
+        $this->assertSame($payload['cover_media_id'], $payload['gallery'][0]['media_id']);
+        $this->assertSame($ids[1], $payload['gallery'][1]['media_id']);
+        $this->put('/admin/projects/'.$entry->id, $this->data(['version' => 2, 'image_slots' => 1]))->assertSessionHasNoErrors();
+        $empty = $entry->revisions()->latest('version')->firstOrFail()->payload;
+        $this->assertSame([], $empty['gallery']);
+        $this->assertNull($empty['cover_media_id']);
+        $this->assertDatabaseCount('media', 3);
+        Storage::disk('local')->assertExists(Media::findOrFail($ids[0])->original_path);
+    }
+
+    public function test_cards_reject_out_of_range_slots_and_two_images_in_one_slot(): void
+    {
+        $this->post('/admin/projects', $this->data(['image_slots' => 1, 'images' => [5 => $this->images(1)[0]]]))->assertSessionHasErrors('images');
+        $this->assertDatabaseCount('media', 0);
+        $this->post('/admin/projects', $this->data(['images' => $this->images(1)]))->assertSessionHasNoErrors();
+        $entry = ContentEntry::where('type', 'project')->firstOrFail();
+        $id = $entry->revisions()->firstOrFail()->payload['cover_media_id'];
+        $this->put('/admin/projects/'.$entry->id, $this->data(['version' => 1, 'image_slots' => 1, 'keep_images' => [0 => $id], 'images' => [0 => $this->images(1)[0]]]))->assertSessionHasErrors('images');
+        $this->assertDatabaseCount('media', 1);
+        $this->assertSame(1, $entry->revisions()->count());
+    }
+
     public function test_limit_applies_to_existing_plus_new_images_and_failed_saves_leave_no_files(): void
     {
         $this->post('/admin/projects', $this->data(['images' => $this->images(6)]))->assertSessionHasErrors('images');
@@ -89,6 +120,6 @@ class ProjectImagesTest extends TestCase
         $editor = User::factory()->create(['two_factor_confirmed_at' => now()]);
         $editor->roles()->attach(Role::where('name', 'project-editor')->firstOrFail());
         $entry->assignees()->attach($editor);
-        $this->actingAs($editor)->put('/admin/projects/'.$entry->id,$this->data(['version' => 1, 'images' => $this->images(1)]))->assertForbidden();
+        $this->actingAs($editor)->put('/admin/projects/'.$entry->id, $this->data(['version' => 1, 'images' => $this->images(1)]))->assertForbidden();
     }
 }

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>@yield('title', 'Administration') | {{ config('app.name') }}</title><link rel="stylesheet" href="{{ asset('assets/admin.css') }}"><script src="{{ asset('assets/password-toggle.js') }}" defer></script><script src="{{ asset('assets/admin-shell.js') }}" defer></script></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>@yield('title', 'Administration') | {{ config('app.name') }}</title><link rel="stylesheet" href="{{ asset('assets/admin.css') }}?v={{ filemtime(public_path('assets/admin.css')) }}"><script src="{{ asset('assets/password-toggle.js') }}" defer></script><script src="{{ asset('assets/admin-shell.js') }}" defer></script></head>
 <body class="@auth cms-shell @else auth-shell @endauth">
 <a class="skip" href="#main">Skip to content</a>
 @auth
